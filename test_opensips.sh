@@ -65,14 +65,14 @@ wait ${ALICE_PID}
 ALICE_RC="${?}"
 wait ${BOB_PID}
 BOB_RC="${?}"
-kill -HUP ${RTPP_PID}
-echo "RTPP_PID: ${RTPP_PID}"
-wait ${RTPP_PID}
-RTPP_RC="${?}"
 kill -TERM ${OPENSIPS_PID}
 echo "OPENSIPS_PID: ${OPENSIPS_PID}"
 wait ${OPENSIPS_PID}
 OPENSIPS_RC="${?}"
+kill -HUP ${RTPP_PID}
+echo "RTPP_PID: ${RTPP_PID}"
+wait ${RTPP_PID}
+RTPP_RC="${?}"
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
