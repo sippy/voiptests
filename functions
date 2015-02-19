@@ -2,7 +2,7 @@
 
 OS=`uname`
 
-if [ "${OS}" == "FreeBSD" ]
+if [ "${OS}" = "FreeBSD" ]
 then
   CC=gcc48
   MAKE_CMD=gmake
