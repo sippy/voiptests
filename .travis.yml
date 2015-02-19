@@ -1,11 +1,12 @@
 language: python
 python:
   - "2.7"
-install:
-  - pip install .
-  - pip install -r requirements.txt
-  - pip install Twisted
-#before_install:
-#  - sudo apt-get install -qq python-twisted
+#install:
+#  - pip install .
+#  - pip install -r requirements.txt
+# - pip install Twisted
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq python-twisted
 script:
     sh -x ./test_opensips.sh
