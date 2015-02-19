@@ -5,6 +5,9 @@ OS=`uname`
 if [ "${OS}" == "FreeBSD" ]
 then
   CC=gcc48
+  MAKE_CMD=gmake
+else
+  MAKE_CMD=make
 fi
 
 BASEDIR="${BASEDIR:-$(dirname -- $0)}"

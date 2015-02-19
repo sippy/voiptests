@@ -22,10 +22,10 @@ git clone git://github.com/sippy/rtpproxy.git
 
 perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
 ##bash
-gmake -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
+${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
 cd rtpproxy
 ./configure
-make all
+${MAKE_CMD} all
 
 RTPP_PIDF="${BUILDDIR}/rtpproxy.pid"
 OPSPS_PIDF="${BUILDDIR}/opensips.pid"
