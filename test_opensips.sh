@@ -2,6 +2,9 @@
 
 set -e
 
+uname -a
+${CC} --version
+
 . $(dirname $0)/functions
 
 rtpproxy_cmds_gen() {
