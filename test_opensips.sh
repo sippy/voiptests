@@ -3,9 +3,10 @@
 set -e
 
 uname -a
-${CC} --version
 
 . $(dirname $0)/functions
+
+${CC} --version
 
 rtpproxy_cmds_gen() {
   sleep 30
