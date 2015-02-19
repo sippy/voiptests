@@ -58,15 +58,28 @@ echo "${ALICE_PID}" > "${ALICE_PIDF}"
 python bob.py 127.0.0.1 5062 &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
+
+set +e
+
 wait ${ALICE_PID}
+ALICE_RC="${?}"
 wait ${BOB_PID}
+BOB_RC="${?}"
 kill -HUP ${RTPP_PID}
 echo "RTPP_PID: ${RTPP_PID}"
 wait ${RTPP_PID}
+RTPP_RC="${?}"
 kill -TERM ${OPENSIPS_PID}
 echo "OPENSIPS_PID: ${OPENSIPS_PID}"
 wait ${OPENSIPS_PID}
+OPENSIPS_RC="${?}"
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
 diff -u rtpproxy.rout rtpproxy.output
+RTPP_CHECK_RC="${?}"
+report_rc "${ALICE_RC}" "Checking if Alice is happy"
+report_rc "${BOB_RC}" "Checking if Bob is happy"
+report_rc "${RTPP_RC}" "Checking RTPproxy exit code"
+report_rc "${OPENSIPS_RC}" "Checking OpenSIPS exit code"
+report_rc "${RTPP_CHECK_RC}" "Checking RTPproxy stdout"
