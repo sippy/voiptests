@@ -2,7 +2,7 @@
 
 set -e
 
-. functions
+. $(dirname $0)/functions
 
 rtpproxy_cmds_gen() {
   sleep 30
