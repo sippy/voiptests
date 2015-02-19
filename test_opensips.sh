@@ -16,9 +16,9 @@ fi
 mkdir "${BUILDDIR}/dist"
 cd "${BUILDDIR}/dist"
 
-git clone -b 1.10 git@github.com:OpenSIPS/opensips.git
-git clone git@github.com:sippy/b2bua.git
-git clone git@github.com:sippy/rtpproxy.git
+git clone -b 1.10 git://github.com/OpenSIPS/opensips.git
+git clone git://github.com/sippy/b2bua.git
+git clone git://github.com/sippy/rtpproxy.git
 
 perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
 ##bash
