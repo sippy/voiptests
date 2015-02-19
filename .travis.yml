@@ -1,10 +1,10 @@
 language: python
 python:
   - "2.7"
-  - "twisted"
 install:
   - pip install .
   - pip install -r requirements.txt
+  - pip install Twisted
 #before_install:
 #  - sudo apt-get install -qq python-twisted
 script:
