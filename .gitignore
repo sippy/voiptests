@@ -3,3 +3,4 @@ rtpproxy.rout
 dist/*
 *.pid
 *.sock
+opensips.cfg
