@@ -11,6 +11,8 @@ else
   MAKE_CMD=make
 fi
 
+MM_TYPE="${MM_TYPE:-b2bua}"
+
 BASEDIR="${BASEDIR:-$(dirname -- $0)}"
 BASEDIR="$(readlink -f -- $BASEDIR)"
 
