@@ -7,10 +7,7 @@ loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 
-#modparam("rtpproxy", "rtpproxy_sock", "unix:/var/run/rtpproxy.sock")
-modparam("rtpproxy", "rtpproxy_sock", "udp:127.0.0.1:22222")
-#modparam("rtpproxy", "rtpproxy_sock", "unix:/tmp/rtpproxy.sock")
-#modparam("rtpproxy", "rtpproxy_sock", "unix:/tmp/rtpproxy.csock")
+modparam("rtpproxy", "rtpproxy_sock", "%%RTPP_SOCK_TEST%%")
 
 listen=udp:127.0.0.1:5060
 #listen=udp:192.168.1.43:5060

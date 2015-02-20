@@ -12,6 +12,7 @@ else
 fi
 
 MM_TYPE="${MM_TYPE:-b2bua}"
+RTPPC_TYPE="${RTPPC_TYPE:-udp}"
 
 BASEDIR="${BASEDIR:-$(dirname -- $0)}"
 BASEDIR="$(readlink -f -- $BASEDIR)"
@@ -19,6 +20,22 @@ BASEDIR="$(readlink -f -- $BASEDIR)"
 BUILDDIR="${BUILDDIR:-${BASEDIR}}"
 
 RTPPROXY=${BUILDDIR}/dist/rtpproxy/src/rtpproxy_debug
+RTPP_SOCK_UDP="udp:127.0.0.1:22222"
+RTPP_SOCK_UNIX="unix:${BASEDIR}/rtpproxy.sock"
+RTPP_SOCK_CUNIX="unix:${BASEDIR}/rtpproxy.csock"
+
+if [ "${RTPPC_TYPE}" = "udp" ]
+then
+  RTPP_SOCK_TEST="${RTPP_SOCK_UDP}"
+fi
+if [ "${RTPPC_TYPE}" = "unix" ]
+then
+  RTPP_SOCK_TEST="${RTPP_SOCK_UNIX}"
+fi
+if [ "${RTPPC_TYPE}" = "cunix" ]
+then
+  RTPP_SOCK_TEST="${RTPP_SOCK_CUNIX}"
+fi
 
 forcefail() {
   RC=${1}

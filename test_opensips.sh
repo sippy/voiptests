@@ -18,10 +18,11 @@ start_mm() {
   then
     ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
       --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
-      --b2bua_socket="/tmp/b2bua.sock" --rtp_proxy_clients="udp:127.0.0.1:22222" &
+      --b2bua_socket="/tmp/b2bua.sock" --rtp_proxy_clients="${RTPP_SOCK_TEST}" &
     MM_PID=${!}
     echo "${MM_PID}" > "${MM_PIDF}"
   else
+    sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < opensips.cfg.in > opensips.cfg
     ./dist/opensips/opensips -f opensips.cfg -D -P "${MM_PIDF}" &
     MM_PID=${!}
   fi
@@ -46,7 +47,8 @@ do
   kill -TERM "${pid}" || true
 done
 
-rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s udp:127.0.0.1:22222 -s cunix:/tmp/rtpproxy.csock -s unix:/tmp/rtpproxy.sock > rtpproxy.rout &
+rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTPP_SOCK_UDP}" \
+  -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" > rtpproxy.rout &
 RTPP_PID=${!}
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
