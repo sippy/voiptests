@@ -6,5 +6,7 @@ before_install:
 script:
     sh -x ./test_opensips.sh
 env:
-  - MM_TYPE=opensips
-  - MM_TYPE=b2bua
+  - MM_TYPE=opensips RTPPC_TYPE=udp
+  - MM_TYPE=opensips RTPPC_TYPE=unix
+  - MM_TYPE=b2bua RTPPC_TYPE=udp
+  - MM_TYPE=b2bua RTPPC_TYPE=unix
