@@ -48,7 +48,7 @@ do
 done
 
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTPP_SOCK_UDP}" \
-  -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" > rtpproxy.rout &
+  -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" > rtpproxy.rout &
 RTPP_PID=${!}
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"

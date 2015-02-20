@@ -23,10 +23,15 @@ RTPPROXY=${BUILDDIR}/dist/rtpproxy/src/rtpproxy_debug
 RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${BASEDIR}/rtpproxy.sock"
 RTPP_SOCK_CUNIX="cunix:${BASEDIR}/rtpproxy.csock"
+RTPP_SOCK_UDP6="udp6:::1:22222"
 
 if [ "${RTPPC_TYPE}" = "udp" ]
 then
   RTPP_SOCK_TEST="${RTPP_SOCK_UDP}"
+fi
+if [ "${RTPPC_TYPE}" = "udp6" ]
+then
+  RTPP_SOCK_TEST="${RTPP_SOCK_UDP6}"
 fi
 if [ "${RTPPC_TYPE}" = "unix" ]
 then
