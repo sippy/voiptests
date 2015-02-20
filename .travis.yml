@@ -5,3 +5,6 @@ before_install:
   - sh -x ./install_depends/opensips.sh
 script:
     sh -x ./test_opensips.sh
+env:
+  - MM_TYPE=opensips
+  - MM_TYPE=b2bua
