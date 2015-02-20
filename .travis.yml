@@ -10,3 +10,4 @@ env:
   - MM_TYPE=opensips RTPPC_TYPE=unix
   - MM_TYPE=b2bua RTPPC_TYPE=udp
   - MM_TYPE=b2bua RTPPC_TYPE=unix
+  - MM_TYPE=b2bua RTPPC_TYPE=cunix
