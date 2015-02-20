@@ -16,7 +16,7 @@ rtpproxy_cmds_gen() {
 start_mm() {
   if [ "${MM_TYPE}" = "b2bua" ]
   then
-    /usr/home/sobomax/projects/voiptests/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
+    ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
       --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
       --b2bua_socket="/tmp/b2bua.sock" --rtp_proxy_clients="udp:127.0.0.1:22222" &
     MM_PID=${!}
