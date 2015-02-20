@@ -13,27 +13,7 @@ rtpproxy_cmds_gen() {
   echo "G nsess_created nsess_destroyed nsess_complete nsess_nortp nsess_owrtp nsess_nortcp nsess_owrtcp ncmds_rcvd ncmds_succd ncmds_errs ncmds_repld"
 }
 
-install_depends() {
-  if [ -e "${BUILDDIR}/dist" ]
-  then
-    rm -rf "${BUILDDIR}/dist"
-  fi
-  mkdir "${BUILDDIR}/dist"
-  cd "${BUILDDIR}/dist"
-
-  git clone -b 1.10 git://github.com/OpenSIPS/opensips.git
-  git clone git://github.com/sippy/b2bua.git
-  git clone git://github.com/sippy/rtpproxy.git
-
-  perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
-  ##bash
-  ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
-  cd rtpproxy
-  ./configure
-  ${MAKE_CMD} all
-}
-
-install_depends
+#"${BUILDDIR}/install_depends/opensips.sh"
 
 RTPP_PIDF="${BUILDDIR}/rtpproxy.pid"
 OPSPS_PIDF="${BUILDDIR}/opensips.pid"

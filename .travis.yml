@@ -1,5 +1,7 @@
 language: python
 python:
   - "2.7"
+before_install:
+  - sh -x ./install_depends/opensips.sh
 script:
     sh -x ./test_opensips.sh
