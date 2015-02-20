@@ -24,3 +24,6 @@ ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
 cd rtpproxy
 ./configure
 ${MAKE_CMD} all
+cat ${BASEDIR}/install_depends/b2bua_radius.py.fix ${BASEDIR}/dist/b2bua/sippy/b2bua_radius.py | \
+  sed "s|%%SIPPY_ROOT%%|${BASEDIR}/dist/b2bua|" > ${BASEDIR}/dist/b2bua/sippy/b2bua_test.py
+chmod 755 ${BASEDIR}/dist/b2bua/sippy/b2bua_test.py
