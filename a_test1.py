@@ -103,6 +103,7 @@ class a_test(object):
             subtest = subtest_class(global_config, body, self.subtest_done)
             self.nsubtests_running += 1
         self.rval = self.nsubtests_running
+        Timeout(self.timeout, 45, 1)
 
     def recvRequest(self, req):
         return (req.genResponse(501, 'Not Implemented'), None, None)
@@ -113,3 +114,6 @@ class a_test(object):
             self.rval -= 1
         if self.nsubtests_running == 0:
             reactor.crash()
+
+    def timeout(self):
+        reactor.crash()
