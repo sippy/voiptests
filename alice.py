@@ -35,8 +35,8 @@ if __name__ == '__main__':
     global_config['_sip_port'] = int(sys.argv[2])
     global_config['_sip_logger'] = SipLogger('alice_ua')
 
-    from a_test1 import a_test1
-    acore = a_test1(global_config, body)
+    from a_test1 import a_test
+    acore = a_test(global_config, body)
 
     reactor.run(installSignalHandlers = True)
 

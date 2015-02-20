@@ -28,8 +28,8 @@ if __name__ == '__main__':
     global_config['_sip_port'] = int(sys.argv[2])
     global_config['_sip_logger'] = SipLogger('bob_ua')
 
-    from b_test1 import b_test1
-    bcore = b_test1(global_config, body)
+    from b_test1 import b_test
+    bcore = b_test(global_config, body)
 
     reactor.run(installSignalHandlers = True)
     sys.exit(bcore.rval)
