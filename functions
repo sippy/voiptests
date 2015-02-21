@@ -12,6 +12,7 @@ else
 fi
 
 MM_TYPE="${MM_TYPE:-b2bua}"
+MM_BRANCH="${MM_BRANCH:-master}"
 RTPPC_TYPE="${RTPPC_TYPE:-udp}"
 
 BASEDIR="${BASEDIR:-$(dirname -- $0)}"

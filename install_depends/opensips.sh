@@ -16,14 +16,14 @@ cd "${BUILDDIR}/dist"
 
 if [ "${MM_TYPE}" = "opensips" ]
 then
-  git clone -b 1.10 git://github.com/OpenSIPS/opensips.git
+  git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
 fi
 git clone git://github.com/sippy/b2bua.git
 git clone git://github.com/sippy/rtpproxy.git
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  git clone git://git.sip-router.org/kamailio kamailio
+  git clone -b "${MM_BRANCH}" git://git.sip-router.org/kamailio kamailio
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/kamailio/Makefile.defs
 fi
 
