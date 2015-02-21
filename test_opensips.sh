@@ -14,19 +14,39 @@ rtpproxy_cmds_gen() {
 }
 
 start_mm() {
-  if [ "${MM_TYPE}" = "b2bua" ]
+  if [ -e "${MM_PIDF}" ]
   then
-    ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
-      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
-      --b2bua_socket="/tmp/b2bua.sock" --rtp_proxy_clients="${RTPP_SOCK_TEST}" &
-    MM_PID=${!}
-    echo "${MM_PID}" > "${MM_PIDF}"
-  else
-    sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < opensips.cfg.in > opensips.cfg
-    ./dist/opensips/opensips -f opensips.cfg -D -P "${MM_PIDF}" &
-    MM_PID=${!}
+    rm "${MM_PIDF}"
   fi
-}  
+  case "${MM_TYPE}" in
+  b2bua)
+    ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
+     --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
+     --b2bua_socket="/tmp/b2bua.sock" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
+     --logfile="${BUILDDIR}/b2bua.log" &
+    MM_PID=${!}
+    ;;
+
+  opensips)
+    sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < opensips.cfg.in > opensips.cfg
+    ./dist/opensips/opensips -f opensips.cfg -D &
+    MM_PID=${!}
+    ;;
+
+  kamailio)
+    sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
+    ./dist/kamailio/kamailio -f kamailio.cfg -D &
+    MM_PID=${!}
+    ;;
+
+  *)
+    echo "Unknown MM_TYPE: ${MM_TYPE}" 1>&2
+    return 1
+  esac
+
+  echo ${MM_PID} > "${MM_PIDF}"
+  return 0
+}
 
 #"${BUILDDIR}/install_depends/opensips.sh"
 
@@ -52,10 +72,10 @@ rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTP
 RTPP_PID=${!}
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
-python alice.py 127.0.0.1 5061 &
+python alice.py 127.0.0.1 5061 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
-python bob.py 127.0.0.1 5062 &
+python bob.py 127.0.0.1 5062 2>/dev/null &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 
