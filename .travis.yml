@@ -6,13 +6,22 @@ before_install:
 script:
     sh -x ./test_opensips.sh
 env:
-  - MM_TYPE=opensips RTPPC_TYPE=udp
-  - MM_TYPE=opensips RTPPC_TYPE=udp6
-  - MM_TYPE=opensips RTPPC_TYPE=unix
   - MM_TYPE=b2bua RTPPC_TYPE=udp
   - MM_TYPE=b2bua RTPPC_TYPE=udp6
   - MM_TYPE=b2bua RTPPC_TYPE=unix
   - MM_TYPE=b2bua RTPPC_TYPE=cunix
+  - MM_TYPE=opensips MM_BRANCH=1.8 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=1.8 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=1.8 RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=1.10 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=1.10 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=1.10 RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=1.11 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=1.11 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=1.11 RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPPC_TYPE=unix
   - MM_TYPE=kamailio RTPPC_TYPE=udp
   - MM_TYPE=kamailio RTPPC_TYPE=udp6
   - MM_TYPE=kamailio RTPPC_TYPE=unix
