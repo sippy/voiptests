@@ -4,3 +4,6 @@ dist/*
 *.pid
 *.sock
 opensips.cfg
+alice.log
+b2bua.log
+kamailio.cfg
