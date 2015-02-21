@@ -16,16 +16,28 @@ fi
 mkdir "${BUILDDIR}/dist"
 cd "${BUILDDIR}/dist"
 
-git clone -b 1.10 git://github.com/OpenSIPS/opensips.git
+if [ "${MM_TYPE}" = "opensips" ]
+then
+  git clone -b 1.10 git://github.com/OpenSIPS/opensips.git
+  perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
+fi
 git clone git://github.com/sippy/b2bua.git
 git clone git://github.com/sippy/rtpproxy.git
-git clone git://git.sip-router.org/kamailio kamailio
+if [ "${MM_TYPE}" = "kamailio" ]
+then
+  git clone git://git.sip-router.org/kamailio kamailio
+  perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/kamailio/Makefile.defs
+fi
 
-perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
-perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/kamailio/Makefile.defs
 ##bash
-${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
-${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" all modules
+if [ "${MM_TYPE}" = "opensips" ]
+then
+  ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
+fi
+if [ "${MM_TYPE}" = "kamailio" ]
+then
+  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" all modules
+fi
 cd rtpproxy
 ./configure
 ${MAKE_CMD} all
