@@ -20,6 +20,7 @@ git clone git://github.com/sippy/rtpproxy.git
 git clone git://git.sip-router.org/kamailio kamailio
 
 perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
+perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/kamailio/Makefile.defs
 ##bash
 ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" all modules
 ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" all modules
