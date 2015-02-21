@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "MM_TYPE: ${MM_TYPE}"
+
 set -e
 
 BASEDIR="${BASEDIR:-$(dirname -- "${0}")/..}"
