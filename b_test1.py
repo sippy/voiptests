@@ -31,6 +31,8 @@ from sippy.SipTransactionManager import SipTransactionManager
 from twisted.internet import reactor
 from random import random
 
+from a_test1 import fillhostport, checkhostport
+
 class b_test1(object):
     rval = 1
     ring_done = False
@@ -39,10 +41,15 @@ class b_test1(object):
     done_cb = None
     body = None
 
-    def __init__(self, done_cb):
+    def __init__(self, done_cb, portrange):
         self.done_cb = done_cb
+        self.portrange = portrange
 
     def answer(self, global_config, body, req):
+        in_body = req.getBody()
+        in_body.parse()
+        if not checkhostport(in_body, self.portrange):
+            raise ValueError('Bob: hostport validation has failed')
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
@@ -120,12 +127,14 @@ class b_test(object):
     body = None
     global_config = None
     nsubtests_running = 0
+    portrange = None
 
-    def __init__(self, global_config, body):
+    def __init__(self, global_config, body, portrange):
         global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
         Timeout(self.timeout, 45, 1)
         self.body = body
         self.global_config = global_config
+        self.portrange = portrange
 
     def recvRequest(self, req):
         if req.getHFBody('to').getTag() != None:
@@ -135,20 +144,22 @@ class b_test(object):
             # New dialog
             cld = req.getRURI().username
             if cld == 'bob_1':
-                subtest = b_test1(self.subtest_done)
+                subtest = b_test1(self.subtest_done, self.portrange)
             elif cld == 'bob_2':
-                subtest = b_test2(self.subtest_done)
+                subtest = b_test2(self.subtest_done, self.portrange)
             elif cld == 'bob_3':
-                subtest = b_test3(self.subtest_done)
+                subtest = b_test3(self.subtest_done, self.portrange)
             elif cld == 'bob_4':
-                subtest = b_test4(self.subtest_done)
+                subtest = b_test4(self.subtest_done, self.portrange)
             elif cld == 'bob_5':
-                subtest = b_test5(self.subtest_done)
+                subtest = b_test5(self.subtest_done, self.portrange)
             else:
                 return (req.genResponse(404, 'Test Does Not Exist'), None, None)
             self.nsubtests_running += 1
             self.rval += 1
-            return subtest.answer(self.global_config, self.body, req)
+            sdp_body = self.body.getCopy()
+            fillhostport(sdp_body, self.portrange)
+            return subtest.answer(self.global_config, sdp_body, req)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):

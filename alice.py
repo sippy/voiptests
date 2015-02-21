@@ -25,12 +25,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
+import sys, getopt
 sys.path.insert(0, 'dist/b2bua')
+sys.path.insert(0, 'lib')
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
 from twisted.internet import reactor
+
+from PortRange import PortRange
 
 body_txt = 'v=0\r\n' + \
   'o=- 380960 380960 IN IP4 192.168.22.95\r\n' + \
@@ -52,7 +55,18 @@ body_txt = 'v=0\r\n' + \
   'a=sendrecv\r\n'
 
 if __name__ == '__main__':
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'p:')
+    except getopt.GetoptError:
+        usage(global_config)
+    portrange = PortRange('12000-15000')
+    for o, a in opts:
+        if o == '-p':
+            portrange = PortRange(a.strip())
+            continue
+
     body = MsgBody(body_txt)
+    body.parse()
 
     global_config = {}
 
@@ -61,7 +75,7 @@ if __name__ == '__main__':
     global_config['_sip_logger'] = SipLogger('alice_ua')
 
     from a_test1 import a_test
-    acore = a_test(global_config, body)
+    acore = a_test(global_config, body, portrange)
 
     reactor.run(installSignalHandlers = True)
 
