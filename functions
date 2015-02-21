@@ -89,6 +89,19 @@ ok() {
   echo >&2 "OK:" "$@"
 }
 
+report_rc_log() {
+  RC=${1}
+  FAIL_LOGFILE="${2}"
+  shift 2
+  if [ ${RC} -eq 0 ]
+  then
+    ok "${@}"
+  else
+    cat "${FAIL_LOGFILE}" >&2
+    fail "${@}"
+  fi
+}
+
 report_rc() {
   RC=${1}
   shift
