@@ -3,3 +3,6 @@
 import sys
 sys.path.insert(0, "%%SIPPY_ROOT%%")
 
+from sippy.Rtp_proxy_client import Rtp_proxy_client
+Rtp_proxy_client.hrtb_ival = 120.0
+Rtp_proxy_client.hrtb_retr_ival = 120.0
