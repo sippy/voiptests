@@ -76,7 +76,7 @@ echo "${MM_PID}" > "${MM_PIDF}"
 python alice.py 127.0.0.1 5061 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
-python bob.py 127.0.0.1 5062 2>/dev/null &
+python bob.py 127.0.0.1 5062 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 
