@@ -41,12 +41,13 @@ class b_test1(object):
     disconnect_done = False
     done_cb = None
     body = None
+    compact_sip = False
 
     def __init__(self, done_cb, portrange):
         self.done_cb = done_cb
         self.portrange = portrange
 
-    def answer(self, global_config, body, req):
+    def answer(self, global_config, body, req, sip_t):
         in_body = req.getBody()
         in_body.parse()
         if not checkhostport(in_body, self.portrange):
@@ -56,9 +57,10 @@ class b_test1(object):
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
         uaA.godead_timeout = 10
+        uaA.compact_sip = self.compact_sip
         Timeout(self.ring, 5, 1, uaA)
         self.body = body
-        return uaA.recvRequest(req)
+        return uaA.recvRequest(req, sip_t)
 
     def ring(self, ua):
         event = CCEventRing((180, 'Ringing', None), origin = 'switch')
@@ -124,6 +126,21 @@ class b_test5(b_test2):
         ua.recvEvent(event)
         self.connect_done = True
 
+class b_test6(b_test1):
+    compact_sip = True
+
+class b_test7(b_test2):
+    compact_sip = True
+
+class b_test8(b_test3):
+    compact_sip = True
+
+class b_test9(b_test4):
+    compact_sip = True
+
+class b_test10(b_test5):
+    compact_sip = True
+
 class b_test(object):
     rval = 1
     body = None
@@ -138,7 +155,7 @@ class b_test(object):
         self.global_config = global_config
         self.portrange = portrange
 
-    def recvRequest(self, req):
+    def recvRequest(self, req, sip_t):
         if req.getHFBody('to').getTag() != None:
             # Request within dialog, but no such dialog
             return (req.genResponse(481, 'Call Leg/Transaction Does Not Exist'), None, None)
@@ -146,22 +163,33 @@ class b_test(object):
             # New dialog
             cld = req.getRURI().username
             if cld == 'bob_1':
-                subtest = b_test1(self.subtest_done, self.portrange)
+                tclass = b_test1
             elif cld == 'bob_2':
-                subtest = b_test2(self.subtest_done, self.portrange)
+                tclass = b_test2
             elif cld == 'bob_3':
-                subtest = b_test3(self.subtest_done, self.portrange)
+                tclass = b_test3
             elif cld == 'bob_4':
-                subtest = b_test4(self.subtest_done, self.portrange)
+                tclass = b_test4
             elif cld == 'bob_5':
-                subtest = b_test5(self.subtest_done, self.portrange)
+                tclass = b_test5
+            elif cld == 'bob_6':
+                tclass = b_test6
+            elif cld == 'bob_7':
+                tclass = b_test7
+            elif cld == 'bob_8':
+                tclass = b_test8
+            elif cld == 'bob_9':
+                tclass = b_test9
+            elif cld == 'bob_10':
+                tclass = b_test10
             else:
                 return (req.genResponse(404, 'Test Does Not Exist'), None, None)
+            subtest = tclass(self.subtest_done, self.portrange)
             self.nsubtests_running += 1
             self.rval += 1
             sdp_body = self.body.getCopy()
             fillhostport(sdp_body, self.portrange)
-            return subtest.answer(self.global_config, sdp_body, req)
+            return subtest.answer(self.global_config, sdp_body, req, sip_t)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):
