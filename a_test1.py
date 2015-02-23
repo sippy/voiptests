@@ -26,7 +26,7 @@
 from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
-  CCEventPreConnect
+  CCEventPreConnect, CCEventRing
 from sippy.SipCallId import SipCallId
 from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
@@ -64,11 +64,13 @@ class a_test1(object):
     done_cb = None
 
     def recvEvent(self, event, ua):
-        if isinstance(event, CCEventConnect) or isinstance(event, CCEventPreConnect):
+        if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
+          isinstance(event, CCEventPreConnect):
             code, reason, sdp_body = event.getData()
-            sdp_body.parse()
-            if not checkhostport(sdp_body, self.portrange):
-                raise ValueError('Alice: SDP body has failed validation')
+            if not (isinstance(event, CCEventRing) and sdp_body == None):
+                sdp_body.parse()
+                if not checkhostport(sdp_body, self.portrange):
+                    raise ValueError('Alice: SDP body has failed validation')
         print 'Alice: Incoming event:', event
 
     def connected(self, ua, rtime, origin):
