@@ -59,6 +59,7 @@ class a_test1(object):
     cld = 'bob_1'
     cli = 'alice_1'
     rval = 1
+    nerrs = 0
     connect_done = False
     disconnect_done = False
     done_cb = None
@@ -70,6 +71,7 @@ class a_test1(object):
             if not (isinstance(event, CCEventRing) and sdp_body == None):
                 sdp_body.parse()
                 if not checkhostport(sdp_body, self.portrange):
+                    self.nerrs += 1
                     raise ValueError('Alice: SDP body has failed validation')
         print 'Alice: Incoming event:', event
 
@@ -87,7 +89,7 @@ class a_test1(object):
         print 'Alice: disconnected', rtime, origin, result
 
     def alldone(self, ua):
-        if self.connect_done and self.disconnect_done:
+        if self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         self.done_cb(self)
 
@@ -112,7 +114,7 @@ class a_test3(a_test1):
     cli = 'alice_3'
 
     def alldone(self, ua):
-        if self.disconnect_done:
+        if self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         self.done_cb(self)
 

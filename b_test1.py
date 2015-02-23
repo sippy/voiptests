@@ -35,6 +35,7 @@ from a_test1 import fillhostport, checkhostport
 
 class b_test1(object):
     rval = 1
+    nerrs = 0
     ring_done = False
     connect_done = False
     disconnect_done = False
@@ -49,6 +50,7 @@ class b_test1(object):
         in_body = req.getBody()
         in_body.parse()
         if not checkhostport(in_body, self.portrange):
+            self.nerrs += 1
             raise ValueError('Bob: hostport validation has failed')
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
@@ -86,7 +88,7 @@ class b_test1(object):
             self.disconnect_done = True
 
     def alldone(self, ua):
-        if self.ring_done and self.connect_done and self.disconnect_done:
+        if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
             print 'Bob: subclass %s failed' % str(self.__class__)
