@@ -69,7 +69,7 @@ done
 
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" \
-  -m 12000 -M 15000 > rtpproxy.rout &
+  -m 12000 -M 15000 -6 '::1' > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
@@ -102,6 +102,6 @@ RTPP_CHECK_RC="${?}"
 
 report_rc_log "${ALICE_RC}" alice.log "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" bob.log "Checking if Bob is happy"
-report_rc "${RTPP_RC}" "Checking RTPproxy exit code"
+report_rc_log "${RTPP_RC}" rtpproxy.log "Checking RTPproxy exit code"
 report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
 report_rc "${RTPP_CHECK_RC}" "Checking RTPproxy stdout"
