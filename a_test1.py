@@ -129,7 +129,7 @@ class a_test3(a_test1):
 class a_test4(a_test3):
     cld = 'bob_4'
     cli = 'alice_4'
-    atype = 'IP6'
+    atype = 'IP4'
 
 class a_test5(a_test3):
     cld = 'bob_5'
