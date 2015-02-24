@@ -43,30 +43,9 @@ then
   RTPP_SOCK_TEST="unix:${BASEDIR}/rtpproxy.csock"
 fi
 
-forcefail() {
+fail_rc() {
   RC=${1}
-  if [ ${RC} -eq 0 ]
-  then
-    echo >&2 "ALERT, forcefail() called with the bogus 0 RC!"
-    ${RC}=1
-  fi
   shift
-  echo >&2 "FAILED: (rc=${RC})" "${@}"
-  if [ -n "$CONTINUE" ] ; then
-    return
-  fi
-  if [ -n "$INTERACTIVE" ] ; then
-    read -p "Continue? (y/n)" YN
-    if [ "$YN" != 'y' ] ; then
-      exit $RC
-    fi
-  else
-    exit $RC
-  fi
-}
-
-fail() {
-  RC=$?
   echo >&2 "FAILED: (rc=$RC)" "$@"
   if [ -n "$CONTINUE" ] ; then
     return
@@ -81,8 +60,20 @@ fail() {
   fi
 }
 
-ok() {
-  echo >&2 "OK:" "$@"
+forcefail() {
+  RC=${1}
+  if [ ${RC} -eq 0 ]
+  then
+    echo >&2 "ALERT, forcefail() called with the bogus 0 RC!"
+    ${RC}=1
+  fi
+  shift
+  fail_rc "${RC}" "${@}"
+}
+
+fail() {
+  RC=$?
+  fail_rc "${RC}" "${@}"
 }
 
 ok() {
@@ -98,7 +89,7 @@ report_rc_log() {
     ok "${@}"
   else
     cat "${FAIL_LOGFILE}" >&2
-    fail "${@}"
+    fail_rc "${RC}" "${@}"
   fi
 }
 
@@ -109,7 +100,7 @@ report_rc() {
   then
     ok "${@}"
   else
-    fail "${@}"
+    fail_rc "${RC}" "${@}"
   fi
 }
 
@@ -122,8 +113,7 @@ reportifnotfail() {
   RC=$?
   if [ "$RC" = 0 ]
   then
-    false
-    fail "$@"
+    fail_rc 1 "$@"
   else
     true
     ok "$@"
