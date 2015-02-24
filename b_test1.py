@@ -42,6 +42,7 @@ class b_test1(object):
     done_cb = None
     body = None
     compact_sip = False
+    atype = 'IP4'
 
     def __init__(self, done_cb, portrange):
         self.done_cb = done_cb
@@ -50,7 +51,7 @@ class b_test1(object):
     def answer(self, global_config, body, req, sip_t):
         in_body = req.getBody()
         in_body.parse()
-        if not checkhostport(in_body, self.portrange):
+        if not checkhostport(in_body, self.portrange, self.atype):
             self.nerrs += 1
             raise ValueError('Bob: hostport validation has failed')
         # New dialog
@@ -97,6 +98,8 @@ class b_test1(object):
         self.done_cb(self)
 
 class b_test2(b_test1):
+    atype = 'IP6'
+
     def ring(self, ua):
         event = CCEventRing((183, 'Session Progress', self.body), \
           origin = 'switch')
@@ -105,6 +108,8 @@ class b_test2(b_test1):
         self.ring_done = True
 
 class b_test3(b_test1):
+    atype = 'IP4'
+
     def connect(self, ua):
         event = CCEventFail((501, 'Post-ring Failure'), \
           origin = 'switch')
@@ -112,6 +117,8 @@ class b_test3(b_test1):
         self.connect_done = True
 
 class b_test4(b_test1):
+    atype = 'IP6'
+
     def ring(self, ua):
         event = CCEventFail((502, 'Pre-ring Failure'), \
           origin = 'switch')
@@ -120,6 +127,8 @@ class b_test4(b_test1):
         self.connect_done = True
 
 class b_test5(b_test2):
+    atype = 'IP4'
+
     def connect(self, ua):
         event = CCEventFail((503, 'Post-early-session Failure'), \
           origin = 'switch')
@@ -127,18 +136,28 @@ class b_test5(b_test2):
         self.connect_done = True
 
 class b_test6(b_test1):
+    atype = 'IP6'
+
     compact_sip = True
 
 class b_test7(b_test2):
+    atype = 'IP4'
+
     compact_sip = True
 
 class b_test8(b_test3):
+    atype = 'IP6'
+
     compact_sip = True
 
 class b_test9(b_test4):
+    atype = 'IP4'
+
     compact_sip = True
 
 class b_test10(b_test5):
+    atype = 'IP6'
+
     compact_sip = True
 
 class b_test(object):
@@ -188,7 +207,7 @@ class b_test(object):
             self.nsubtests_running += 1
             self.rval += 1
             sdp_body = self.body.getCopy()
-            fillhostport(sdp_body, self.portrange)
+            fillhostport(sdp_body, self.portrange, tclass.atype)
             return subtest.answer(self.global_config, sdp_body, req, sip_t)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
