@@ -9,8 +9,8 @@ uname -a
 ${CC} --version
 
 rtpproxy_cmds_gen() {
-  sleep 32
-  echo "Gv nsess_created nsess_destroyed nsess_complete nsess_nortp nsess_owrtp nsess_nortcp nsess_owrtcp ncmds_rcvd ncmds_succd ncmds_errs ncmds_repld"
+  sleep ${RTPP_STAT_TIMEOUT}
+  cat "${BUILDDIR}/rtpproxy.stats.input"
 }
 
 start_mm() {
@@ -22,7 +22,7 @@ start_mm() {
   b2bua)
     ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
-     --b2bua_socket="/tmp/b2bua.sock" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
+     --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
      --logfile="${BUILDDIR}/b2bua.log" &
     MM_PID=${!}
     ;;
@@ -67,17 +67,22 @@ do
   kill -TERM "${pid}" || true
 done
 
-rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTPP_SOCK_UDP}" \
+if [ "${MM_SOCK}" != "" ]
+then
+  RTPP_NOTIFY_ARG="-n ${MM_SOCK} -W 45"
+fi
+
+rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" \
-  -m 12000 -M 15000 > rtpproxy.rout 2>rtpproxy.log &
+  -m 12000 -M 15000 ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
 sleep 2
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
-python alice.py 127.0.0.1 5061 2>alice.log &
+python alice.py -t "${TEST_SET}" -l 127.0.0.1 -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
-python bob.py 127.0.0.1 5062 2>bob.log &
+python bob.py -l 127.0.0.1 -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 

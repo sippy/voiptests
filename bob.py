@@ -48,8 +48,10 @@ body_txt = 'v=0\r\n' + \
     'a=fmtp:101 0-15\r\n'
 
 if __name__ == '__main__':
+    global_config = {}
+
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:')
     except getopt.GetoptError:
         usage(global_config)
     portrange = PortRange('12000-15000')
@@ -57,18 +59,23 @@ if __name__ == '__main__':
         if o == '-p':
             portrange = PortRange(a.strip())
             continue
+        if o == '-l':
+            global_config['_sip_address'] = a.strip()
+            continue
+        if o == '-P':
+            global_config['_sip_port'] = int(a)
+            continue
+        if o == '-T':
+            test_timeout = int(a)
+            continue
 
     body = MsgBody(body_txt)
     body.parse()
 
-    global_config = {}
-
-    global_config['_sip_address'] = sys.argv[1]
-    global_config['_sip_port'] = int(sys.argv[2])
     global_config['_sip_logger'] = SipLogger('bob_ua')
 
     from b_test1 import b_test
-    bcore = b_test(global_config, body, portrange)
+    bcore = b_test(global_config, body, portrange, test_timeout)
 
     reactor.run(installSignalHandlers = True)
     sys.exit(bcore.rval)

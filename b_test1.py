@@ -43,10 +43,18 @@ class b_test1(object):
     body = None
     compact_sip = False
     atype = 'IP4'
+    ring_ival = 5.0
+    answer_ival = None
+    disconnect_ival = None
+    cli = 'bob_1'
 
     def __init__(self, done_cb, portrange):
         self.done_cb = done_cb
         self.portrange = portrange
+        if self.answer_ival == None:
+            self.answer_ival = 9.0 + random() * 5.0
+        if self.disconnect_ival == None:
+            self.disconnect_ival = 5.0 + random() * 10.0
 
     def answer(self, global_config, body, req, sip_t):
         in_body = req.getBody()
@@ -59,13 +67,13 @@ class b_test1(object):
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
         uaA.godead_timeout = 10
         uaA.compact_sip = self.compact_sip
-        Timeout(self.ring, 5, 1, uaA)
+        Timeout(self.ring, self.ring_ival, 1, uaA)
         self.body = body
         return uaA.recvRequest(req, sip_t)
 
     def ring(self, ua):
         event = CCEventRing((180, 'Ringing', None), origin = 'switch')
-        Timeout(self.connect, 9.0 + random() * 5.0, 1, ua)
+        Timeout(self.connect, self.answer_ival, 1, ua)
         ua.recvEvent(event)
         self.ring_done = True
 
@@ -74,7 +82,7 @@ class b_test1(object):
         #    ua.recvEvent(CCEventFail((666, 'Random Failure')))
         #    return
         event = CCEventConnect((200, 'OK', self.body), origin = 'switch')
-        Timeout(self.disconnect, 5.0 + random() * 10.0, 1, ua)
+        Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         ua.recvEvent(event)
         self.connect_done = True
 
@@ -98,16 +106,18 @@ class b_test1(object):
         self.done_cb(self)
 
 class b_test2(b_test1):
+    cli = 'bob_2'
     atype = 'IP4'
 
     def ring(self, ua):
         event = CCEventRing((183, 'Session Progress', self.body), \
           origin = 'switch')
-        Timeout(self.connect, 9.0 + random() * 5.0, 1, ua)
+        Timeout(self.connect, self.answer_ival, 1, ua)
         ua.recvEvent(event)
         self.ring_done = True
 
 class b_test3(b_test1):
+    cli = 'bob_3'
     atype = 'IP4'
 
     def connect(self, ua):
@@ -117,6 +127,7 @@ class b_test3(b_test1):
         self.connect_done = True
 
 class b_test4(b_test1):
+    cli = 'bob_4'
     atype = 'IP4'
 
     def ring(self, ua):
@@ -127,6 +138,7 @@ class b_test4(b_test1):
         self.connect_done = True
 
 class b_test5(b_test2):
+    cli = 'bob_5'
     atype = 'IP4'
 
     def connect(self, ua):
@@ -136,24 +148,65 @@ class b_test5(b_test2):
         self.connect_done = True
 
 class b_test6(b_test1):
+    cli = 'bob_6'
     atype = 'IP4'
     compact_sip = True
 
 class b_test7(b_test2):
+    cli = 'bob_7'
     atype = 'IP4'
     compact_sip = True
 
 class b_test8(b_test3):
+    cli = 'bob_8'
     atype = 'IP4'
     compact_sip = True
 
 class b_test9(b_test4):
+    cli = 'bob_9'
     atype = 'IP4'
     compact_sip = True
 
 class b_test10(b_test5):
+    cli = 'bob_10'
     atype = 'IP4'
     compact_sip = True
+
+class b_test11(b_test1):
+    cli = 'bob_11'
+    atype = 'IP4'
+    compact_sip = True
+    answer_ival = 55.0
+
+    def alldone(self, ua):
+        if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
+            self.rval = 0
+        else:
+            print 'Bob: subclass %s failed' % str(self.__class__)
+        self.done_cb(self)
+
+class b_test12(b_test2):
+    cli = 'bob_12'
+    atype = 'IP4'
+    compact_sip = True
+    ring_ival = 55.0
+
+    def alldone(self, ua):
+        if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
+            self.rval = 0
+        else:
+            print 'Bob: subclass %s failed' % str(self.__class__)
+        self.done_cb(self)
+
+class b_test13(b_test12):
+    cli = 'bob_13'
+    atype = 'IP4'
+    compact_sip = True
+    ring_ival = 1.0
+    answer_ival = 70.0
+
+ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
+  b_test8, b_test9, b_test10, b_test11, b_test12, b_test13)
 
 class b_test(object):
     rval = 1
@@ -162,9 +215,9 @@ class b_test(object):
     nsubtests_running = 0
     portrange = None
 
-    def __init__(self, global_config, body, portrange):
+    def __init__(self, global_config, body, portrange, test_timeout):
         global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
-        Timeout(self.timeout, 45, 1)
+        Timeout(self.timeout, test_timeout, 1)
         self.body = body
         self.global_config = global_config
         self.portrange = portrange
@@ -176,26 +229,9 @@ class b_test(object):
         if req.getMethod() == 'INVITE':
             # New dialog
             cld = req.getRURI().username
-            if cld == 'bob_1':
-                tclass = b_test1
-            elif cld == 'bob_2':
-                tclass = b_test2
-            elif cld == 'bob_3':
-                tclass = b_test3
-            elif cld == 'bob_4':
-                tclass = b_test4
-            elif cld == 'bob_5':
-                tclass = b_test5
-            elif cld == 'bob_6':
-                tclass = b_test6
-            elif cld == 'bob_7':
-                tclass = b_test7
-            elif cld == 'bob_8':
-                tclass = b_test8
-            elif cld == 'bob_9':
-                tclass = b_test9
-            elif cld == 'bob_10':
-                tclass = b_test10
+            for tclass in ALL_TESTS:
+                if cld == tclass.cli:
+                    break
             else:
                 return (req.genResponse(404, 'Test Does Not Exist'), None, None)
             subtest = tclass(self.subtest_done, self.portrange)

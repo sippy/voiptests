@@ -43,6 +43,20 @@ then
   RTPP_SOCK_TEST="unix:${BASEDIR}/rtpproxy.csock"
 fi
 
+RTPP_STAT_TIMEOUT=32
+ALICE_TIMEOUT=45
+BOB_TIMEOUT=45
+TEST_SET="alice_1,alice_2,alice_3,alice_4,alice_5,alice_6,alice_7,alice_8,alice_9,alice_10"
+
+if [ "${MM_TYPE}" = "b2bua" ]
+then
+  MM_SOCK="unix:${BASEDIR}/b2bua.sock"
+  RTPP_STAT_TIMEOUT=55
+  ALICE_TIMEOUT=90
+  BOB_TIMEOUT=90
+  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13"
+fi
+
 fail_rc() {
   RC=${1}
   shift

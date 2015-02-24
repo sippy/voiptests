@@ -166,20 +166,48 @@ class a_test10(a_test5):
     compact_sip = True
     atype = 'IP4'
 
+class a_test11(a_test1):
+    cld = 'bob_11'
+    cli = 'alice_11'
+    compact_sip = True
+    atype = 'IP4'
+
+    def alldone(self, ua):
+        if not self.connect_done and self.disconnect_done and self.nerrs == 0:
+            self.rval = 0
+        self.done_cb(self)
+
+class a_test12(a_test11):
+    cld = 'bob_12'
+    cli = 'alice_12'
+    compact_sip = True
+    atype = 'IP4'
+
+class a_test13(a_test11):
+    cld = 'bob_13'
+    cli = 'alice_13'
+    compact_sip = True
+    atype = 'IP4'
+
+ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
+  a_test8, a_test9, a_test10, a_test11, a_test12, a_test13)
+
 class a_test(object):
     nsubtests_running = 0
     rval = 1
 
-    def __init__(self, global_config, body, portrange):
+    def __init__(self, global_config, body, portrange, tests, test_timeout):
         global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
         
-        for subtest_class in a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, a_test8, a_test9, a_test10:
+        for subtest_class in ALL_TESTS:
+            if subtest_class.cli not in tests:
+                continue
             sdp_body = body.getCopy()
             fillhostport(sdp_body, portrange, subtest_class.atype)
             subtest = subtest_class(global_config, sdp_body, self.subtest_done, portrange)
             self.nsubtests_running += 1
         self.rval = self.nsubtests_running
-        Timeout(self.timeout, 45, 1)
+        Timeout(self.timeout, test_timeout, 1)
 
     def recvRequest(self, req, sip_t):
         return (req.genResponse(501, 'Not Implemented'), None, None)
