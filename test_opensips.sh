@@ -100,8 +100,8 @@ rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 diff -u rtpproxy.rout rtpproxy.${MM_TYPE}.output
 RTPP_CHECK_RC="${?}"
 
-report_rc_log "${ALICE_RC}" alice.log "Checking if Alice is happy"
-report_rc_log "${BOB_RC}" bob.log "Checking if Bob is happy"
+report_rc_log "${ALICE_RC}" "alice.log bob.log" "Checking if Alice is happy"
+report_rc_log "${BOB_RC}" "bob.log alice.log" "Checking if Bob is happy"
 report_rc_log "${RTPP_RC}" rtpproxy.log "Checking RTPproxy exit code"
 report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
 report_rc "${RTPP_CHECK_RC}" "Checking RTPproxy stdout"

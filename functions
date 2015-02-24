@@ -82,13 +82,16 @@ ok() {
 
 report_rc_log() {
   RC=${1}
-  FAIL_LOGFILE="${2}"
+  FAIL_LOGFILES="${2}"
   shift 2
   if [ ${RC} -eq 0 ]
   then
     ok "${@}"
   else
-    cat "${FAIL_LOGFILE}" >&2
+    for logf in ${FAIL_LOGFILES}
+    do
+      cat "${logf}" >&2
+    do
     fail_rc "${RC}" "${@}"
   fi
 }
