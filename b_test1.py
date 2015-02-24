@@ -98,7 +98,7 @@ class b_test1(object):
         self.done_cb(self)
 
 class b_test2(b_test1):
-    atype = 'IP6'
+    atype = 'IP4'
 
     def ring(self, ua):
         event = CCEventRing((183, 'Session Progress', self.body), \
@@ -117,7 +117,7 @@ class b_test3(b_test1):
         self.connect_done = True
 
 class b_test4(b_test1):
-    atype = 'IP6'
+    atype = 'IP4'
 
     def ring(self, ua):
         event = CCEventFail((502, 'Pre-ring Failure'), \
@@ -136,28 +136,23 @@ class b_test5(b_test2):
         self.connect_done = True
 
 class b_test6(b_test1):
-    atype = 'IP6'
-
+    atype = 'IP4'
     compact_sip = True
 
 class b_test7(b_test2):
     atype = 'IP4'
-
     compact_sip = True
 
 class b_test8(b_test3):
-    atype = 'IP6'
-
+    atype = 'IP4'
     compact_sip = True
 
 class b_test9(b_test4):
     atype = 'IP4'
-
     compact_sip = True
 
 class b_test10(b_test5):
-    atype = 'IP6'
-
+    atype = 'IP4'
     compact_sip = True
 
 class b_test(object):

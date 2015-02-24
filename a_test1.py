@@ -114,7 +114,7 @@ class a_test1(object):
 class a_test2(a_test1):
     cld = 'bob_2'
     cli = 'alice_2'
-    atype = 'IP6'
+    atype = 'IP4'
 
 class a_test3(a_test1):
     cld = 'bob_3'
@@ -140,7 +140,7 @@ class a_test6(a_test1):
     cld = 'bob_6'
     cli = 'alice_6'
     compact_sip = True
-    atype = 'IP6'
+    atype = 'IP4'
 
 class a_test7(a_test2):
     cld = 'bob_7'
@@ -152,7 +152,7 @@ class a_test8(a_test3):
     cld = 'bob_8'
     cli = 'alice_8'
     compact_sip = True
-    atype = 'IP6'
+    atype = 'IP4'
 
 class a_test9(a_test4):
     cld = 'bob_9'
@@ -164,7 +164,7 @@ class a_test10(a_test5):
     cld = 'bob_10'
     cli = 'alice_10'
     compact_sip = True
-    atype = 'IP6'
+    atype = 'IP4'
 
 class a_test(object):
     nsubtests_running = 0
