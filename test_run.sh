@@ -69,7 +69,7 @@ done
 
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" \
-  -m 12000 -M 15000 -6 '::1' > rtpproxy.rout 2>rtpproxy.log &
+  -m 12000 -M 15000 > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
