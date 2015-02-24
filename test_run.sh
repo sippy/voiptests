@@ -9,7 +9,7 @@ uname -a
 ${CC} --version
 
 rtpproxy_cmds_gen() {
-  sleep 30
+  sleep 32
   echo "Gv nsess_created nsess_destroyed nsess_complete nsess_nortp nsess_owrtp nsess_nortcp nsess_owrtcp ncmds_rcvd ncmds_succd ncmds_errs ncmds_repld"
 }
 
