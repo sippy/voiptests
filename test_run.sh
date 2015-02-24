@@ -71,6 +71,7 @@ rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d info -f -s stdio: -s "${RTP
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" \
   -m 12000 -M 15000 > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
+sleep 2
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
 python alice.py 127.0.0.1 5061 2>alice.log &
