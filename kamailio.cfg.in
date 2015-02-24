@@ -26,7 +26,7 @@ route {
     };
 
     if (method == "INVITE") {
-        if (rtpproxy_offer()) {
+        if (rtpproxy_offer("r")) {
             t_on_reply("1");
             t_on_failure("1");
         };
@@ -58,7 +58,7 @@ onreply_route[1]
 {
     if (status=~"(180)|(183)|2[0-9][0-9]") {
         if(!search("^Content-Length:[ ]*0")) {
-            rtpproxy_answer();
+            rtpproxy_answer("r");
             #rtpproxy_stream2uas("ringback", "10");
         };
     };
