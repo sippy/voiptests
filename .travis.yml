@@ -4,7 +4,7 @@ python:
 before_install:
   - sh -x ./install_depends/opensips.sh
 script:
-    sh -x ./test_opensips.sh
+    sh -x ./test_run.sh
 env:
   - MM_TYPE=b2bua RTPPC_TYPE=udp
   - MM_TYPE=b2bua RTPPC_TYPE=udp6
