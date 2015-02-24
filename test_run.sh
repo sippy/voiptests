@@ -72,11 +72,24 @@ then
   RTPP_NOTIFY_ARG="-n ${MM_SOCK} -W 45"
 fi
 
+if [ -e "${RTPP_SOCK_BARE}" ]
+then
+  rm "${RTPP_SOCK_BARE}"
+fi
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" \
   -m 12000 -M 15000 ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
-sleep 2
+i=0
+while [ ! -e "${RTPP_SOCK_BARE}" ]
+do
+  if [ ${i} -gt 5 ]
+  then
+    fail_rd 1 "Waiting for the RTPproxy to become ready"
+  fi
+  sleep 1
+  i=$((${i} + 1))
+done
 start_mm
 echo "${MM_PID}" > "${MM_PIDF}"
 python alice.py -t "${TEST_SET}" -l 127.0.0.1 -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &

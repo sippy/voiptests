@@ -205,8 +205,16 @@ class b_test13(b_test12):
     ring_ival = 1.0
     answer_ival = 70.0
 
+class b_test14(b_test1):
+    cli = 'bob_14'
+    atype = 'IP4'
+    compact_sip = True
+    ring_ival = 1.0
+    answer_ival = 2.0
+    disconnect_ival = 120
+
 ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
-  b_test8, b_test9, b_test10, b_test11, b_test12, b_test13)
+  b_test8, b_test9, b_test10, b_test11, b_test12, b_test13, b_test14)
 
 class b_test(object):
     rval = 1

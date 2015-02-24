@@ -68,6 +68,7 @@ class a_test1(object):
     done_cb = None
     compact_sip = False
     atype = 'IP4'
+    disconnect_ival = 9.0
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
@@ -81,7 +82,7 @@ class a_test1(object):
         print 'Alice: Incoming event:', event
 
     def connected(self, ua, rtime, origin):
-        Timeout(self.disconnect, 9, 1, ua)
+        Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         self.connect_done = True
 
     def disconnect(self, ua):
@@ -180,7 +181,7 @@ class a_test11(a_test1):
 class a_test12(a_test11):
     cld = 'bob_12'
     cli = 'alice_12'
-    compact_sip = True
+    compact_sip = False
     atype = 'IP4'
 
 class a_test13(a_test11):
@@ -189,8 +190,15 @@ class a_test13(a_test11):
     compact_sip = True
     atype = 'IP4'
 
+class a_test14(a_test1):
+    cld = 'bob_14'
+    cli = 'alice_14'
+    compact_sip = False
+    atype = 'IP4'
+    disconnect_ival = 120
+
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
-  a_test8, a_test9, a_test10, a_test11, a_test12, a_test13)
+  a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14)
 
 class a_test(object):
     nsubtests_running = 0
