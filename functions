@@ -91,7 +91,7 @@ report_rc_log() {
     for logf in ${FAIL_LOGFILES}
     do
       cat "${logf}" >&2
-    do
+    done
     fail_rc "${RC}" "${@}"
   fi
 }
