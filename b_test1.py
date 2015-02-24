@@ -53,7 +53,7 @@ class b_test1(object):
         in_body.parse()
         if not checkhostport(in_body, self.portrange, self.atype):
             self.nerrs += 1
-            raise ValueError('Bob: hostport validation has failed')
+            raise ValueError('Bob(%s): hostport validation has failed' % str(self.__class__))
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
