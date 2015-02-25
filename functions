@@ -44,7 +44,7 @@ then
   RTPP_SOCK_TEST="unix:${BASEDIR}/rtpproxy.csock"
 fi
 
-RTPP_STAT_TIMEOUT=34
+RTPP_STAT_TIMEOUT=36
 ALICE_TIMEOUT=45
 BOB_TIMEOUT=45
 TEST_SET="alice_1,alice_2,alice_3,alice_4,alice_5,alice_6,alice_7,alice_8,alice_9,alice_10"
