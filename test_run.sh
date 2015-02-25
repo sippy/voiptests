@@ -115,6 +115,12 @@ kill -TERM ${MM_PID}
 echo "MM_PID: ${MM_PID}"
 wait ${MM_PID}
 MM_RC="${?}"
+if [ ${ALICE_RC} -eq 0 -a ${BOB_RC} -eq 0 -a ${MM_RC} -eq 0 ]
+then
+  # Always give the RTPproxy enough time to execute final stats command,
+  # before we SIGHUP it
+  python -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${RTPP_STAT_TIMEOUT} + 5 - time(); sleep(tleft) if tleft > 0 else False;"
+fi
 kill -HUP ${RTPP_PID}
 echo "RTPP_PID: ${RTPP_PID}"
 wait ${RTPP_PID}
@@ -125,8 +131,8 @@ rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 diff -u rtpproxy.rout rtpproxy.${MM_TYPE}.output
 RTPP_CHECK_RC="${?}"
 
-report_rc_log "${ALICE_RC}" "alice.log bob.log" "Checking if Alice is happy"
-report_rc_log "${BOB_RC}" "bob.log alice.log" "Checking if Bob is happy"
+report_rc_log "${ALICE_RC}" "alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
+report_rc_log "${BOB_RC}" "bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
 report_rc_log "${RTPP_RC}" rtpproxy.log "Checking RTPproxy exit code"
 report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
-report_rc "${RTPP_CHECK_RC}" "Checking RTPproxy stdout"
+report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
