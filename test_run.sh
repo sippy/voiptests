@@ -45,6 +45,7 @@ start_mm() {
   esac
 
   echo ${MM_PID} > "${MM_PIDF}"
+  sleep ${MM_INIT_DELAY}
   return 0
 }
 
@@ -97,7 +98,6 @@ do
   i=$((${i} + 1))
 done
 start_mm
-echo "${MM_PID}" > "${MM_PIDF}"
 python alice.py -t "${TEST_SET}" -l 127.0.0.1 -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
