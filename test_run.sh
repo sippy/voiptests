@@ -76,6 +76,12 @@ if [ -e "${RTPP_SOCK_BARE}" ]
 then
   rm "${RTPP_SOCK_BARE}"
 fi
+
+SIPLOG_TSTART="`python -c 'from time import time; print(time());'`"
+export SIPLOG_TSTART
+SIPLOG_TFORM="rel"
+export SIPLOG_TFORM
+
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" \
   -m 12000 -M 15000 ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
