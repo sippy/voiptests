@@ -82,7 +82,8 @@ if __name__ == '__main__':
     body = MsgBody(body_txt)
     body.parse()
 
-    global_config['_sip_logger'] = SipLogger('alice_ua')
+    sl = SipLogger('alice_ua')
+    global_config['_sip_logger'] = sl
 
     from a_test1 import a_test
     acore = a_test(global_config, body, portrange, tests, test_timeout)

@@ -72,7 +72,8 @@ if __name__ == '__main__':
     body = MsgBody(body_txt)
     body.parse()
 
-    global_config['_sip_logger'] = SipLogger('bob_ua')
+    sl = SipLogger('bob_ua')
+    global_config['_sip_logger'] = sl
 
     from b_test1 import b_test
     bcore = b_test(global_config, body, portrange, test_timeout)
