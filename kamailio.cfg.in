@@ -25,6 +25,12 @@ route {
         exit;
     };
 
+    # shield us against retransmits
+    if (!t_newtran()) {
+        sl_reply_error();
+        exit;
+    };
+
     if (method == "INVITE") {
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
