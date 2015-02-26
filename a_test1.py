@@ -207,7 +207,7 @@ class a_test(object):
     def __init__(self, global_config, body, portrange, tests, test_timeout):
         global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
         
-        for subtest_class in ALL_TESTS:
+        for subtest_class in ALL_TESTS * 2:
             if subtest_class.cli not in tests:
                 continue
             sdp_body = body.getCopy()
