@@ -35,9 +35,9 @@ from twisted.internet import reactor
 
 from PortRange import PortRange
 
-body_txt = 'v=0\r\n' + \
+body_audio = 'v=0\r\n' + \
     'o=987654382 4650 4650 IN IP4 192.168.0.90\r\n' + \
-    's=ATA186 Call\r\n' + \
+    's=BobPentiumIV Call\r\n' + \
     'c=IN IP4 192.168.0.5\r\n' + \
     't=0 0\r\n' + \
     'm=audio 20000 RTP/AVP 0 4 8 101\r\n' + \
@@ -46,6 +46,20 @@ body_txt = 'v=0\r\n' + \
     'a=rtpmap:8 PCMA/8000/1\r\n' + \
     'a=rtpmap:101 telephone-event/8000\r\n' + \
     'a=fmtp:101 0-15\r\n'
+body_fax = 'v=0\r\n' + \
+    'o=BOBSDP 187392 187393 IN IP4 192.168.174.156\r\n' + \
+    's=BOBSDP Session\r\n' + \
+    'c=IN IP4 192.168.174.156\r\n' + \
+    't=0 0\r\n' + \
+    'm=image 53278 udptl t38\r\n' + \
+    'a=T38FaxVersion:0\r\n' + \
+    'a=T38MaxBitRate:14400\r\n' + \
+    'a=T38FaxRateManagement:transferredTCF\r\n' + \
+    'a=T38FaxMaxBuffer:262\r\n' + \
+    'a=T38FaxMaxDatagram:176\r\n' + \
+    'a=T38FaxUdpEC:t38UDPRedundancy\r\n'
+
+BODIES_ALL = (body_audio, body_fax)
 
 if __name__ == '__main__':
     global_config = {}
@@ -69,14 +83,15 @@ if __name__ == '__main__':
             test_timeout = int(a)
             continue
 
-    body = MsgBody(body_txt)
-    body.parse()
+    bodys = [MsgBody(x) for x in BODIES_ALL]
+    for body in bodys:
+        body.parse()
 
     sl = SipLogger('bob_ua')
     global_config['_sip_logger'] = sl
 
     from b_test1 import b_test
-    bcore = b_test(global_config, body, portrange, test_timeout)
+    bcore = b_test(global_config, tuple(bodys), portrange, test_timeout)
 
     reactor.run(installSignalHandlers = True)
     sys.exit(bcore.rval)

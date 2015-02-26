@@ -218,15 +218,15 @@ ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
 
 class b_test(object):
     rval = 1
-    body = None
+    bodys = None
     global_config = None
     nsubtests_running = 0
     portrange = None
 
-    def __init__(self, global_config, body, portrange, test_timeout):
+    def __init__(self, global_config, bodys, portrange, test_timeout):
         global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
         Timeout(self.timeout, test_timeout, 1)
-        self.body = body
+        self.bodys = bodys
         self.global_config = global_config
         self.portrange = portrange
 
@@ -245,7 +245,7 @@ class b_test(object):
             subtest = tclass(self.subtest_done, self.portrange)
             self.nsubtests_running += 1
             self.rval += 1
-            sdp_body = self.body.getCopy()
+            sdp_body = self.bodys[0 if random() < 0.5 else 1].getCopy()
             fillhostport(sdp_body, self.portrange, tclass.atype)
             return subtest.answer(self.global_config, sdp_body, req, sip_t)
         return (req.genResponse(501, 'Not Implemented'), None, None)
