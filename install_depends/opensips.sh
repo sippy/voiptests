@@ -19,7 +19,7 @@ then
   git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
 fi
-git clone git://github.com/sippy/b2bua.git
+git clone -b "${MM_BRANCH}" git://github.com/sippy/b2bua.git
 git clone git://github.com/sippy/rtpproxy.git
 if [ "${MM_TYPE}" = "kamailio" ]
 then
