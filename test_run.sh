@@ -128,7 +128,7 @@ RTPP_RC="${?}"
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
-diff -u rtpproxy.rout rtpproxy.${MM_TYPE}.output
+diff -u rtpproxy.${MM_TYPE}.output rtpproxy.rout
 RTPP_CHECK_RC="${?}"
 
 report_rc_log "${ALICE_RC}" "alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
