@@ -26,40 +26,8 @@ RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
 RTPP_SOCK_CUNIX="cunix:${BASEDIR}/rtpproxy.csock"
 RTPP_SOCK_UDP6="udp6:::1:22222"
-
-if [ "${RTPPC_TYPE}" = "udp" ]
-then
-  RTPP_SOCK_TEST="${RTPP_SOCK_UDP}"
-fi
-if [ "${RTPPC_TYPE}" = "udp6" ]
-then
-  RTPP_SOCK_TEST="${RTPP_SOCK_UDP6}"
-fi
-if [ "${RTPPC_TYPE}" = "unix" ]
-then
-  RTPP_SOCK_TEST="${RTPP_SOCK_UNIX}"
-fi
-if [ "${RTPPC_TYPE}" = "cunix" ]
-then
-  RTPP_SOCK_TEST="unix:${BASEDIR}/rtpproxy.csock"
-fi
-
-MM_INIT_DELAY=1
-RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
-ALICE_TIMEOUT=45
-BOB_TIMEOUT=45
-TEST_SET="alice_1,alice_2,alice_3,alice_4,alice_5,alice_6,alice_7,alice_8,alice_9,alice_10"
-
-if [ "${MM_TYPE}" = "b2bua" ]
-then
-  MM_SOCK="unix:${BASEDIR}/b2bua.sock"
-  # Python b2bua needs slightly more time to init everything
-  MM_INIT_DELAY=4
-  RTPP_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
-  ALICE_TIMEOUT=90
-  BOB_TIMEOUT=90
-  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13,alice_14"
-fi
+RTPP_SOCK_TCP="tcp:127.0.0.1:22222"
+RTPP_SOCK_TCP6="tcp:127.0.0.1:22222"
 
 fail_rc() {
   RC=${1}
@@ -77,6 +45,33 @@ fail_rc() {
     exit $RC
   fi
 }
+
+case "${RTPPC_TYPE}" in
+  "udp")   RTPP_SOCK_TEST="${RTPP_SOCK_UDP}";;
+  "udp6")  RTPP_SOCK_TEST="${RTPP_SOCK_UDP6}";;
+  "unix")  RTPP_SOCK_TEST="${RTPP_SOCK_UNIX}";;
+  "cunix") RTPP_SOCK_TEST="${RTPP_SOCK_CUNIX}";;
+  "tcp")   RTPP_SOCK_TEST="${RTPP_SOCK_TCP}";;
+  "tcp6")  RTPP_SOCK_TEST="${RTPP_SOCK_TCP6}";;
+  *)       fail_rc 1 "Unknown socket type RTPPC_TYPE=${RTPPC_TYPE}";;
+esac
+
+MM_INIT_DELAY=1
+RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
+ALICE_TIMEOUT=45
+BOB_TIMEOUT=45
+TEST_SET="alice_1,alice_2,alice_3,alice_4,alice_5,alice_6,alice_7,alice_8,alice_9,alice_10"
+
+if [ "${MM_TYPE}" = "b2bua" ]
+then
+  MM_SOCK="unix:${BASEDIR}/b2bua.sock"
+  # Python b2bua needs slightly more time to init everything
+  MM_INIT_DELAY=4
+  RTPP_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
+  ALICE_TIMEOUT=90
+  BOB_TIMEOUT=90
+  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13,alice_14"
+fi
 
 forcefail() {
   RC=${1}
