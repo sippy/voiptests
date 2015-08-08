@@ -27,7 +27,7 @@ RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
 RTPP_SOCK_CUNIX="cunix:${BASEDIR}/rtpproxy.csock"
 RTPP_SOCK_UDP6="udp6:::1:22222"
 RTPP_SOCK_TCP="tcp:127.0.0.1:22222"
-RTPP_SOCK_TCP6="tcp:127.0.0.1:22222"
+RTPP_SOCK_TCP6="tcp6:::1:22222"
 
 fail_rc() {
   RC=${1}
