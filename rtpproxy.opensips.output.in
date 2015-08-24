@@ -1,3 +1,7 @@
 nsess_created=20 nsess_destroyed=20 nsess_timeout=0 nsess_complete=12 nsess_nortp=12 nsess_owrtp=0 nsess_nortcp=12 nsess_owrtcp=0
+#if OPENSIPS_VER >= 210
+ncmds_rcvd=63 ncmds_succd=62 ncmds_errs=0 ncmds_repld=62
+#else
 ncmds_rcvd=68 ncmds_succd=67 ncmds_errs=0 ncmds_repld=67
+#endif
 MEMDEB: all clear

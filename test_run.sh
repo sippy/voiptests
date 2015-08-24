@@ -29,8 +29,11 @@ start_mm() {
 
   opensips)
     OPENSIPS_VER=`echo ${MM_BRANCH} | sed 's|[.]||g'`
-    cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${OPENSIPS_VER} \
-      opensips.cfg.in > opensips.cfg
+    for file in opensips.cfg.in rtpproxy.opensips.output.in
+    do
+      cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${OPENSIPS_VER} \
+       ${file} | grep -v '^#' > ${file%.in}
+    done
     ./dist/opensips/opensips -f opensips.cfg -C
     ./dist/opensips/opensips -f opensips.cfg -D &
     MM_PID=${!}
@@ -131,7 +134,7 @@ RTPP_RC="${?}"
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
-diff -u rtpproxy.${MM_TYPE}.output rtpproxy.rout
+diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
 RTPP_CHECK_RC="${?}"
 
 report_rc_log "${ALICE_RC}" "alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
