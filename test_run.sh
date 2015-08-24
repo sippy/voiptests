@@ -28,7 +28,9 @@ start_mm() {
     ;;
 
   opensips)
-    sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < opensips.cfg.in > opensips.cfg
+    OPENSIPS_VER=`echo ${MM_BRANCH} | sed 's|[.]||g'`
+    cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${OPENSIPS_VER} \
+      opensips.cfg.in > opensips.cfg
     ./dist/opensips/opensips -f opensips.cfg -C
     ./dist/opensips/opensips -f opensips.cfg -D &
     MM_PID=${!}

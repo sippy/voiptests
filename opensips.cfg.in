@@ -1,5 +1,8 @@
 mpath="dist/opensips/modules/"
 
+#if OPENSIPS_VER >= 210
+loadmodule "../net/proto_udp/proto_udp.so"
+#endif
 loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
 loadmodule "rr/rr.so"
@@ -7,7 +10,7 @@ loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 
-modparam("rtpproxy", "rtpproxy_sock", "%%RTPP_SOCK_TEST%%")
+modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
 listen=udp:127.0.0.1:5060
 #listen=udp:192.168.1.43:5060
