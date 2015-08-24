@@ -34,14 +34,14 @@ start_mm() {
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${OPENSIPS_VER} \
        ${file} | grep -v '^#' > ${file%.in}
     done
-    ./dist/opensips/opensips -f opensips.cfg -C
-    ./dist/opensips/opensips -f opensips.cfg -D &
+    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
+    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -D -E &
     MM_PID=${!}
     ;;
 
   kamailio)
     sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    ./dist/kamailio/kamailio -f kamailio.cfg -D &
+    ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -D -E &
     MM_PID=${!}
     ;;
 
