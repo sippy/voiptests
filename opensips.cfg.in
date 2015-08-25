@@ -2,6 +2,9 @@ mpath="dist/opensips/modules/"
 
 #if OPENSIPS_VER >= 210
 loadmodule "proto_udp.so"
+#define RTPP_UNFORCE() rtpproxy_unforce()
+#else
+#define RTPP_UNFORCE() unforce_rtp_proxy()
 #endif
 loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
@@ -46,7 +49,7 @@ route {
     };
 
     if (method == "CANCEL" || method == "BYE") {
-        unforce_rtp_proxy();
+        RTPP_UNFORCE();
     };
 
     record_route();
@@ -67,7 +70,7 @@ route {
 
 onreply_route[1]
 {
-    if (status=~"(180)|(183)|2[0-9][0-9]") {
+    if (status=~"(183)|2[0-9][0-9]") {
         if(!search("^Content-Length:[ ]*0")) {
             rtpproxy_answer("r");
             ##rtpproxy_stream2uas("ringback", "10");
@@ -78,5 +81,5 @@ onreply_route[1]
 failure_route[1]
 {
 
-    unforce_rtp_proxy();
+    RTPP_UNFORCE();
 }
