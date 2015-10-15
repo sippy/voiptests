@@ -1,4 +1,6 @@
 *.pyc
+*.orig
+*.rej
 rtpproxy.rout
 dist/*
 *.pid
