@@ -40,7 +40,8 @@ then
 fi
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="gcc48" include_modules="sl tm rr maxfwd rtpproxy textops" skip_modules="erlang" all modules
+  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="${CC}" \
+   include_modules="sl tm rr maxfwd rtpproxy textops" skip_modules="erlang" all modules
 fi
 cd rtpproxy
 ./configure
