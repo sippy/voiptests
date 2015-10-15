@@ -25,7 +25,7 @@ then
 else
   git clone git://github.com/sippy/b2bua.git
 fi
-git clone git://github.com/sippy/rtpproxy.git
+git clone -b "${RTPP_BRANCH}" git://github.com/sippy/rtpproxy.git
 if [ "${MM_TYPE}" = "kamailio" ]
 then
   git clone -b "${MM_BRANCH}" git://git.sip-router.org/kamailio kamailio
