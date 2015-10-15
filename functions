@@ -103,7 +103,7 @@ report_rc_log() {
   else
     for logf in ${FAIL_LOGFILES}
     do
-      cat "${logf}" >&2
+      grep -v 'DBUG:main:GLOBAL:' "${logf}" | grep -v 'DBUG:rtpp_proc_async_run:GLOBAL:' >&2
     done
     fail_rc "${RC}" "${@}"
   fi
