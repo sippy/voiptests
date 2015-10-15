@@ -29,7 +29,8 @@ git clone -b "${RTPP_BRANCH}" git://github.com/sippy/rtpproxy.git
 if [ "${MM_TYPE}" = "kamailio" ]
 then
   git clone -b "${MM_BRANCH}" git://git.sip-router.org/kamailio kamailio
-  perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/kamailio/Makefile.defs
+  perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
+   ${BUILDDIR}/dist/kamailio/Makefile.defs
 fi
 
 ##bash
@@ -39,7 +40,7 @@ then
 fi
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" all modules
+  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="gcc48" include_modules="sl tm rr maxfwd rtpproxy textops" skip_modules="erlang" all modules
 fi
 cd rtpproxy
 ./configure
