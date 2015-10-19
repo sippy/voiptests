@@ -103,7 +103,7 @@ while [ ! -e "${RTPP_SOCK_BARE}" ]
 do
   if [ ${i} -gt 5 ]
   then
-    fail_rd 1 "Waiting for the RTPproxy to become ready"
+    report_rc_log 1 "rtpproxy.rout rtpproxy.log" "Waiting for the RTPproxy to become ready"
   fi
   sleep 1
   i=$((${i} + 1))
