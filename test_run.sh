@@ -84,10 +84,15 @@ then
   rm "${RTPP_SOCK_BARE}"
 fi
 
-SIPLOG_TSTART="`python -c 'from time import time; print(time());'`"
+MR_TIME="`python ${RTPPROXY_DIST}/python/getmonotime.py -S ${RTPPROXY_DIST}/python/sippy_lite -r`"
+SIPLOG_TSTART="`echo ${MR_TIME} | awk '{print $2}'`"
 export SIPLOG_TSTART
 SIPLOG_TFORM="rel"
 export SIPLOG_TFORM
+RTPP_LOG_TSTART="`echo ${MR_TIME} | awk '{print $1}'`"
+export RTPP_LOG_TSTART
+RTPP_LOG_TFORM="rel"
+export RTPP_LOG_TFORM
 
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
