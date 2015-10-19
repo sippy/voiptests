@@ -20,7 +20,8 @@ BASEDIR="$(readlink -f -- $BASEDIR)"
 
 BUILDDIR="${BUILDDIR:-${BASEDIR}}"
 
-RTPPROXY=${BUILDDIR}/dist/rtpproxy/src/rtpproxy_debug
+RTPPROXY_DIST="${BUILDDIR}/dist/rtpproxy"
+RTPPROXY=${RTPPROXY_DIST}/rtpproxy_debug
 RTPP_SOCK_BARE="${BASEDIR}/rtpproxy.sock"
 RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
