@@ -47,6 +47,7 @@ class b_test1(object):
     answer_ival = None
     disconnect_ival = None
     cli = 'bob_1'
+    acct = None
 
     def __init__(self, done_cb, portrange):
         self.done_cb = done_cb
@@ -91,18 +92,19 @@ class b_test1(object):
         ua.recvEvent(event)
 
     def recvEvent(self, event, ua):
-        print 'Bob: Incoming event:', event
+        print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
 
     def disconnected(self, ua, rtime, origin, result = 0):
-        print 'Bob: disconnected', rtime, origin, result
         if origin in ('switch', 'caller'):
             self.disconnect_done = True
+        self.acct = ua.getAcct()
+        print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct
 
     def alldone(self, ua):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
-            print 'Bob: subclass %s failed' % str(self.__class__)
+            print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
         self.done_cb(self)
 
 class b_test2(b_test1):
@@ -182,7 +184,7 @@ class b_test11(b_test1):
         if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
-            print 'Bob: subclass %s failed' % str(self.__class__)
+            print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
         self.done_cb(self)
 
 class b_test12(b_test2):
@@ -195,7 +197,7 @@ class b_test12(b_test2):
         if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
-            print 'Bob: subclass %s failed' % str(self.__class__)
+            print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
         self.done_cb(self)
 
 class b_test13(b_test12):
@@ -213,8 +215,23 @@ class b_test14(b_test1):
     answer_ival = 2.0
     disconnect_ival = 120
 
+class b_test_early_cancel(b_test1):
+    cli = 'bob_early_cancel'
+    atype = 'IP4'
+
+    def alldone(self, ua):
+        if self.disconnect_done:
+            duration, delay, connected, disconnected = self.acct
+            if (duration, connected, disconnected) == (0, False, True) and \
+              delay < 0.5:
+                self.rval = 0
+            else:
+                print 'Bob(s): subclass %s failed, acct=%s' % (self.cli, str(self.__class__), str(self.acct))
+        self.done_cb(self)
+
 ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
-  b_test8, b_test9, b_test10, b_test11, b_test12, b_test13, b_test14)
+  b_test8, b_test9, b_test10, b_test11, b_test12, b_test13, b_test14, \
+  b_test_early_cancel)
 
 class b_test(object):
     rval = 1

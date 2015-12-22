@@ -69,6 +69,7 @@ class a_test1(object):
     compact_sip = False
     atype = 'IP4'
     disconnect_ival = 9.0
+    cancel_ival = None
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
@@ -79,7 +80,7 @@ class a_test1(object):
                 if not checkhostport(sdp_body, self.portrange, self.atype):
                     self.nerrs += 1
                     raise ValueError('Alice: SDP body has failed validation')
-        print 'Alice: Incoming event:', event
+        print 'Alice(%s): Incoming event: %s' % (self.cli, event)
 
     def connected(self, ua, rtime, origin):
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
@@ -89,10 +90,17 @@ class a_test1(object):
         event = CCEventDisconnect(origin = 'switch')
         ua.recvEvent(event)
 
+    def cancel(self, ua):
+        if self.connect_done:
+            return
+        event = CCEventDisconnect(origin = 'switch')
+        ua.recvEvent(event)
+
     def disconnected(self, ua, rtime, origin, result = 0):
         if origin in ('switch', 'callee'):
             self.disconnect_done = True
-        print 'Alice: disconnected', rtime, origin, result
+        self.acct = ua.getAcct()
+        print 'Alice(%s): disconnected' % self.cli, rtime, origin, result, self.acct
 
     def alldone(self, ua):
         if self.connect_done and self.disconnect_done and self.nerrs == 0:
@@ -111,6 +119,8 @@ class a_test1(object):
         uaO.recvEvent(event)
         self.done_cb = done_cb
         self.portrange = portrange
+        if self.cancel_ival != None:
+            Timeout(self.cancel, self.cancel_ival, 1, uaO)
 
 class a_test2(a_test1):
     cld = 'bob_2'
@@ -197,8 +207,27 @@ class a_test14(a_test1):
     atype = 'IP4'
     disconnect_ival = 120
 
+class a_test_early_cancel(a_test1):
+    cld = 'bob_early_cancel'
+    cli = 'alice_early_cancel'
+    compact_sip = False
+    atype = 'IP4'
+    cancel_ival = 0.01
+
+    def alldone(self, ua):
+        if self.disconnect_done:
+            duration, delay, connected, disconnected = self.acct
+            if (duration, connected, disconnected) == (0, False, True) and \
+              delay < 0.5:
+                self.rval = 0
+            else:
+                print 'Alice(%s): subclass %s failed, acct=%s' % (self.cli, \
+                  str(self.__class__), str(self.acct))
+        self.done_cb(self)
+
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
-  a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14)
+  a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \
+  a_test_early_cancel)
 
 class a_test(object):
     nsubtests_running = 0
