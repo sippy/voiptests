@@ -20,10 +20,12 @@ start_mm() {
   fi
   case "${MM_TYPE}" in
   b2bua)
-    ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
+    MM_LOG="${BUILDDIR}/b2bua.log"
+    SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
+     ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
-     --logfile="${BUILDDIR}/b2bua.log" &
+     --logfile="${MM_LOG}" &
     MM_PID=${!}
     ;;
 
@@ -145,5 +147,10 @@ RTPP_CHECK_RC="${?}"
 report_rc_log "${ALICE_RC}" "alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
 report_rc_log "${RTPP_RC}" rtpproxy.log "Checking RTPproxy exit code"
-report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
+if [ "${MM_LOG}" != "" ]
+then
+  report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
+else
+  report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
+fi
 report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
