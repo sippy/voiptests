@@ -113,14 +113,16 @@ class a_test1(object):
           dead_cbs = (self.alldone,))
         uaO.godead_timeout = 10
         uaO.compact_sip = self.compact_sip
-
         event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, body, \
           None, 'Alice Smith'))
-        uaO.recvEvent(event)
         self.done_cb = done_cb
         self.portrange = portrange
+        self.run(uaO, event)
+
+    def run(self, ua, event):
+        ua.recvEvent(event)
         if self.cancel_ival != None:
-            Timeout(self.cancel, self.cancel_ival, 1, uaO)
+            Timeout(self.cancel, self.cancel_ival, 1, ua)
 
 class a_test2(a_test1):
     cld = 'bob_2'
@@ -208,7 +210,7 @@ class a_test14(a_test1):
     disconnect_ival = 120
 
 class a_test_early_cancel(a_test1):
-    cld = 'bob_early_cancel'
+    cld = 'bob_early_cancel_lost100'
     cli = 'alice_early_cancel'
     compact_sip = False
     atype = 'IP4'
@@ -225,9 +227,13 @@ class a_test_early_cancel(a_test1):
                   str(self.__class__), str(self.acct))
         self.done_cb(self)
 
+class a_test_early_cancel_lost100(a_test_early_cancel):
+    cld = 'bob_early_cancel_lost100'
+    cli = 'alice_early_cancel_lost100'
+
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \
-  a_test_early_cancel)
+  a_test_early_cancel, a_test_early_cancel_lost100)
 
 class a_test(object):
     nsubtests_running = 0
