@@ -71,7 +71,7 @@ then
   RTPP_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
   ALICE_TIMEOUT=90
   BOB_TIMEOUT=90
-  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13,alice_14,alice_early_cancel"
+  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13,alice_14,alice_early_cancel,alice_early_cancel_lost100"
 fi
 
 forcefail() {
