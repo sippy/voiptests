@@ -210,7 +210,7 @@ class a_test14(a_test1):
     disconnect_ival = 120
 
 class a_test_early_cancel(a_test1):
-    cld = 'bob_early_cancel_lost100'
+    cld = 'bob_early_cancel'
     cli = 'alice_early_cancel'
     compact_sip = False
     atype = 'IP4'
