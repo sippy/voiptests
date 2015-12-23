@@ -70,7 +70,10 @@ class b_test1(object):
         uaA.compact_sip = self.compact_sip
         Timeout(self.ring, self.ring_ival, 1, uaA)
         self.body = body
-        return uaA.recvRequest(req, sip_t)
+        return self.complete_answer(uaA, req, sip_t)
+
+    def complete_answer(self, ua, req, sip_t):
+        return ua.recvRequest(req, sip_t)
 
     def ring(self, ua):
         event = CCEventRing((180, 'Ringing', None), origin = 'switch')
@@ -218,20 +221,29 @@ class b_test14(b_test1):
 class b_test_early_cancel(b_test1):
     cli = 'bob_early_cancel'
     atype = 'IP4'
+    max_delay = 0.5
 
     def alldone(self, ua):
         if self.disconnect_done:
             duration, delay, connected, disconnected = self.acct
             if (duration, connected, disconnected) == (0, False, True) and \
-              delay < 0.5:
+              delay < self.max_delay:
                 self.rval = 0
             else:
-                print 'Bob(s): subclass %s failed, acct=%s' % (self.cli, str(self.__class__), str(self.acct))
+                print 'Bob(%s): subclass %s failed, acct=%s' % (self.cli, str(self.__class__), str(self.acct))
         self.done_cb(self)
+
+class b_test_early_cancel_lost100(b_test_early_cancel):
+    cli = 'bob_early_cancel_lost100'
+    max_delay = 1.0
+
+    def complete_answer(self, ua, req, sip_t):
+        ua.uas_lossemul = 1
+        return b_test1.complete_answer(self, ua, req, sip_t)
 
 ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
   b_test8, b_test9, b_test10, b_test11, b_test12, b_test13, b_test14, \
-  b_test_early_cancel)
+  b_test_early_cancel, b_test_early_cancel_lost100)
 
 class b_test(object):
     rval = 1
