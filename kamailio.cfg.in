@@ -38,7 +38,7 @@ route {
         };
     };
 
-    if (method == "CANCEL" || method == "BYE") {
+    if (method == "BYE") {
         unforce_rtp_proxy();
     };
 
