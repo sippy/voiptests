@@ -1,0 +1,31 @@
+diff --git a/modules/tm/t_fwd.c b/modules/tm/t_fwd.c
+index b5787ea..53764e7 100644
+--- a/modules/tm/t_fwd.c
++++ b/modules/tm/t_fwd.c
+@@ -551,16 +551,16 @@ void cancel_invite(struct sip_msg *cancel_msg,
+ 	cancel_uacs(t_invite, cancel_bitmap );
+ 	set_cancel_extra_hdrs( NULL, 0);
+ 
+-	/* internally cancel branches with no received reply */
+-	for (i=t_invite->first_branch; i<t_invite->nr_of_outgoings; i++) {
+-		if (t_invite->uac[i].last_received==0){
+-			/* reset the "request" timers */
+-			reset_timer(&t_invite->uac[i].request.retr_timer);
+-			reset_timer(&t_invite->uac[i].request.fr_timer);
+-			LOCK_REPLIES( t_invite );
+-			relay_reply(t_invite,FAKED_REPLY,i,487,&dummy_bm);
+-		}
+-	}
++//	/* internally cancel branches with no received reply */
++//	for (i=t_invite->first_branch; i<t_invite->nr_of_outgoings; i++) {
++//		if (t_invite->uac[i].last_received==0){
++//			/* reset the "request" timers */
++//			reset_timer(&t_invite->uac[i].request.retr_timer);
++//			reset_timer(&t_invite->uac[i].request.fr_timer);
++//			LOCK_REPLIES( t_invite );
++//			relay_reply(t_invite,FAKED_REPLY,i,487,&dummy_bm);
++//		}
++//	}
+ }
+ 
+ 
