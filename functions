@@ -79,6 +79,11 @@ then
   TEST_SET="${TEST_SET},alice_early_cancel_lost100"
 fi
 
+if [ "${MM_TYPE}" = "kamailio" ]
+then
+  TEST_SET="${TEST_SET},alice_early_cancel_lost100"
+fi
+
 forcefail() {
   RC=${1}
   if [ ${RC} -eq 0 ]
