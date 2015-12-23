@@ -42,6 +42,7 @@ route {
     };
 
     if (method == "INVITE") {
+        t_reply("100", "Trying");
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
             t_on_failure("1");
