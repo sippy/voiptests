@@ -48,7 +48,7 @@ route {
         };
     };
 
-    if (method == "CANCEL" || method == "BYE") {
+    if (method == "BYE") {
         RTPP_UNFORCE();
     };
 
