@@ -20,7 +20,7 @@ then
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
   if [ "${MM_BRANCH}" = "1.11" ]
   then
-    patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
+    #patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
   fi
 fi
 if [ "${MM_TYPE}" = "b2bua" ]
