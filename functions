@@ -61,7 +61,8 @@ MM_INIT_DELAY=1
 RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
 ALICE_TIMEOUT=45
 BOB_TIMEOUT=45
-TEST_SET="alice_1,alice_2,alice_3,alice_4,alice_5,alice_6,alice_7,alice_8,alice_9,alice_10,alice_early_cancel"
+TEST_SET="alice_1,alice_2,alice_3,alice_4,alice_5,alice_6,alice_7,alice_8," \
+ "alice_9,alice_10,alice_early_cancel,alice_early_cancel_lost100"
 
 if [ "${MM_TYPE}" = "b2bua" ]
 then
@@ -71,18 +72,18 @@ then
   RTPP_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
   ALICE_TIMEOUT=90
   BOB_TIMEOUT=90
-  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13,alice_14,alice_early_cancel_lost100"
+  TEST_SET="${TEST_SET},alice_11,alice_12,alice_13,alice_14"
 fi
 
-if [ "${MM_TYPE}" = "opensips" -a "${MM_BRANCH}" = "1.11" ]
-then
-  TEST_SET="${TEST_SET},alice_early_cancel_lost100"
-fi
+#if [ "${MM_TYPE}" = "opensips" -a "${MM_BRANCH}" = "1.11" ]
+#then
+#  TEST_SET="${TEST_SET}"
+#fi
 
-if [ "${MM_TYPE}" = "kamailio" ]
-then
-  TEST_SET="${TEST_SET},alice_early_cancel_lost100"
-fi
+#if [ "${MM_TYPE}" = "kamailio" ]
+#then
+#  TEST_SET="${TEST_SET}"
+#fi
 
 forcefail() {
   RC=${1}
