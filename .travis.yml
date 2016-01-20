@@ -37,13 +37,13 @@ env:
 #  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=tcp6
 #
 ## 2. Tests with OpenSIPS
-  - MM_TYPE=opensips MM_BRANCH=1.8 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=1.8 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=1.8 RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=1.9 RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=1.9 RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=1.9 RTPP_BRANCH=master RTPPC_TYPE=unix
 #
-  - MM_TYPE=opensips MM_BRANCH=1.8 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=1.8 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=1.8 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=1.9 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=1.9 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=1.9 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
 #
   - MM_TYPE=opensips MM_BRANCH=1.10 RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=1.10 RTPP_BRANCH=master RTPPC_TYPE=udp6
@@ -61,14 +61,6 @@ env:
   - MM_TYPE=opensips MM_BRANCH=1.11 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=1.11 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
 #
-  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.1.0 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
-#
   - MM_TYPE=opensips MM_BRANCH=2.1.1 RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=2.1.1 RTPP_BRANCH=master RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=2.1.1 RTPP_BRANCH=master RTPPC_TYPE=unix
@@ -76,6 +68,22 @@ env:
   - MM_TYPE=opensips MM_BRANCH=2.1.1 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=2.1.1 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=2.1.1 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
+#
+  - MM_TYPE=opensips MM_BRANCH=2.1.2 RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=2.1.2 RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=2.1.2 RTPP_BRANCH=master RTPPC_TYPE=unix
+#
+  - MM_TYPE=opensips MM_BRANCH=2.1.2 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=2.1.2 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=2.1.2 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
+#
+  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=master RTPPC_TYPE=unix
+#
+  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=rtpp_2_1 RTPPC_TYPE=unix
 #
 ## 3. Tests with Kamailio
   - MM_TYPE=kamailio RTPP_BRANCH=master RTPPC_TYPE=udp
