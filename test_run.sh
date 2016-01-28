@@ -18,6 +18,8 @@ start_mm() {
   then
     rm "${MM_PIDF}"
   fi
+  MM_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
+  MM_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`
   case "${MM_TYPE}" in
   b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
@@ -30,12 +32,10 @@ start_mm() {
     ;;
 
   opensips)
-    OPENSIPS_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
-    OPENSIPS_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`
     for file in opensips.cfg.in rtpproxy.opensips.output.in
     do
-      cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${OPENSIPS_VER} \
-       -DOPENSIPS_VER_FULL=${OPENSIPS_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
+      cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
+       -DOPENSIPS_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
     done
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -D -E &
@@ -43,7 +43,12 @@ start_mm() {
     ;;
 
   kamailio)
-    sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
+    for file in kamailio.cfg.in rtpproxy.kamailio.output.in
+    do
+      cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
+       -DKAMAILIO_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
+    done
+    #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
     ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -D -E &
     MM_PID=${!}
     ;;

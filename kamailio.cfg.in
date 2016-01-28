@@ -7,14 +7,14 @@ loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 
-modparam("rtpproxy", "rtpproxy_sock", "%%RTPP_SOCK_TEST%%")
+modparam("rtpproxy", "rtpproxy_sock", "RTPP_SOCK_TEST")
 
 listen=udp:127.0.0.1:5060
-#listen=udp:192.168.1.43:5060
+// listen=udp:192.168.1.43:5060
 
 route {
-    # initial sanity checks -- messages with
-    # max_forwards==0, or excessively long requests
+    // initial sanity checks -- messages with
+    // max_forwards==0, or excessively long requests
     if (!mf_process_maxfwd_header("10")) {
         sl_send_reply("483","Too Many Hops");
         exit;
@@ -25,7 +25,7 @@ route {
         exit;
     };
 
-    # shield us against retransmits
+    // shield us against retransmits
     if (!t_newtran()) {
         sl_reply_error();
         exit;
@@ -56,7 +56,7 @@ route {
         rewritehostport("127.0.0.1:5061");
         t_relay();
     };
-    #rtpproxy_stream2uac("ringback", "10");
+    // rtpproxy_stream2uac("ringback", "10");
     exit;
 }
 
@@ -65,7 +65,7 @@ onreply_route[1]
     if (status=~"(180)|(183)|2[0-9][0-9]") {
         if(!search("^Content-Length:[ ]*0")) {
             rtpproxy_answer("r");
-            #rtpproxy_stream2uas("ringback", "10");
+            // rtpproxy_stream2uas("ringback", "10");
         };
     };
 }
