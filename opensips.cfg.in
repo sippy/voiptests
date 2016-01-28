@@ -1,6 +1,6 @@
 mpath="dist/opensips/modules/"
 
-#if OPENSIPS_VER >= 210
+#if OPENSIPS_VER >= 21
 loadmodule "proto_udp.so"
 #define RTPP_UNFORCE() rtpproxy_unforce()
 #else
@@ -10,7 +10,7 @@ loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
 loadmodule "rr/rr.so"
 loadmodule "maxfwd/maxfwd.so"
-#if OPENSIPS_VER >= 210
+#if OPENSIPS_VER >= 21
 ## dialog is now required by the rtpproxy, not sure why, but OK
 loadmodule "dialog/dialog.so"
 #endif
