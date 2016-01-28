@@ -31,7 +31,7 @@ start_mm() {
 
   opensips)
     OPENSIPS_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
-    OPENSIPS_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*||'`
+    OPENSIPS_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`
     for file in opensips.cfg.in rtpproxy.opensips.output.in
     do
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${OPENSIPS_VER} \
