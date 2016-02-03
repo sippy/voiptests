@@ -26,7 +26,7 @@
 from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
-  CCEventPreConnect, CCEventRing
+  CCEventPreConnect, CCEventRing, CCEventUpdate
 from sippy.SipCallId import SipCallId
 from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
@@ -70,21 +70,42 @@ class a_test1(object):
     atype = 'IP4'
     disconnect_ival = 9.0
     cancel_ival = None
+    reinvite_in_progress = False
+    reinvite_done = False
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
           isinstance(event, CCEventPreConnect):
             code, reason, sdp_body = event.getData()
+            if self.reinvite_in_progress and isinstance(event, CCEventConnect):
+                self.reinvite_in_progress = False
+                sdp_body.parse()
+                if not checkhostport(sdp_body, self.portrange, self.atype):
+                    self.nerrs += 1
+                    raise ValueError('Alice: SDP body has failed validation')
+                self.reinvite_done = True
             if not (isinstance(event, CCEventRing) and sdp_body == None):
                 sdp_body.parse()
                 if not checkhostport(sdp_body, self.portrange, self.atype):
                     self.nerrs += 1
                     raise ValueError('Alice: SDP body has failed validation')
+        if self.reinvite_in_progress and (isinstance(event, CCEventDisconnect) or \
+          isinstance(event, CCEventFail)):
+            self.nerrs += 1
+            raise ValueError('Alice: re-INVITE has failed')
         print 'Alice(%s): Incoming event: %s' % (self.cli, event)
 
     def connected(self, ua, rtime, origin):
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         self.connect_done = True
+
+    def reinvite(self, ua):
+        if not self.connect_done or self.disconnect_done:
+            return
+        sdp_body = ua.lSDP.getCopy()
+        event = CCEventUpdate(sdp_body, origin = 'switch')
+        self.reinvite_in_progress = True
+        ua.recvEvent(event)
 
     def disconnect(self, ua):
         event = CCEventDisconnect(origin = 'switch')
@@ -227,13 +248,31 @@ class a_test_early_cancel(a_test1):
                   str(self.__class__), str(self.acct))
         self.done_cb(self)
 
+class a_test_reinvite(a_test1):
+    cld = 'bob_reinvite'
+    cli = 'alice_reinvite'
+    compact_sip = False
+    atype = 'IP4'
+
+    def connected(self, ua, rtime, origin):
+        Timeout(self.reinvite, self.disconnect_ival / 2, 1, ua)
+        a_test1.connected(self, ua, rtime, origin)
+
+    def alldone(self, ua):
+        if not self.reinvite_done or not self.disconnect_done or self.nerrs > 0:
+            print 'Alice(%s): subclass %s failed, acct=%s' % (self.cli, \
+              str(self.__class__), str(self.acct))
+        else:
+            self.rval = 0
+        self.done_cb(self)
+
 class a_test_early_cancel_lost100(a_test_early_cancel):
     cld = 'bob_early_cancel_lost100'
     cli = 'alice_early_cancel_lost100'
 
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \
-  a_test_early_cancel, a_test_early_cancel_lost100)
+  a_test_early_cancel, a_test_early_cancel_lost100, a_test_reinvite)
 
 class a_test(object):
     nsubtests_running = 0

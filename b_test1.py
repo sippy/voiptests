@@ -241,9 +241,17 @@ class b_test_early_cancel_lost100(b_test_early_cancel):
         ua.uas_lossemul = 1
         return b_test1.complete_answer(self, ua, req, sip_t)
 
+class b_test_reinvite(b_test1):
+    cli = 'bob_reinvite'
+    atype = 'IP4'
+    compact_sip = True
+    ring_ival = 1.0
+    answer_ival = 5.0
+    disconnect_ival = 16
+
 ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
   b_test8, b_test9, b_test10, b_test11, b_test12, b_test13, b_test14, \
-  b_test_early_cancel, b_test_early_cancel_lost100)
+  b_test_early_cancel, b_test_early_cancel_lost100, b_test_reinvite)
 
 class b_test(object):
     rval = 1
