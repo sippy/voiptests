@@ -26,7 +26,7 @@
 from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
-  CCEventPreConnect, CCEventRing, CCEventUpdate
+  CCEventPreConnect, CCEventRing, CCEventUpdate, CCEventFail
 from sippy.SipCallId import SipCallId
 from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
@@ -93,7 +93,7 @@ class a_test1(object):
           isinstance(event, CCEventFail)):
             self.nerrs += 1
             raise ValueError('Alice: re-INVITE has failed')
-        print 'Alice(%s): Incoming event: %s' % (self.cli, event)
+        print '%s: Incoming event: %s' % (self.my_name(), event)
 
     def connected(self, ua, rtime, origin):
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
@@ -103,9 +103,20 @@ class a_test1(object):
         if not self.connect_done or self.disconnect_done:
             return
         sdp_body = ua.lSDP.getCopy()
+        sdp_body.content.o_header.version += 1
+        for sect in sdp_body.content.sections:
+            if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
+                continue
+            sect.m_header.port += 10
+            while 'sendrecv' in sect.a_headers:
+                sect.a_headers.remove('sendrecv')
+            sect += 'a=sendonly'
         event = CCEventUpdate(sdp_body, origin = 'switch')
         self.reinvite_in_progress = True
         ua.recvEvent(event)
+
+    def my_name(self):
+        return 'Alice(%s)' % (self.cli,)
 
     def disconnect(self, ua):
         event = CCEventDisconnect(origin = 'switch')
@@ -121,7 +132,7 @@ class a_test1(object):
         if origin in ('switch', 'callee'):
             self.disconnect_done = True
         self.acct = ua.getAcct()
-        print 'Alice(%s): disconnected' % self.cli, rtime, origin, result, self.acct
+        print '%s: disconnected' % self.my_name(), rtime, origin, result, self.acct
 
     def alldone(self, ua):
         if self.connect_done and self.disconnect_done and self.nerrs == 0:
@@ -244,7 +255,7 @@ class a_test_early_cancel(a_test1):
               delay < 0.5:
                 self.rval = 0
             else:
-                print 'Alice(%s): subclass %s failed, acct=%s' % (self.cli, \
+                print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
                   str(self.__class__), str(self.acct))
         self.done_cb(self)
 
@@ -260,7 +271,7 @@ class a_test_reinvite(a_test1):
 
     def alldone(self, ua):
         if not self.reinvite_done or not self.disconnect_done or self.nerrs > 0:
-            print 'Alice(%s): subclass %s failed, acct=%s' % (self.cli, \
+            print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
               str(self.__class__), str(self.acct))
         else:
             self.rval = 0
