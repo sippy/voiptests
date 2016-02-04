@@ -23,6 +23,10 @@ start_mm() {
   case "${MM_TYPE}" in
   b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
+    if [ -e ${MM_LOG} ]
+    then
+      rm ${MM_LOG}
+    fi
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
      ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
