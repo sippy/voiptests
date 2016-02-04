@@ -26,7 +26,7 @@
 from sippy.UA import UA
 from sippy.Timeout import Timeout
 from sippy.CCEvents import CCEventRing, CCEventConnect, CCEventDisconnect, \
-  CCEventFail
+  CCEventFail, CCEventUpdate
 from sippy.SipTransactionManager import SipTransactionManager
 from twisted.internet import reactor
 from random import random
@@ -48,6 +48,7 @@ class b_test1(object):
     disconnect_ival = None
     cli = 'bob_1'
     acct = None
+    nupdates = 0
 
     def __init__(self, done_cb, portrange):
         self.done_cb = done_cb
@@ -96,6 +97,16 @@ class b_test1(object):
 
     def recvEvent(self, event, ua):
         print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
+        if isinstance(event, CCEventUpdate):
+            sdp_body = ua.lSDP.getCopy()
+            for sect in sdp_body.content.sections:
+                if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
+                    continue
+                sect.m_header.port -= 10
+            sdp_body.content.o_header.version += 1
+            event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
+            ua.recvEvent(event)
+            self.nupdates += 1
 
     def disconnected(self, ua, rtime, origin, result = 0):
         if origin in ('switch', 'caller'):
