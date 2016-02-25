@@ -28,7 +28,7 @@ start_mm() {
       rm ${MM_LOG}
     fi
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
-     ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address=127.0.0.1 \
+     ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address='*' \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
      --logfile="${MM_LOG}" &
