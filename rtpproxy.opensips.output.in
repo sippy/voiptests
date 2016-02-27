@@ -4,12 +4,12 @@ nsess_created=26 nsess_destroyed=26 nsess_timeout=0 nsess_complete=14 nsess_nort
 nsess_created=24 nsess_destroyed=24 nsess_timeout=0 nsess_complete=14 nsess_nortp=14 nsess_owrtp=0 nsess_nortcp=14 nsess_owrtcp=0
 #endif
 #if OPENSIPS_VER >= 21
-ncmds_rcvd=77 ncmds_succd=76 ncmds_errs=0 ncmds_repld=76
+ncmds_rcvd=82 ncmds_succd=81 ncmds_errs=0 ncmds_repld=82
 #else
 # if OPENSIPS_VER_FULL == 111
-ncmds_rcvd=86 ncmds_succd=85 ncmds_errs=0 ncmds_repld=85
+ncmds_rcvd=91 ncmds_succd=90 ncmds_errs=0 ncmds_repld=90
 # else
-ncmds_rcvd=82 ncmds_succd=81 ncmds_errs=0 ncmds_repld=81
+ncmds_rcvd=87 ncmds_succd=86 ncmds_errs=0 ncmds_repld=86
 # endif
 #endif
 MEMDEB: all clear

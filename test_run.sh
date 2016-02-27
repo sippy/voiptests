@@ -43,7 +43,7 @@ start_mm() {
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
     done
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
-    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -F -E &
+    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -F -E -n 1 &
     MM_PID=${!}
     ;;
 
@@ -54,7 +54,7 @@ start_mm() {
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -F -E &
+    ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -F -E -n 1 &
     MM_PID=${!}
     ;;
 
