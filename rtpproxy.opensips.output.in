@@ -4,7 +4,7 @@ nsess_created=26 nsess_destroyed=26 nsess_timeout=0 nsess_complete=14 nsess_nort
 nsess_created=24 nsess_destroyed=24 nsess_timeout=0 nsess_complete=14 nsess_nortp=14 nsess_owrtp=0 nsess_nortcp=14 nsess_owrtcp=0
 #endif
 #if OPENSIPS_VER >= 21
-ncmds_rcvd=82 ncmds_succd=81 ncmds_errs=0 ncmds_repld=82
+ncmds_rcvd=82 ncmds_succd=81 ncmds_errs=0 ncmds_repld=81
 #else
 # if OPENSIPS_VER_FULL == 111
 ncmds_rcvd=91 ncmds_succd=90 ncmds_errs=0 ncmds_repld=90
