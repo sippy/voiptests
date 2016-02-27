@@ -49,13 +49,12 @@ route {
         exit;
     };
 
-    if (src_ip == "127.0.0.1" && src_port == 5061) {
-        rewritehostport("127.0.0.1:5062");
-        t_relay();
+    if (src_port == 5061) {
+        rewriteport("5062");
     } else {
-        rewritehostport("127.0.0.1:5061");
-        t_relay();
+        rewriteport("5061");
     };
+    t_relay();
     // rtpproxy_stream2uac("ringback", "10");
     exit;
 }
