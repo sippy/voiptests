@@ -7,7 +7,7 @@ nsess_created=24 nsess_destroyed=24 nsess_timeout=0 nsess_complete=14 nsess_nort
 ncmds_rcvd=82 ncmds_succd=81 ncmds_errs=0 ncmds_repld=81
 #else
 # if OPENSIPS_VER_FULL == 111
-ncmds_rcvd=91 ncmds_succd=90 ncmds_errs=0 ncmds_repld=90
+ncmds_rcvd=96 ncmds_succd=95 ncmds_errs=0 ncmds_repld=95
 # else
 ncmds_rcvd=87 ncmds_succd=86 ncmds_errs=0 ncmds_repld=86
 # endif
