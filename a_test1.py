@@ -53,7 +53,7 @@ def checkhostport(sdp_body, portrange, atype):
             return False
         if atype == 'IP4' and sect.c_header.atype == 'IP4' and sect.c_header.addr == '127.0.0.1':
             continue
-        if atype == 'IP6' and sect.c_header.atype == 'IP6' and sect.c_header.addr == '::1':
+        if atype == 'IP6' and sect.c_header.atype == 'IP6' and sect.c_header.addr in ('::1', '0:0:0:0:0:0:0:1'):
             continue
         return False
     return True
@@ -67,11 +67,13 @@ class a_test1(object):
     disconnect_done = False
     done_cb = None
     compact_sip = False
-    atype = 'IP4'
+    atype = None
     disconnect_ival = 9.0
     cancel_ival = None
     reinvite_in_progress = False
     reinvite_done = False
+    nh_address4 = ('127.0.0.1', 5060)
+    nh_address6 = ('[::1]', 5060)
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
@@ -139,8 +141,16 @@ class a_test1(object):
             self.rval = 0
         self.done_cb(self)
 
-    def __init__(self, global_config, body, done_cb, portrange):
-        uaO = UA(global_config, event_cb = self.recvEvent, nh_address = ('127.0.0.1', 5060), \
+    def __init__(self, global_config, body, done_cb, portrange, atype = 'IP4', \
+      cli = None):
+        self.atype = atype
+        if cli != None:
+            self.cli = cli
+        if atype == 'IP4':
+            nh_address = self.nh_address4
+        else:
+            nh_address = self.nh_address6
+        uaO = UA(global_config, event_cb = self.recvEvent, nh_address = nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,))
         uaO.godead_timeout = 10
@@ -159,12 +169,10 @@ class a_test1(object):
 class a_test2(a_test1):
     cld = 'bob_2'
     cli = 'alice_2'
-    atype = 'IP4'
 
 class a_test3(a_test1):
     cld = 'bob_3'
     cli = 'alice_3'
-    atype = 'IP4'
 
     def alldone(self, ua):
         if self.disconnect_done and self.nerrs == 0:
@@ -174,48 +182,40 @@ class a_test3(a_test1):
 class a_test4(a_test3):
     cld = 'bob_4'
     cli = 'alice_4'
-    atype = 'IP4'
 
 class a_test5(a_test3):
     cld = 'bob_5'
     cli = 'alice_5'
-    atype = 'IP4'
 
 class a_test6(a_test1):
     cld = 'bob_6'
     cli = 'alice_6'
     compact_sip = True
-    atype = 'IP4'
 
 class a_test7(a_test2):
     cld = 'bob_7'
     cli = 'alice_7'
     compact_sip = True
-    atype = 'IP4'
 
 class a_test8(a_test3):
     cld = 'bob_8'
     cli = 'alice_8'
     compact_sip = True
-    atype = 'IP4'
 
 class a_test9(a_test4):
     cld = 'bob_9'
     cli = 'alice_9'
     compact_sip = True
-    atype = 'IP4'
 
 class a_test10(a_test5):
     cld = 'bob_10'
     cli = 'alice_10'
     compact_sip = True
-    atype = 'IP4'
 
 class a_test11(a_test1):
     cld = 'bob_11'
     cli = 'alice_11'
     compact_sip = True
-    atype = 'IP4'
 
     def alldone(self, ua):
         if not self.connect_done and self.disconnect_done and self.nerrs == 0:
@@ -226,26 +226,22 @@ class a_test12(a_test11):
     cld = 'bob_12'
     cli = 'alice_12'
     compact_sip = False
-    atype = 'IP4'
 
 class a_test13(a_test11):
     cld = 'bob_13'
     cli = 'alice_13'
     compact_sip = True
-    atype = 'IP4'
 
 class a_test14(a_test1):
     cld = 'bob_14'
     cli = 'alice_14'
     compact_sip = False
-    atype = 'IP4'
     disconnect_ival = 120
 
 class a_test_early_cancel(a_test1):
     cld = 'bob_early_cancel'
     cli = 'alice_early_cancel'
     compact_sip = False
-    atype = 'IP4'
     cancel_ival = 0.01
 
     def alldone(self, ua):
@@ -263,7 +259,6 @@ class a_test_reinvite(a_test1):
     cld = 'bob_reinvite'
     cli = 'alice_reinvite'
     compact_sip = False
-    atype = 'IP4'
 
     def connected(self, ua, rtime, origin):
         Timeout(self.reinvite, self.disconnect_ival / 2, 1, ua)
@@ -289,16 +284,27 @@ class a_test(object):
     nsubtests_running = 0
     rval = 1
 
-    def __init__(self, global_config, body, portrange, tests, test_timeout):
+    def __init__(self, global_config, ttype, body, portrange, tests, test_timeout):
         global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
-        
+
+        i = 0
+        if len(ttype) == 1:
+            ttype += ttype
         for subtest_class in ALL_TESTS * 2:
             if subtest_class.cli not in tests:
                 continue
+            cli = subtest_class.cli
+            if i >= len(ALL_TESTS):
+                atype = ttype[1]
+            else:
+                atype = ttype[0]
+            cli += '_ipv%s' % atype[-1]
             sdp_body = body.getCopy()
-            fillhostport(sdp_body, portrange, subtest_class.atype)
-            subtest = subtest_class(global_config, sdp_body, self.subtest_done, portrange)
+            fillhostport(sdp_body, portrange, atype)
+            subtest = subtest_class(global_config, sdp_body, self.subtest_done, \
+              portrange, atype, cli)
             self.nsubtests_running += 1
+            i += 1
         self.rval = self.nsubtests_running
         Timeout(self.timeout, test_timeout, 1)
 

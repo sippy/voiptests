@@ -29,7 +29,8 @@ start_mm() {
     fi
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
      ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address='*' \
-     --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off --static_route="127.0.0.1:5062" \
+     --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \
+     --static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
@@ -42,7 +43,7 @@ start_mm() {
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
     done
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
-    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -D -E &
+    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -F -E &
     MM_PID=${!}
     ;;
 
@@ -53,7 +54,7 @@ start_mm() {
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -D -E &
+    ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -F -E &
     MM_PID=${!}
     ;;
 
@@ -108,7 +109,7 @@ export RTPP_LOG_TFORM
 
 rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -f -s stdio: -s "${RTPP_SOCK_UDP}" \
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
-  -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
+  -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 -6 '/::' -l '0.0.0.0' ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
 i=0
 while [ ! -e "${RTPP_SOCK_BARE}" ]
@@ -121,10 +122,10 @@ do
   i=$((${i} + 1))
 done
 start_mm
-python alice.py -t "${TEST_SET}" -l 127.0.0.1 -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
+python alice.py -44 -t "${TEST_SET}" -l '*' -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
-python bob.py -l 127.0.0.1 -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
+python bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 

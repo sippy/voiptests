@@ -31,6 +31,7 @@ sys.path.insert(0, 'lib')
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
+from sippy.SipConf import SipConf
 from twisted.internet import reactor
 
 from PortRange import PortRange
@@ -58,10 +59,12 @@ if __name__ == '__main__':
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46')
     except getopt.GetoptError:
         usage(global_config)
     portrange = PortRange('12000-15000')
+    ttype_default = ('IP4', 'IP6')
+    ttype = []
     for o, a in opts:
         if o == '-p':
             portrange = PortRange(a.strip())
@@ -70,7 +73,10 @@ if __name__ == '__main__':
             tests = a.split(',')
             continue
         if o == '-l':
-            global_config['_sip_address'] = a.strip()
+            saddr = a.strip()
+            if saddr == '*':
+                saddr = SipConf.my_address
+            global_config['_sip_address'] = saddr
             continue
         if o == '-P':
             global_config['_sip_port'] = int(a)
@@ -78,6 +84,16 @@ if __name__ == '__main__':
         if o == '-T':
             test_timeout = int(a)
             continue
+        if o == '-4':
+            ttype.append('IP4')
+            continue
+        if o == '-6':
+            ttype.append('IP6')
+            continue
+    if len(ttype) > 0:
+        ttype = tuple(ttype)
+    else:
+        ttype = ttype_default
 
     body = MsgBody(body_txt)
     body.parse()
@@ -86,7 +102,7 @@ if __name__ == '__main__':
     global_config['_sip_logger'] = sl
 
     from a_test1 import a_test
-    acore = a_test(global_config, body, portrange, tests, test_timeout)
+    acore = a_test(global_config, ttype, body, portrange, tests, test_timeout)
 
     reactor.run(installSignalHandlers = True)
 

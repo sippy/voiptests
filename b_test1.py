@@ -63,7 +63,8 @@ class b_test1(object):
         in_body.parse()
         if not checkhostport(in_body, self.portrange, self.atype):
             self.nerrs += 1
-            raise ValueError('Bob(%s): hostport validation has failed' % str(self.__class__))
+            raise ValueError('Bob(%s): hostport validation has failed (%s):\n%s' % \
+              (str(self.__class__), self.atype, in_body))
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
@@ -123,7 +124,6 @@ class b_test1(object):
 
 class b_test2(b_test1):
     cli = 'bob_2'
-    atype = 'IP4'
 
     def ring(self, ua):
         event = CCEventRing((183, 'Session Progress', self.body), \
@@ -134,7 +134,6 @@ class b_test2(b_test1):
 
 class b_test3(b_test1):
     cli = 'bob_3'
-    atype = 'IP4'
 
     def connect(self, ua):
         event = CCEventFail((501, 'Post-ring Failure'), \
@@ -144,7 +143,6 @@ class b_test3(b_test1):
 
 class b_test4(b_test1):
     cli = 'bob_4'
-    atype = 'IP4'
 
     def ring(self, ua):
         event = CCEventFail((502, 'Pre-ring Failure'), \
@@ -155,7 +153,6 @@ class b_test4(b_test1):
 
 class b_test5(b_test2):
     cli = 'bob_5'
-    atype = 'IP4'
 
     def connect(self, ua):
         event = CCEventFail((503, 'Post-early-session Failure'), \
@@ -165,32 +162,26 @@ class b_test5(b_test2):
 
 class b_test6(b_test1):
     cli = 'bob_6'
-    atype = 'IP4'
     compact_sip = True
 
 class b_test7(b_test2):
     cli = 'bob_7'
-    atype = 'IP4'
     compact_sip = True
 
 class b_test8(b_test3):
     cli = 'bob_8'
-    atype = 'IP4'
     compact_sip = True
 
 class b_test9(b_test4):
     cli = 'bob_9'
-    atype = 'IP4'
     compact_sip = True
 
 class b_test10(b_test5):
     cli = 'bob_10'
-    atype = 'IP4'
     compact_sip = True
 
 class b_test11(b_test1):
     cli = 'bob_11'
-    atype = 'IP4'
     compact_sip = True
     answer_ival = 55.0
 
@@ -203,7 +194,6 @@ class b_test11(b_test1):
 
 class b_test12(b_test2):
     cli = 'bob_12'
-    atype = 'IP4'
     compact_sip = True
     ring_ival = 55.0
 
@@ -216,14 +206,12 @@ class b_test12(b_test2):
 
 class b_test13(b_test12):
     cli = 'bob_13'
-    atype = 'IP4'
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 70.0
 
 class b_test14(b_test1):
     cli = 'bob_14'
-    atype = 'IP4'
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 2.0
@@ -231,7 +219,6 @@ class b_test14(b_test1):
 
 class b_test_early_cancel(b_test1):
     cli = 'bob_early_cancel'
-    atype = 'IP4'
     max_delay = 0.5
 
     def alldone(self, ua):
@@ -254,7 +241,6 @@ class b_test_early_cancel_lost100(b_test_early_cancel):
 
 class b_test_reinvite(b_test1):
     cli = 'bob_reinvite'
-    atype = 'IP4'
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 5.0
@@ -291,10 +277,13 @@ class b_test(object):
             else:
                 return (req.genResponse(404, 'Test Does Not Exist'), None, None)
             subtest = tclass(self.subtest_done, self.portrange)
+            cli = req.getHFBody('from').getUrl().username
+            if cli.endswith('_ipv6'):
+                subtest.atype = 'IP6'
             self.nsubtests_running += 1
             self.rval += 1
             sdp_body = self.bodys[0 if random() < 0.5 else 1].getCopy()
-            fillhostport(sdp_body, self.portrange, tclass.atype)
+            fillhostport(sdp_body, self.portrange, subtest.atype)
             return subtest.answer(self.global_config, sdp_body, req, sip_t)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 

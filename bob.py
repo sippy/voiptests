@@ -31,6 +31,7 @@ sys.path.insert(0, 'lib')
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
+from sippy.SipConf import SipConf
 from twisted.internet import reactor
 
 from PortRange import PortRange
@@ -74,7 +75,10 @@ if __name__ == '__main__':
             portrange = PortRange(a.strip())
             continue
         if o == '-l':
-            global_config['_sip_address'] = a.strip()
+            saddr = a.strip()
+            if saddr == '*':
+                saddr = SipConf.my_address
+            global_config['_sip_address'] = saddr
             continue
         if o == '-P':
             global_config['_sip_port'] = int(a)
