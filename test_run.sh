@@ -34,6 +34,7 @@ start_mm() {
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
+    ALICE_ARGS="-46"
     ;;
 
   opensips)
@@ -45,6 +46,7 @@ start_mm() {
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -F -E -n 1 &
     MM_PID=${!}
+    ALICE_ARGS="-44"
     ;;
 
   kamailio)
@@ -56,6 +58,7 @@ start_mm() {
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
     ${BUILDDIR}/dist/kamailio/kamailio -f kamailio.cfg -DD -E -n 1 &
     MM_PID=${!}
+    ALICE_ARGS="-44"
     ;;
 
   *)
@@ -122,7 +125,7 @@ do
   i=$((${i} + 1))
 done
 start_mm
-python alice.py -44 -t "${TEST_SET}" -l '*' -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
+python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
 python bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
