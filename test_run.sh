@@ -46,7 +46,7 @@ start_mm() {
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
     ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -F -E -n 1 &
     MM_PID=${!}
-    ALICE_ARGS="-44"
+    ALICE_ARGS="-46"
     ;;
 
   kamailio)
