@@ -18,6 +18,7 @@ if [ "${MM_TYPE}" = "opensips" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
+  patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/rtpproxy_ip6.patch
   #if [ "${MM_BRANCH}" = "1.11" ]
   #then
   #  patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
@@ -35,6 +36,7 @@ then
   git clone -b "${MM_BRANCH}" git://git.sip-router.org/kamailio kamailio
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
+  patch -p1 -s -d kamailio < ${BUILDDIR}/install_depends/kamailio/rtpproxy_ip6.patch
 fi
 
 ##bash
