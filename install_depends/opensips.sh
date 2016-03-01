@@ -36,7 +36,10 @@ then
   git clone -b "${MM_BRANCH}" git://git.sip-router.org/kamailio kamailio
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
-  patch -p1 -s -d kamailio < ${BUILDDIR}/install_depends/kamailio/rtpproxy_ip6.patch
+  if [ "${MM_BRANCH}" = "4.1" -o "${MM_BRANCH}" = "4.2" ]
+  then
+    patch -p1 -s -d kamailio < ${BUILDDIR}/install_depends/kamailio/rtpproxy_ip6.patch
+  fi
 fi
 
 ##bash
