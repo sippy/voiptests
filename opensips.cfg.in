@@ -1,7 +1,9 @@
 mpath="dist/opensips/modules/"
 
-#if OPENSIPS_VER >= 21
+#if OPENSIPS_VER >= 11
+# if OPENSIPS_VER >= 21
 loadmodule "proto_udp.so"
+# endif
 #define RTPP_UNFORCE() rtpproxy_unforce()
 #else
 #define RTPP_UNFORCE() unforce_rtp_proxy()
