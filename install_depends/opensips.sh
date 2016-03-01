@@ -33,7 +33,7 @@ fi
 git clone -b "${RTPP_BRANCH}" git://github.com/sippy/rtpproxy.git
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  git clone -b "${MM_BRANCH}" git://git.sip-router.org/kamailio kamailio
+  git clone -b "${MM_BRANCH}" git://github.com/kamailio/kamailio.git kamailio
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
   if [ "${MM_BRANCH}" = "4.1" -o "${MM_BRANCH}" = "4.2" ]
