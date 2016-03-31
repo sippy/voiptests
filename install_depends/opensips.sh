@@ -18,7 +18,10 @@ if [ "${MM_TYPE}" = "opensips" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
-  #patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/rtpproxy_ip6.patch
+  if [ "${MM_BRANCH}" != "1.11" -a "${MM_BRANCH}" != "2.1" ]
+  then
+    patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/rtpproxy_ip6.patch
+  fi
   #if [ "${MM_BRANCH}" = "1.11" ]
   #then
   #  patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
