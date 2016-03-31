@@ -1,15 +1,15 @@
 #if OPENSIPS_VER_FULL == 111
-nsess_created=26 nsess_destroyed=26 nsess_timeout=0 nsess_complete=14 nsess_nortp=14 nsess_owrtp=0 nsess_nortcp=14 nsess_owrtcp=0
+nsess_created=28 nsess_destroyed=28 nsess_timeout=0 nsess_complete=16 nsess_nortp=16 nsess_owrtp=0 nsess_nortcp=16 nsess_owrtcp=0
 #else
-nsess_created=24 nsess_destroyed=24 nsess_timeout=0 nsess_complete=14 nsess_nortp=14 nsess_owrtp=0 nsess_nortcp=14 nsess_owrtcp=0
+nsess_created=26 nsess_destroyed=26 nsess_timeout=0 nsess_complete=16 nsess_nortp=16 nsess_owrtp=0 nsess_nortcp=16 nsess_owrtcp=0
 #endif
 #if OPENSIPS_VER >= 21
-ncmds_rcvd=82 ncmds_succd=81 ncmds_errs=0 ncmds_repld=81
+ncmds_rcvd=90 ncmds_succd=89 ncmds_errs=0 ncmds_repld=89
 #else
 # if OPENSIPS_VER_FULL == 111
-ncmds_rcvd=96 ncmds_succd=95 ncmds_errs=0 ncmds_repld=95
+ncmds_rcvd=104 ncmds_succd=103 ncmds_errs=0 ncmds_repld=103
 # else
-ncmds_rcvd=87 ncmds_succd=86 ncmds_errs=0 ncmds_repld=86
+ncmds_rcvd=95 ncmds_succd=94 ncmds_errs=0 ncmds_repld=94
 # endif
 #endif
 MEMDEB: all clear

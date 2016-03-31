@@ -18,6 +18,7 @@ loadmodule "dialog/dialog.so"
 #endif
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
+loadmodule "uri/uri.so"
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
@@ -47,7 +48,10 @@ route {
         t_reply("100", "Trying");
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
-            t_on_failure("1");
+            if (!has_totag()) {
+                /* Get rid of session when INVITE fails unless it's re-INVITE */
+                t_on_failure("1");
+            }
         };
     };
 

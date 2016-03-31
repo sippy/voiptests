@@ -6,6 +6,8 @@ loadmodule "rr/rr.so"
 loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
+loadmodule "pv/pv.so"
+loadmodule "siputils/siputils.so"
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
@@ -34,7 +36,9 @@ route {
     if (method == "INVITE") {
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
-            t_on_failure("1");
+            if (!has_totag()) {
+                t_on_failure("1");
+            };
         };
     };
 

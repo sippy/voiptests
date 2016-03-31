@@ -272,13 +272,29 @@ class a_test_reinvite(a_test1):
             self.rval = 0
         self.done_cb(self)
 
+class a_test_reinv_fail(a_test_reinvite):
+    cld = 'bob_reinv_fail'
+    cli = 'alice_reinv_fail'
+
+    def recvEvent(self, event, ua):
+        if self.reinvite_in_progress and not isinstance(event, CCEventRing):
+            if not isinstance(event, CCEventFail):
+                self.nerrs += 1
+                raise ValueError('Alice: re-INVITE has NOT failed')
+            self.reinvite_in_progress = False
+            self.reinvite_done = True
+            print '%s: Incoming event: %s, ignoring' % (self.my_name(), event)
+            return
+        return (a_test_reinvite.recvEvent(self, event, ua))
+
 class a_test_early_cancel_lost100(a_test_early_cancel):
     cld = 'bob_early_cancel_lost100'
     cli = 'alice_early_cancel_lost100'
 
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \
-  a_test_early_cancel, a_test_early_cancel_lost100, a_test_reinvite)
+  a_test_early_cancel, a_test_early_cancel_lost100, a_test_reinvite, \
+  a_test_reinv_fail)
 
 class a_test(object):
     nsubtests_running = 0
