@@ -55,13 +55,11 @@ class a_test1(object):
     disconnect_done = False
     done_cb = None
     compact_sip = False
-    atype = None
     disconnect_ival = 9.0
     cancel_ival = None
     reinvite_in_progress = False
     reinvite_done = False
-    nh_address4 = ('127.0.0.1', 5060)
-    nh_address6 = ('[::1]', 5060)
+    tccfg = None
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
@@ -70,13 +68,13 @@ class a_test1(object):
             if self.reinvite_in_progress and isinstance(event, CCEventConnect):
                 self.reinvite_in_progress = False
                 sdp_body.parse()
-                if not checkhostport(sdp_body, self.portrange, self.atype):
+                if not self.tccfg.checkhostport(sdp_body):
                     self.nerrs += 1
                     raise ValueError('Alice: SDP body has failed validation')
                 self.reinvite_done = True
             if not (isinstance(event, CCEventRing) and sdp_body == None):
                 sdp_body.parse()
-                if not checkhostport(sdp_body, self.portrange, self.atype):
+                if not self.tccfg.checkhostport(sdp_body):
                     self.nerrs += 1
                     raise ValueError('Alice: SDP body has failed validation')
         if self.reinvite_in_progress and (isinstance(event, CCEventDisconnect) or \
@@ -130,7 +128,7 @@ class a_test1(object):
         self.done_cb(self)
 
     def __init__(self, tccfg):
-        self.atype = tccfg.atype
+        self.tccfg = tccfg
         if tccfg.cli != None:
             self.cli = tccfg.cli
         uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
@@ -141,7 +139,6 @@ class a_test1(object):
         event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
           None, 'Alice Smith'))
         self.done_cb = tccfg.done_cb
-        self.portrange = tccfg.portrange
         self.run(uaO, event)
 
     def run(self, ua, event):
