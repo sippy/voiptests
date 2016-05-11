@@ -66,7 +66,7 @@ if __name__ == '__main__':
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:n:N:')
     except getopt.GetoptError:
         usage(global_config)
     tcfg = test_config(global_config)
@@ -85,6 +85,16 @@ if __name__ == '__main__':
             continue
         if o == '-T':
             tcfg.test_timeout = int(a)
+            continue
+        if o == '-n':
+            nh_address4 = a.split(':', 1)
+            nh_address4[1] = int(nh_address4[1])
+            tcfg.nh_address4 = tuple(nh_address4)
+            continue
+        if o == '-N':
+            nh_address6 = a.rsplit(':', 1)
+            nh_address6[1] = int(nh_address6[1])
+            tcfg.nh_address6 = tuple(nh_address6)
             continue
 
     bodys = [MsgBody(x) for x in BODIES_ALL]
