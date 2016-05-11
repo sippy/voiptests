@@ -27,14 +27,13 @@
 
 import sys, getopt
 sys.path.insert(0, 'dist/b2bua')
-sys.path.insert(0, 'lib')
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
 from twisted.internet import reactor
 
-from PortRange import PortRange
+from lib.PortRange import PortRange
 
 body_txt = 'v=0\r\n' + \
   'o=- 380960 380960 IN IP4 192.168.22.95\r\n' + \
@@ -59,18 +58,20 @@ if __name__ == '__main__':
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46n:N:')
     except getopt.GetoptError:
         usage(global_config)
-    portrange = PortRange('12000-15000')
-    ttype_default = ('IP4', 'IP6')
+
+    from a_test1 import test_config
+
+    tcfg = test_config()
     ttype = []
     for o, a in opts:
         if o == '-p':
             portrange = PortRange(a.strip())
             continue
         if o == '-t':
-            tests = a.split(',')
+            tcfg.tests = tuple(['alice_' + x for x in a.split(',')])
             continue
         if o == '-l':
             saddr = a.strip()
@@ -82,7 +83,7 @@ if __name__ == '__main__':
             global_config['_sip_port'] = int(a)
             continue
         if o == '-T':
-            test_timeout = int(a)
+            tcfg.test_timeout = int(a)
             continue
         if o == '-4':
             ttype.append('IP4')
@@ -90,19 +91,28 @@ if __name__ == '__main__':
         if o == '-6':
             ttype.append('IP6')
             continue
+        if o == '-n':
+            nh_address4 = a.split(':', 1)
+            nh_address4[1] = int(nh_address4[1])
+            tcfg.nh_address4 = tuple(nh_address4)
+            continue
+        if o == '-N':
+            nh_address6 = a.rsplit(':', 1)
+            nh_address6[1] = int(nh_address6[1])
+            tcfg.nh_address6 = tuple(nh_address6)
+            continue
     if len(ttype) > 0:
-        ttype = tuple(ttype)
-    else:
-        ttype = ttype_default
+        tcfg.ttype = tuple(ttype)
 
-    body = MsgBody(body_txt)
-    body.parse()
+    tcfg.body = MsgBody(body_txt)
+    tcfg.body.parse()
 
     sl = SipLogger('alice_ua')
     global_config['_sip_logger'] = sl
 
     from a_test1 import a_test
-    acore = a_test(global_config, ttype, body, portrange, tests, test_timeout)
+    tcfg.global_config = global_config
+    acore = a_test(tcfg)
 
     reactor.run(installSignalHandlers = True)
 
