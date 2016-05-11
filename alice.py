@@ -34,6 +34,7 @@ from sippy.SipConf import SipConf
 from twisted.internet import reactor
 
 from lib.PortRange import PortRange
+from lib.test_config import test_config
 
 body_txt = 'v=0\r\n' + \
   'o=- 380960 380960 IN IP4 192.168.22.95\r\n' + \
@@ -61,8 +62,6 @@ if __name__ == '__main__':
         opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46n:N:')
     except getopt.GetoptError:
         usage(global_config)
-
-    from a_test1 import test_config
 
     tcfg = test_config()
     ttype = []

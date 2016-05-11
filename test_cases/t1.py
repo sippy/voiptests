@@ -129,24 +129,19 @@ class a_test1(object):
             self.rval = 0
         self.done_cb(self)
 
-    def __init__(self, global_config, body, done_cb, portrange, atype = 'IP4', \
-      cli = None):
-        self.atype = atype
-        if cli != None:
-            self.cli = cli
-        if atype == 'IP4':
-            nh_address = self.nh_address4
-        else:
-            nh_address = self.nh_address6
-        uaO = UA(global_config, event_cb = self.recvEvent, nh_address = nh_address, \
+    def __init__(self, tccfg):
+        self.atype = tccfg.atype
+        if tccfg.cli != None:
+            self.cli = tccfg.cli
+        uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,))
         uaO.godead_timeout = 10
         uaO.compact_sip = self.compact_sip
-        event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, body, \
+        event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
           None, 'Alice Smith'))
-        self.done_cb = done_cb
-        self.portrange = portrange
+        self.done_cb = tccfg.done_cb
+        self.portrange = tccfg.portrange
         self.run(uaO, event)
 
     def run(self, ua, event):

@@ -31,7 +31,7 @@ from sippy.SipTransactionManager import SipTransactionManager
 from twisted.internet import reactor
 from random import random
 
-from a_test1 import fillhostport
+from lib.test_config import fillhostport
 
 from test_cases.t1 import b_test1
 from test_cases.t2 import b_test2

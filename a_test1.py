@@ -28,19 +28,7 @@
 
 from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Timeout import Timeout
-from sippy.SdpOrigin import SdpOrigin
 from twisted.internet import reactor
-
-from lib.GenIPs import genIP
-
-def fillhostport(sdp_body, portrange, atype = None):
-    sdp_body.content.o_header = SdpOrigin()
-    for i in range(0, len(sdp_body.content.sections)):
-        sect = sdp_body.content.sections[i]
-        if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
-            continue
-        sect.m_header.port = portrange.gennotinrange()
-        sect.c_header.atype, sect.c_header.addr = genIP(atype)
 
 from test_cases.t1 import a_test1
 from test_cases.t2 import a_test2
@@ -72,14 +60,15 @@ class a_test(object):
     nsubtests_running = 0
     rval = 1
 
-    def __init__(self, global_config, ttype, body, portrange, tests, test_timeout):
-        global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
+    def __init__(self, tcfg):
+        tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
 
         i = 0
+        ttype = tcfg.ttype
         if len(ttype) == 1:
             ttype += ttype
-        for subtest_class in ALL_TESTS * 2:
-            if subtest_class.cli not in tests:
+        for subtest_class in ALL_TESTS * len(ttype):
+            if subtest_class.cli not in tcfg.tests:
                 continue
             cli = subtest_class.cli
             if i >= len(ALL_TESTS):
@@ -87,14 +76,12 @@ class a_test(object):
             else:
                 atype = ttype[0]
             cli += '_ipv%s' % atype[-1]
-            sdp_body = body.getCopy()
-            fillhostport(sdp_body, portrange, atype)
-            subtest = subtest_class(global_config, sdp_body, self.subtest_done, \
-              portrange, atype, cli)
+            tccfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
+            subtest = subtest_class(tccfg)
             self.nsubtests_running += 1
             i += 1
         self.rval = self.nsubtests_running
-        Timeout(self.timeout, test_timeout, 1)
+        Timeout(self.timeout, tcfg.test_timeout, 1)
 
     def recvRequest(self, req, sip_t):
         return (req.genResponse(501, 'Not Implemented'), None, None)
