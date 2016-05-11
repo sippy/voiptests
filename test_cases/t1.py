@@ -55,13 +55,15 @@ class a_test1(object):
                 sdp_body.parse()
                 if not self.tccfg.checkhostport(sdp_body):
                     self.nerrs += 1
-                    raise ValueError('Alice: SDP body has failed validation')
+                    raise ValueError('Alice: SDP body has failed validation:\n%s' %
+                      str(sdp_body))
                 self.reinvite_done = True
             if not (isinstance(event, CCEventRing) and sdp_body == None):
                 sdp_body.parse()
                 if not self.tccfg.checkhostport(sdp_body):
                     self.nerrs += 1
-                    raise ValueError('Alice: SDP body has failed validation')
+                    raise ValueError('Alice: SDP body has failed validation:\n%s' %
+                      str(sdp_body))
         if self.reinvite_in_progress and (isinstance(event, CCEventDisconnect) or \
           isinstance(event, CCEventFail)):
             self.nerrs += 1
