@@ -41,4 +41,4 @@ class b_test12(b_test2):
             self.rval = 0
         else:
             print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
-        self.done_cb(self)
+        self.tccfg.done_cb(self)

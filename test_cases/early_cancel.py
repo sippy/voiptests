@@ -40,7 +40,7 @@ class a_test_early_cancel(a_test1):
             else:
                 print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
                   str(self.__class__), str(self.acct))
-        self.done_cb(self)
+        self.tccfg.done_cb(self)
 
 class b_test_early_cancel(b_test1):
     cli = 'bob_early_cancel'
@@ -54,4 +54,4 @@ class b_test_early_cancel(b_test1):
                 self.rval = 0
             else:
                 print 'Bob(%s): subclass %s failed, acct=%s' % (self.cli, str(self.__class__), str(self.acct))
-        self.done_cb(self)
+        self.tccfg.done_cb(self)

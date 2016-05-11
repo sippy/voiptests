@@ -63,7 +63,7 @@ if __name__ == '__main__':
     except getopt.GetoptError:
         usage(global_config)
 
-    tcfg = test_config()
+    tcfg = test_config(global_config)
     ttype = []
     for o, a in opts:
         if o == '-p':
@@ -110,7 +110,6 @@ if __name__ == '__main__':
     global_config['_sip_logger'] = sl
 
     from a_test1 import a_test
-    tcfg.global_config = global_config
     acore = a_test(tcfg)
 
     reactor.run(installSignalHandlers = True)

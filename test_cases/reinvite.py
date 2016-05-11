@@ -42,7 +42,7 @@ class a_test_reinvite(a_test1):
               str(self.__class__), str(self.acct))
         else:
             self.rval = 0
-        self.done_cb(self)
+        self.tccfg.done_cb(self)
 
 class b_test_reinvite(b_test1):
     cli = 'bob_reinvite'

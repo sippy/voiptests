@@ -61,17 +61,13 @@ ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
 
 class b_test(object):
     rval = 1
-    bodys = None
-    global_config = None
     nsubtests_running = 0
-    portrange = None
+    tcfg = None
 
-    def __init__(self, global_config, bodys, portrange, test_timeout):
-        global_config['_sip_tm'] = SipTransactionManager(global_config, self.recvRequest)
-        Timeout(self.timeout, test_timeout, 1)
-        self.bodys = bodys
-        self.global_config = global_config
-        self.portrange = portrange
+    def __init__(self, tcfg):
+        tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
+        Timeout(self.timeout, tcfg.test_timeout, 1)
+        self.tcfg = tcfg
 
     def recvRequest(self, req, sip_t):
         if req.getHFBody('to').getTag() != None:
@@ -85,15 +81,21 @@ class b_test(object):
                     break
             else:
                 return (req.genResponse(404, 'Test Does Not Exist'), None, None)
-            subtest = tclass(self.subtest_done, self.portrange)
+
             cli = req.getHFBody('from').getUrl().username
             if cli.endswith('_ipv6'):
-                subtest.atype = 'IP6'
+                atype = 'IP6'
+            else:
+                atype = 'IP4'
+            tccfg = self.tcfg.gen_tccfg(atype, self.subtest_done)
+
+            subtest = tclass(tccfg)
+
             self.nsubtests_running += 1
             self.rval += 1
-            sdp_body = self.bodys[0 if random() < 0.5 else 1].getCopy()
-            fillhostport(sdp_body, self.portrange, subtest.atype)
-            return subtest.answer(self.global_config, sdp_body, req, sip_t)
+            sdp_body = self.tcfg.bodys[0 if random() < 0.5 else 1].getCopy()
+            fillhostport(sdp_body, self.tcfg.portrange, tccfg.atype)
+            return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):

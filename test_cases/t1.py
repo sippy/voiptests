@@ -32,20 +32,6 @@ from sippy.UA import UA
 
 from random import random
 
-def checkhostport(sdp_body, portrange, atype):
-    for i in range(0, len(sdp_body.content.sections)):
-        sect = sdp_body.content.sections[i]
-        if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
-            continue
-        if not portrange.isinrange(sect.m_header.port):
-            return False
-        if atype == 'IP4' and sect.c_header.atype == 'IP4' and sect.c_header.addr == '127.0.0.1':
-            continue
-        if atype == 'IP6' and sect.c_header.atype == 'IP6' and sect.c_header.addr in ('::1', '0:0:0:0:0:0:0:1'):
-            continue
-        return False
-    return True
-
 class a_test1(object):
     cld = 'bob_1'
     cli = 'alice_1'
@@ -53,7 +39,6 @@ class a_test1(object):
     nerrs = 0
     connect_done = False
     disconnect_done = False
-    done_cb = None
     compact_sip = False
     disconnect_ival = 9.0
     cancel_ival = None
@@ -125,7 +110,7 @@ class a_test1(object):
     def alldone(self, ua):
         if self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
-        self.done_cb(self)
+        self.tccfg.done_cb(self)
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
@@ -138,7 +123,6 @@ class a_test1(object):
         uaO.compact_sip = self.compact_sip
         event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
           None, 'Alice Smith'))
-        self.done_cb = tccfg.done_cb
         self.run(uaO, event)
 
     def run(self, ua, event):
@@ -152,7 +136,6 @@ class b_test1(object):
     ring_done = False
     connect_done = False
     disconnect_done = False
-    done_cb = None
     body = None
     compact_sip = False
     atype = 'IP4'
@@ -162,10 +145,10 @@ class b_test1(object):
     cli = 'bob_1'
     acct = None
     nupdates = 0
+    tccfg = None
 
-    def __init__(self, done_cb, portrange):
-        self.done_cb = done_cb
-        self.portrange = portrange
+    def __init__(self, tccfg):
+        self.tccfg = tccfg
         if self.answer_ival == None:
             self.answer_ival = 9.0 + random() * 5.0
         if self.disconnect_ival == None:
@@ -174,7 +157,7 @@ class b_test1(object):
     def answer(self, global_config, body, req, sip_t):
         in_body = req.getBody()
         in_body.parse()
-        if not checkhostport(in_body, self.portrange, self.atype):
+        if not self.tccfg.checkhostport(in_body):
             self.nerrs += 1
             raise ValueError('Bob(%s): hostport validation has failed (%s):\n%s' % \
               (str(self.__class__), self.atype, in_body))
@@ -233,4 +216,4 @@ class b_test1(object):
             self.rval = 0
         else:
             print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
-        self.done_cb(self)
+        self.tccfg.done_cb(self)

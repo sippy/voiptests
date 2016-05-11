@@ -49,11 +49,12 @@ class test_config(object):
     nh_address4 = ('127.0.0.1', 5060)
     nh_address6 = ('[::1]', 5060)
 
-    def gen_tccfg(self, atype, done_cb, cli):
+    def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
         tccfg.global_config = self.global_config
-        tccfg.body = self.body.getCopy()
-        fillhostport(tccfg.body, self.portrange, atype)
+        if self.body != None:
+            tccfg.body = self.body.getCopy()
+            fillhostport(tccfg.body, self.portrange, atype)
         tccfg.done_cb = done_cb
         tccfg.cli = cli
         tccfg.atype = atype
@@ -63,3 +64,6 @@ class test_config(object):
             tccfg.nh_address = self.nh_address6
         tccfg.portrange = self.portrange
         return tccfg
+
+    def __init__(self, global_config):
+        self.global_config = global_config

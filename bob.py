@@ -34,6 +34,7 @@ from sippy.SipConf import SipConf
 from twisted.internet import reactor
 
 from lib.PortRange import PortRange
+from lib.test_config import test_config
 
 body_audio = 'v=0\r\n' + \
     'o=987654382 4650 4650 IN IP4 192.168.0.90\r\n' + \
@@ -68,10 +69,10 @@ if __name__ == '__main__':
         opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:')
     except getopt.GetoptError:
         usage(global_config)
-    portrange = PortRange('12000-15000')
+    tcfg = test_config(global_config)
     for o, a in opts:
         if o == '-p':
-            portrange = PortRange(a.strip())
+            tcfg.portrange = PortRange(a.strip())
             continue
         if o == '-l':
             saddr = a.strip()
@@ -83,18 +84,19 @@ if __name__ == '__main__':
             global_config['_sip_port'] = int(a)
             continue
         if o == '-T':
-            test_timeout = int(a)
+            tcfg.test_timeout = int(a)
             continue
 
     bodys = [MsgBody(x) for x in BODIES_ALL]
     for body in bodys:
         body.parse()
+    tcfg.bodys = tuple(bodys)
 
     sl = SipLogger('bob_ua')
     global_config['_sip_logger'] = sl
 
     from b_test1 import b_test
-    bcore = b_test(global_config, tuple(bodys), portrange, test_timeout)
+    bcore = b_test(tcfg)
 
     reactor.run(installSignalHandlers = True)
     sys.exit(bcore.rval)
