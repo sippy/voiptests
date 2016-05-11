@@ -67,7 +67,7 @@ if __name__ == '__main__':
     ttype = []
     for o, a in opts:
         if o == '-p':
-            portrange = PortRange(a.strip())
+            tcfg.portrange = PortRange(a.strip())
             continue
         if o == '-t':
             tcfg.tests = tuple(['alice_' + x for x in a.split(',')])
