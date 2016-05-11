@@ -27,14 +27,13 @@
 
 import sys, getopt
 sys.path.insert(0, 'dist/b2bua')
-sys.path.insert(0, 'lib')
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
 from twisted.internet import reactor
 
-from PortRange import PortRange
+from lib.PortRange import PortRange
 
 body_audio = 'v=0\r\n' + \
     'o=987654382 4650 4650 IN IP4 192.168.0.90\r\n' + \
