@@ -12,3 +12,4 @@ b2bua.log
 kamailio.cfg
 rtpproxy.log
 rtpproxy.opensips.output
+rtpproxy.kamailio.output
