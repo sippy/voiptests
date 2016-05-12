@@ -26,9 +26,10 @@
 from test_cases.t11 import a_test11
 from test_cases.t2 import b_test2
 
-# This tests verifies that settion setup timeout (which is set to 45 seconds
-# via -W45 option to the rtpproxy) is correctly executed and that media timeout
-# is properly deliered to the B2B causing session to be disconnected.
+# This tests verifies that settion half-setup no-media timeout (which is set
+# to 45 seconds via -W45 option to the rtpproxy) is correctly executed and that
+# media timeout is properly deliered to the B2B causing session to be
+# disconnected.
 
 class a_test12(a_test11):
     cld = 'bob_12'
