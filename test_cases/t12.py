@@ -26,6 +26,10 @@
 from test_cases.t11 import a_test11
 from test_cases.t2 import b_test2
 
+# This tests verifies that settion setup timeout (which is set to 45 seconds
+# via -W45 option to the rtpproxy) is correctly executed and that media timeout
+# is properly deliered to the B2B causing session to be disconnected.
+
 class a_test12(a_test11):
     cld = 'bob_12'
     cli = 'alice_12'
@@ -37,7 +41,8 @@ class b_test12(b_test2):
     ring_ival = 55.0
 
     def alldone(self, ua):
-        if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
+        #print 'b_test12.alldone', self.ring_done
+        if not self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
             print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
