@@ -40,6 +40,8 @@ class b_test3(b_test1):
     cli = 'bob_3'
 
     def connect(self, ua):
+        if self.connect_done or self.connect_done:
+            return
         event = CCEventFail((501, 'Post-ring Failure'), \
           origin = 'switch')
         ua.recvEvent(event)

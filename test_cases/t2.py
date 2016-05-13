@@ -36,6 +36,8 @@ class b_test2(b_test1):
     cli = 'bob_2'
 
     def ring(self, ua):
+        if self.connect_done or self.disconnect_done:
+            return
         event = CCEventRing((183, 'Session Progress', self.body), \
           origin = 'switch')
         Timeout(self.connect, self.answer_ival, 1, ua)

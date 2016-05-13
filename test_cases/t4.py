@@ -36,6 +36,8 @@ class b_test4(b_test1):
     cli = 'bob_4'
 
     def ring(self, ua):
+        if self.connect_done or self.disconnect_done:
+            return
         event = CCEventFail((502, 'Pre-ring Failure'), \
           origin = 'switch')
         ua.recvEvent(event)

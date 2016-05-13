@@ -36,6 +36,8 @@ class b_test5(b_test2):
     cli = 'bob_5'
 
     def connect(self, ua):
+        if self.connect_done or self.disconnect_done:
+            return
         event = CCEventFail((503, 'Post-early-session Failure'), \
           origin = 'switch')
         ua.recvEvent(event)

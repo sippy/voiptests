@@ -31,6 +31,8 @@ class a_test_reinv_brkn2(a_test_reinv_fail):
     cli = 'alice_reinv_brkn2'
 
     def reinvite(self, ua):
+        if not self.connect_done or self.disconnect_done:
+            return
         sdp_body_bak = ua.lSDP
         ua.lSDP = sdp_body_bak.getCopy()
         for sect in ua.lSDP.content.sections:
