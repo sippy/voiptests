@@ -94,11 +94,13 @@ class a_test1(object):
         return 'Alice(%s)' % (self.cli,)
 
     def disconnect(self, ua):
+        if self.disconnect_done:
+            return
         event = CCEventDisconnect(origin = 'switch')
         ua.recvEvent(event)
 
     def cancel(self, ua):
-        if self.connect_done:
+        if self.connect_done or self.disconnect_done:
             return
         event = CCEventDisconnect(origin = 'switch')
         ua.recvEvent(event)
@@ -157,6 +159,8 @@ class b_test1(object):
             self.disconnect_ival = 5.0 + random() * 10.0
 
     def answer(self, global_config, body, req, sip_t):
+        if self.connect_done or self.disconnect_done:
+            return
         in_body = req.getBody()
         in_body.parse()
         if not self.tccfg.checkhostport(in_body):
@@ -176,6 +180,9 @@ class b_test1(object):
         return ua.recvRequest(req, sip_t)
 
     def ring(self, ua):
+        #print 'Bob(%s): ring: %s %s' % (self.cli, self.ring_done, self.disconnect_done)
+        if self.connect_done or self.disconnect_done:
+            return
         event = CCEventRing((180, 'Ringing', None), origin = 'switch')
         Timeout(self.connect, self.answer_ival, 1, ua)
         ua.recvEvent(event)
@@ -185,12 +192,16 @@ class b_test1(object):
         #if random() > 0.3:
         #    ua.recvEvent(CCEventFail((666, 'Random Failure')))
         #    return
+        if self.connect_done or self.disconnect_done:
+            return
         event = CCEventConnect((200, 'OK', self.body), origin = 'switch')
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         ua.recvEvent(event)
         self.connect_done = True
 
     def disconnect(self, ua):
+        if self.disconnect_done:
+            return
         event = CCEventDisconnect(origin = 'switch')
         ua.recvEvent(event)
 
@@ -211,7 +222,7 @@ class b_test1(object):
         if origin in ('switch', 'caller'):
             self.disconnect_done = True
         self.acct = ua.getAcct()
-        print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct
+        print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done
 
     def alldone(self, ua):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
