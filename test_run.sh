@@ -9,6 +9,12 @@ uname -a
 ${CC} --version
 
 rtpproxy_cmds_gen() {
+  if [ "${RTPP_PRE_STAT_TIMEOUT}" != "" ]
+  then
+    sleep ${RTPP_PRE_STAT_TIMEOUT}
+    cat "${BUILDDIR}/rtpproxy.stats.input"
+    RTPP_STAT_TIMEOUT=$((${RTPP_STAT_TIMEOUT} - ${RTPP_PRE_STAT_TIMEOUT}))
+  fi
   sleep ${RTPP_STAT_TIMEOUT}
   cat "${BUILDDIR}/rtpproxy.stats.input"
 }
