@@ -26,6 +26,12 @@
 from test_cases.t11 import a_test11
 from test_cases.t12 import b_test12
 
+# This tests verifies that settion fully-setup no-media timeout (which is set
+# to 60 seconds by default in the rtpproxy) is correctly executed and that
+# media timeout is properly deliered to the B2B causing session to be
+# disconnected. The no-media timeout is expected to hit around 61.0 sec mark,
+# since the session is to be refreshed at 1.0 sec via 183.
+
 class a_test13(a_test11):
     cld = 'bob_13'
     cli = 'alice_13'
@@ -36,3 +42,11 @@ class b_test13(b_test12):
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 70.0
+
+    def alldone(self, ua):
+        #print 'b_test13.alldone', self.ring_done
+        if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
+            self.rval = 0
+        else:
+            print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
+        self.tccfg.done_cb(self)
