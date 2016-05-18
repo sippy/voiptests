@@ -26,6 +26,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys, getopt
+from time import sleep
+
 sys.path.insert(0, 'dist/b2bua')
 
 from sippy.MsgBody import MsgBody
@@ -59,12 +61,13 @@ if __name__ == '__main__':
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46n:N:')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46n:N:w:')
     except getopt.GetoptError:
         usage(global_config)
 
     tcfg = test_config(global_config)
     ttype = []
+    pre_wait = None
     for o, a in opts:
         if o == '-p':
             tcfg.portrange = PortRange(a.strip())
@@ -100,6 +103,9 @@ if __name__ == '__main__':
             nh_address6[1] = int(nh_address6[1])
             tcfg.nh_address6 = tuple(nh_address6)
             continue
+        if o == '-w':
+            pre_wait = float(a)
+            continue
     if len(ttype) > 0:
         tcfg.ttype = tuple(ttype)
 
@@ -110,6 +116,8 @@ if __name__ == '__main__':
     global_config['_sip_logger'] = sl
 
     from a_test1 import a_test
+    if pre_wait != None:
+        sleep(pre_wait)
     acore = a_test(tcfg)
 
     reactor.run(installSignalHandlers = True)
