@@ -68,7 +68,7 @@ if [ "${MM_TYPE}" = "b2bua" ]
 then
   MM_SOCK="unix:${BASEDIR}/b2bua.sock"
   # Python b2bua needs slightly more time to init everything
-  MM_INIT_DELAY=4
+  MM_INIT_DELAY=5
   # RTP sessions might take up to 60 seconds to disconnect on no media
   RTPP_STAT_TIMEOUT=$((70 + ${MM_INIT_DELAY}))
   RTPP_PRE_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
