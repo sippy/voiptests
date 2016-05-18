@@ -131,7 +131,8 @@ do
   i=$((${i} + 1))
 done
 start_mm
-python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 -T ${ALICE_TIMEOUT} 2>alice.log &
+python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
+ -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
 python bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
