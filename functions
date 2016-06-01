@@ -62,7 +62,7 @@ RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
 ALICE_TIMEOUT=45
 BOB_TIMEOUT=45
 TEST_SET="1,2,3,4,5,6,7,8,9,10,early_cancel"
-TEST_SET="${TEST_SET},reinvite,reinv_fail"
+TEST_SET="${TEST_SET},reinvite,reinv_fail,reinv_onhold"
 
 if [ "${MM_TYPE}" = "b2bua" ]
 then
@@ -115,10 +115,13 @@ report_rc_log() {
   then
     ok "${@}"
   else
-    for logf in ${FAIL_LOGFILES}
-    do
-      grep -v 'DBUG:main:GLOBAL:' "${logf}" | grep -v 'DBUG:rtpp_proc_async_run:GLOBAL:' >&2
-    done
+    if [ "${VT_NO_LOG_DUMP}" == "" ]
+    then
+      for logf in ${FAIL_LOGFILES}
+      do
+        grep -v 'DBUG:main:GLOBAL:' "${logf}" | grep -v 'DBUG:rtpp_proc_async_run:GLOBAL:' >&2
+      done
+    fi
     fail_rc "${RC}" "${@}"
   fi
 }
