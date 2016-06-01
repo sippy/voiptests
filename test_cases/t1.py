@@ -45,6 +45,7 @@ class a_test1(object):
     reinvite_in_progress = False
     reinvite_done = False
     tccfg = None
+    debug_lvl = 0
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
@@ -68,24 +69,23 @@ class a_test1(object):
           isinstance(event, CCEventFail)):
             self.nerrs += 1
             raise ValueError('Alice: re-INVITE has failed')
-        print '%s: Incoming event: %s' % (self.my_name(), event)
+        if self.debug_lvl > 0:
+            print '%s: Incoming event: %s' % (self.my_name(), event)
 
     def connected(self, ua, rtime, origin):
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         self.connect_done = True
 
-    def reinvite(self, ua):
+    def reinvite(self, ua, alter_port = True):
         if not self.connect_done or self.disconnect_done:
             return
         sdp_body = ua.lSDP.getCopy()
         sdp_body.content.o_header.version += 1
-        for sect in sdp_body.content.sections:
-            if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
-                continue
-            sect.m_header.port += 10
-            while 'sendrecv' in sect.a_headers:
-                sect.a_headers.remove('sendrecv')
-            sect += 'a=sendonly'
+        if alter_port:
+            for sect in sdp_body.content.sections:
+                if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
+                    continue
+                sect.m_header.port += 10
         event = CCEventUpdate(sdp_body, origin = 'switch')
         self.reinvite_in_progress = True
         ua.recvEvent(event)
@@ -150,6 +150,7 @@ class b_test1(object):
     acct = None
     nupdates = 0
     tccfg = None
+    debug_lvl = 0
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
@@ -206,7 +207,8 @@ class b_test1(object):
         ua.recvEvent(event)
 
     def recvEvent(self, event, ua):
-        print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
+        if self.debug_lvl > 0:
+            print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
         if isinstance(event, CCEventUpdate):
             sdp_body = ua.lSDP.getCopy()
             for sect in sdp_body.content.sections:
