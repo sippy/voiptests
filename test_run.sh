@@ -9,7 +9,7 @@ uname -a
 ${CC} --version
 
 rtpproxy_cmds_gen() {
-  if [ "${RTPP_PRE_STAT_TIMEOUT}" != "" ]
+  if [ x"${RTPP_PRE_STAT_TIMEOUT}" != x"" ]
   then
     sleep ${RTPP_PRE_STAT_TIMEOUT}
     cat "${BUILDDIR}/rtpproxy.stats.input"
@@ -96,7 +96,7 @@ do
   kill -TERM "${pid}" || true
 done
 
-if [ "${MM_SOCK}" != "" ]
+if [ x"${MM_SOCK}" != x"" ]
 then
   RTPP_NOTIFY_ARG="-n ${MM_SOCK} -W 45"
 fi
@@ -168,7 +168,7 @@ RTPP_CHECK_RC="${?}"
 report_rc_log "${ALICE_RC}" "alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
 report_rc_log "${RTPP_RC}" rtpproxy.log "Checking RTPproxy exit code"
-if [ "${MM_LOG}" != "" ]
+if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
 else

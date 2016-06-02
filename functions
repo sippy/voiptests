@@ -115,7 +115,7 @@ report_rc_log() {
   then
     ok "${@}"
   else
-    if [ "${VT_NO_LOG_DUMP}" == "" ]
+    if [ x"${VT_NO_LOG_DUMP}" == x"" ]
     then
       for logf in ${FAIL_LOGFILES}
       do
