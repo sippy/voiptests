@@ -69,7 +69,7 @@ class a_test(object):
         if len(ttype) == 1:
             ttype += ttype
         for subtest_class in ALL_TESTS * len(ttype):
-            if subtest_class.cli not in tcfg.tests:
+            if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
                 continue
             cli = subtest_class.cli
             if i >= len(ALL_TESTS):

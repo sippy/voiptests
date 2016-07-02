@@ -73,7 +73,10 @@ if __name__ == '__main__':
             tcfg.portrange = PortRange(a.strip())
             continue
         if o == '-t':
-            tcfg.tests = tuple(['alice_' + x for x in a.split(',')])
+            if a != '*':
+                tcfg.tests = tuple(['alice_' + x for x in a.split(',')])
+            else:
+                tcfg.tests = None
             continue
         if o == '-l':
             saddr = a.strip()
