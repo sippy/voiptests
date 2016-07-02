@@ -21,7 +21,7 @@ BASEDIR="$(readlink -f -- $BASEDIR)"
 BUILDDIR="${BUILDDIR:-${BASEDIR}}"
 
 RTPPROXY_DIST="${BUILDDIR}/dist/rtpproxy"
-RTPPROXY=${RTPPROXY_DIST}/src/rtpproxy_debug
+RTPPROXY="${RTPPROXY_DIST}/src/rtpproxy_debug --dso ${RTPPROXY_DIST}/modules/acct_csv/.libs/rtpp_acct_csv_debug.so"
 RTPP_SOCK_BARE="${BASEDIR}/rtpproxy.sock"
 RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
