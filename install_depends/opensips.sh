@@ -35,6 +35,7 @@ else
   git clone git://github.com/sippy/b2bua.git
 fi
 git clone -b "${RTPP_BRANCH}" git://github.com/sippy/rtpproxy.git
+git -C rtpproxy submodule update --init --recursive
 if [ "${MM_TYPE}" = "kamailio" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/kamailio/kamailio.git kamailio
