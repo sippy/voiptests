@@ -2,6 +2,6 @@ nsess_created=30 nsess_destroyed=30 nsess_timeout=0 nsess_complete=18 nsess_nort
 #if KAMAILIO_VER_FULL != master
 ncmds_rcvd=138 ncmds_succd=137 ncmds_errs=0 ncmds_repld=137
 #else
-ncmds_rcvd=142 ncmds_succd=141 ncmds_errs=0 ncmds_repld=141
+ncmds_rcvd=134 ncmds_succd=133 ncmds_errs=0 ncmds_repld=133
 #endif
 MEMDEB: all clear
