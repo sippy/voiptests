@@ -30,12 +30,13 @@ class a_test_early_cancel(a_test1):
     cli = 'alice_early_cancel'
     compact_sip = False
     cancel_ival = 0.01
+    max_delay = 0.5
 
     def alldone(self, ua):
         if self.disconnect_done:
             duration, delay, connected, disconnected = self.acct
             if (duration, connected, disconnected) == (0, False, True) and \
-              delay < 0.5:
+              round(delay, 1) < self.max_delay:
                 self.rval = 0
             else:
                 print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
@@ -50,7 +51,7 @@ class b_test_early_cancel(b_test1):
         if self.disconnect_done:
             duration, delay, connected, disconnected = self.acct
             if (duration, connected, disconnected) == (0, False, True) and \
-              delay < self.max_delay:
+              round(delay, 1) < self.max_delay:
                 self.rval = 0
             else:
                 print 'Bob(%s): subclass %s failed, acct=%s' % (self.cli, str(self.__class__), str(self.acct))
