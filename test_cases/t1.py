@@ -200,6 +200,9 @@ class b_test1(object):
         ua.recvEvent(event)
         self.connect_done = True
 
+    def my_name(self):
+        return 'Bob(%s)' % (self.cli,)
+
     def disconnect(self, ua):
         if self.disconnect_done:
             return
