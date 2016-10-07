@@ -25,11 +25,7 @@
 
 from test_cases.t1 import a_test1, b_test1
 
-class a_test_early_cancel(a_test1):
-    cld = 'bob_early_cancel'
-    cli = 'alice_early_cancel'
-    compact_sip = False
-    cancel_ival = 0.01
+class test_early_cancel(object):
     max_delay = 0.5
 
     def alldone(self, ua):
@@ -43,16 +39,11 @@ class a_test_early_cancel(a_test1):
                   str(self.__class__), str(self.acct))
         self.tccfg.done_cb(self)
 
-class b_test_early_cancel(b_test1):
-    cli = 'bob_early_cancel'
-    max_delay = 0.5
+class a_test_early_cancel(a_test1, test_early_cancel):
+    cld = 'bob_early_cancel'
+    cli = 'alice_early_cancel'
+    compact_sip = False
+    cancel_ival = 0.01
 
-    def alldone(self, ua):
-        if self.disconnect_done:
-            duration, delay, connected, disconnected = self.acct
-            if (duration, connected, disconnected) == (0, False, True) and \
-              round(delay, 1) < self.max_delay:
-                self.rval = 0
-            else:
-                print 'Bob(%s): subclass %s failed, acct=%s' % (self.cli, str(self.__class__), str(self.acct))
-        self.tccfg.done_cb(self)
+class b_test_early_cancel(b_test1, test_early_cancel):
+    cli = 'bob_early_cancel'
