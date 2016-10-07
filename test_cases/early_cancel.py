@@ -39,11 +39,11 @@ class test_early_cancel(object):
                   str(self.__class__), str(self.acct))
         self.tccfg.done_cb(self)
 
-class a_test_early_cancel(a_test1, test_early_cancel):
+class a_test_early_cancel(test_early_cancel, a_test1):
     cld = 'bob_early_cancel'
     cli = 'alice_early_cancel'
     compact_sip = False
     cancel_ival = 0.01
 
-class b_test_early_cancel(b_test1, test_early_cancel):
+class b_test_early_cancel(test_early_cancel, b_test1):
     cli = 'bob_early_cancel'
