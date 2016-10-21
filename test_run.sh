@@ -27,6 +27,17 @@ start_mm() {
   MM_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
   MM_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`
   case "${MM_TYPE}" in
+  go-b2bua)
+    MM_LOG="${BUILDDIR}/b2bua.log"
+    MM_SIPLOG="${BUILDDIR}/sip.log"
+    test -e ${MM_SIPLOG} && rm ${MM_SIPLOG}
+    ${BUILDDIR}/dist/go-b2bua/b2bua_radius/b2bua_radius -L ${MM_SIPLOG} \
+        -static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
+        -rtp_proxy_clients="${RTPP_SOCK_TEST}" -b2bua_socket="${MM_SOCK}" -rtpp_hrtb_ival=120 \
+        -rtpp_hrtb_retr_ival=120 >${MM_LOG} 2<&1 &
+    MM_PID=${!}
+    ALICE_ARGS="-46"
+    ;;
   b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
     if [ -e ${MM_LOG} ]

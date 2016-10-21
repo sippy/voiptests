@@ -64,7 +64,7 @@ BOB_TIMEOUT=45
 TEST_SET="1,2,3,4,5,6,7,8,9,10,early_cancel"
 TEST_SET="${TEST_SET},reinvite,reinv_fail,reinv_onhold"
 
-if [ "${MM_TYPE}" = "b2bua" ]
+if [ "${MM_TYPE}" = "b2bua" -o "${MM_TYPE}" = "go-b2bua" ]
 then
   MM_SOCK="unix:${BASEDIR}/b2bua.sock"
   # Python b2bua needs slightly more time to init everything
