@@ -1,0 +1,5 @@
+nsess_created=42 nsess_destroyed=42 nsess_timeout=8 nsess_complete=0 nsess_nortp=0 nsess_owrtp=0 nsess_nortcp=0 nsess_owrtcp=0
+ncmds_rcvd=151 ncmds_succd=142 ncmds_errs=8 ncmds_repld=150
+nsess_created=42 nsess_destroyed=42 nsess_timeout=8 nsess_complete=0 nsess_nortp=0 nsess_owrtp=0 nsess_nortcp=0 nsess_owrtcp=0
+ncmds_rcvd=153 ncmds_succd=144 ncmds_errs=8 ncmds_repld=152
+MEMDEB: all clear
