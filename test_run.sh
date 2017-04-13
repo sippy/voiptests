@@ -61,6 +61,7 @@ start_mm() {
       KROOT="${BUILDDIR}/dist/kamailio"
     else
       KROOT="${BUILDDIR}/dist/kamailio/src"
+      KOPTS="-Y /tmp"
     fi
     KBIN="${KROOT}/kamailio"
     KAM_MPATH="${KROOT}/modules/"
@@ -71,7 +72,7 @@ start_mm() {
        ${file} | grep -v '^#' > ${file%.in}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    "${KBIN}" -f kamailio.cfg -DD -E -n 1 &
+    "${KBIN}" ${KOPTS} -f kamailio.cfg -DD -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
     ;;
