@@ -9,7 +9,11 @@ ncmds_rcvd=116 ncmds_succd=115 ncmds_errs=0 ncmds_repld=115
 # if OPENSIPS_VER_FULL == 111
 ncmds_rcvd=130 ncmds_succd=129 ncmds_errs=0 ncmds_repld=129
 # else
+#  if OPENSIPS_VER < 22
 ncmds_rcvd=121 ncmds_succd=120 ncmds_errs=0 ncmds_repld=120
+#  else
+ncmds_rcvd=161 ncmds_succd=160 ncmds_errs=0 ncmds_repld=160
+#  endif
 # endif
 #endif
 MEMDEB: all clear
