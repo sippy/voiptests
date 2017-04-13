@@ -1,4 +1,4 @@
-mpath="dist/kamailio/modules/"
+mpath=KAM_MPATH
 
 loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
