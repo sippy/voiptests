@@ -62,7 +62,7 @@ start_mm() {
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    if [ ${MM_VER} != "master" ]
+    if [ "${MM_BRANCH}" != "master" ]
     then
       KBIN="${BUILDDIR}/dist/kamailio/kamailio"
     else
