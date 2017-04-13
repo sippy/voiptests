@@ -4,7 +4,7 @@ OS=`uname`
 
 if [ "${OS}" = "FreeBSD" ]
 then
-  CC=gcc48
+  CC=cc
   MAKE_CMD=gmake
 else
   CC=gcc
