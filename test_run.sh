@@ -56,18 +56,21 @@ start_mm() {
     ;;
 
   kamailio)
+    if [ "${MM_BRANCH}" != "master" ]
+    then
+      KROOT="${BUILDDIR}/dist/kamailio"
+    else
+      KROOT="${BUILDDIR}/dist/kamailio/src"
+    fi
+    KBIN="${KROOT}/kamailio"
+    KAM_MPATH="${KROOT}/modules/"
     for file in kamailio.cfg.in rtpproxy.kamailio.output.in
     do
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
-       -DKAMAILIO_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
+       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\" \
+       ${file} | grep -v '^#' > ${file%.in}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    if [ "${MM_BRANCH}" != "master" ]
-    then
-      KBIN="${BUILDDIR}/dist/kamailio/kamailio"
-    else
-      KBIN="${BUILDDIR}/dist/kamailio/src/kamailio"
-    fi
     "${KBIN}" -f kamailio.cfg -DD -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
