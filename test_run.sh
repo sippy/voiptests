@@ -106,7 +106,7 @@ then
   rm "${RTPP_SOCK_BARE}"
 fi
 
-MR_TIME="`python ${RTPPROXY_DIST}/python/getmonotime.py -S ${RTPPROXY_DIST}/python/sippy_lite -r`"
+MR_TIME="`python ${RTPPROXY_DIST}/python/sippy_lite/sippy/tools/getmonotime.py -S ${RTPPROXY_DIST}/python/sippy_lite -r`"
 SIPLOG_TSTART="`echo ${MR_TIME} | awk '{print $2}'`"
 export SIPLOG_TSTART
 SIPLOG_TFORM="rel"
