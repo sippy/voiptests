@@ -29,6 +29,7 @@
 from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Timeout import Timeout
 from twisted.internet import reactor
+from random import shuffle
 
 from test_cases.t1 import a_test1
 from test_cases.t2 import a_test2
@@ -68,19 +69,28 @@ class a_test(object):
         ttype = tcfg.ttype
         if len(ttype) == 1:
             ttype += ttype
-        for subtest_class in ALL_TESTS * len(ttype):
+        atests = ALL_TESTS * len(ttype)
+        for subtest_class in atests:
             if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
+                subtest_class.disabled = True
+                i += 1
                 continue
+            subtest_class.disabled = False
             cli = subtest_class.cli
             if i >= len(ALL_TESTS):
                 atype = ttype[1]
             else:
                 atype = ttype[0]
             cli += '_ipv%s' % atype[-1]
-            tccfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
-            subtest = subtest_class(tccfg)
-            self.nsubtests_running += 1
+            subtest_class._tccfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
             i += 1
+        atests = list(atests)
+        shuffle(atests)
+        for subtest_class in atests:
+            if subtest_class.disabled:
+                continue
+            subtest = subtest_class(subtest_class._tccfg)
+            self.nsubtests_running += 1
         self.rval = self.nsubtests_running
         Timeout(self.timeout, tcfg.test_timeout, 1)
 
