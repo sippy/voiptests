@@ -1,19 +1,22 @@
 from random import random
 
 class PortRange(object):
+    abs_minp = 1024
+    abs_maxp = 65535
     minp = None
     maxp = None
 
     def __init__(self, s):
         sparts = s.split('-', 1)
         self.minp, self.maxp = int(sparts[0]), int(sparts[1])
-        if self.minp <= 1 or self.maxp >= 65536:
+        if self.minp < self.abs_minp or self.maxp > self.abs_maxp:
             raise ValueError('Invalid portrange: %s' % s)
 
     def gennotinrange(self):
         while True:
             portn = 2 * (1 + int(32765.0 * random()))
-            if portn < self.minp or portn > self.maxp:
+            if (portn >= self.abs_minp and portn <= self.abs_maxp) and \
+              (portn < self.minp or portn > self.maxp):
                 return portn
 
     def isinrange(self, portn):
