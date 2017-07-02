@@ -23,6 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from random import random
+
 from sippy.CCEvents import CCEventUpdate
 from sippy.Timeout import Timeout
 
@@ -31,9 +33,14 @@ from test_cases.reinvite import a_test_reinvite, b_test_reinvite
 class a_test_reinv_onhold(a_test_reinvite):
     cld = 'bob_reinv_onhold'
     cli = 'alice_reinv_onhold'
-    next_to_div = 2.0
-    next_to_max = 5.0
-    next_to_mul = 3.1415926
+    sched = None
+
+    def __init__(self, *args, **kwargs):
+        while True:
+            self.sched = [0.6 + (random() * 2.1) for x in range(0, 4)]
+            if sum(self.sched) < (self.disconnect_ival / 2.0):
+                break
+        a_test_reinvite.__init__(self, *args, **kwargs)
 
     def reinvite(self, ua):
         if not self.connect_done or self.disconnect_done:
@@ -49,19 +56,15 @@ class a_test_reinv_onhold(a_test_reinvite):
                 sect.a_headers.remove('sendrecv')
         rval = a_test_reinvite.reinvite(self, ua, alter_port = False)
         ua.lSDP = sdp_body_bak
-        if self.next_to_div <= self.next_to_max:
+        if len(self.sched) > 0:
             # Take call off-hold little bit later
-            self.next_to_div += 1.0
-            Timeout(self.off_hold, self.disconnect_ival / (self.next_to_div ** self.next_to_mul), \
-              1, ua)
+            Timeout(self.off_hold, self.sched.pop(), 1, ua)
         return rval
 
     def off_hold(self, ua):
         a_test_reinvite.reinvite(self, ua, alter_port = False)
-        if self.next_to_div <= self.next_to_max:
-            self.next_to_div += 1.0
-            Timeout(self.reinvite, self.disconnect_ival / (self.next_to_div ** self.next_to_mul), \
-              1, ua)
+        if len(self.sched) > 0:
+            Timeout(self.reinvite, self.sched.pop(), 1, ua)
 
 class b_test_reinv_onhold(b_test_reinvite):
     cli = 'bob_reinv_onhold'
