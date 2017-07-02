@@ -32,20 +32,29 @@ from sippy.UA import UA
 
 from random import random
 
-class a_test1(object):
-    cld = 'bob_1'
-    cli = 'alice_1'
+class test(object):
     rval = 1
     nerrs = 0
     connect_done = False
     disconnect_done = False
     compact_sip = False
+    tccfg = None
+    debug_lvl = 0
+    call_id = None
+    godead_timeout = 10.0
+    acct = None
+
+    def failed_msg(self):
+        msg = '%s: subclass %s failed, acct=%s' % (self.my_name(), \
+          str(self.__class__), str(self.acct))
+
+class a_test1(test):
+    cld = 'bob_1'
+    cli = 'alice_1'
     disconnect_ival = 9.0
     cancel_ival = None
     reinvite_in_progress = False
     reinvite_done = False
-    tccfg = None
-    debug_lvl = 0
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
@@ -109,7 +118,8 @@ class a_test1(object):
         if origin in ('switch', 'callee'):
             self.disconnect_done = True
         self.acct = ua.getAcct()
-        print '%s: disconnected' % self.my_name(), rtime, origin, result, self.acct
+        if self.debug_lvl > 0:
+            print '%s: disconnected' % self.my_name(), rtime, origin, result, self.acct
 
     def alldone(self, ua):
         if self.connect_done and self.disconnect_done and self.nerrs == 0:
@@ -123,8 +133,9 @@ class a_test1(object):
         uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,))
-        uaO.godead_timeout = 10
+        uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
+        self.call_id = uaO.cId
         event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
           None, 'Alice Smith'))
         self.run(uaO, event)
@@ -134,23 +145,15 @@ class a_test1(object):
         if self.cancel_ival != None:
             Timeout(self.cancel, self.cancel_ival, 1, ua)
 
-class b_test1(object):
-    rval = 1
-    nerrs = 0
+class b_test1(test):
     ring_done = False
-    connect_done = False
-    disconnect_done = False
     body = None
-    compact_sip = False
     atype = 'IP4'
     ring_ival = 5.0
     answer_ival = None
     disconnect_ival = None
     cli = 'bob_1'
-    acct = None
     nupdates = 0
-    tccfg = None
-    debug_lvl = 0
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
@@ -171,10 +174,11 @@ class b_test1(object):
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
-        uaA.godead_timeout = 10
+        uaA.godead_timeout = self.godead_timeout
         uaA.compact_sip = self.compact_sip
         Timeout(self.ring, self.ring_ival, 1, uaA)
         self.body = body
+        self.call_id = uaA.cId
         return self.complete_answer(uaA, req, sip_t)
 
     def complete_answer(self, ua, req, sip_t):
@@ -227,11 +231,13 @@ class b_test1(object):
         if origin in ('switch', 'caller'):
             self.disconnect_done = True
         self.acct = ua.getAcct()
-        print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done
+        if self.debug_lvl > 0:
+            print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done
 
     def alldone(self, ua):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
-            print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
+            if self.debug_lvl > -1:
+                print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
         self.tccfg.done_cb(self)

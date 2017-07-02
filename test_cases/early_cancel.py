@@ -35,8 +35,8 @@ class test_early_cancel(object):
               round(delay, 1) < self.max_delay:
                 self.rval = 0
             else:
-                print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
-                  str(self.__class__), str(self.acct))
+                if self.debug_lvl > -1:
+                    print(self.failed_msg())
         self.tccfg.done_cb(self)
 
 class a_test_early_cancel(test_early_cancel, a_test1):
