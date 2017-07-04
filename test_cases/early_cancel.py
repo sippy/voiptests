@@ -37,6 +37,7 @@ class test_early_cancel(object):
             else:
                 if self.debug_lvl > -1:
                     print(self.failed_msg())
+                    self.finfo_displayed = True
         self.tccfg.done_cb(self)
 
 class a_test_early_cancel(test_early_cancel, a_test1):

@@ -43,10 +43,11 @@ class test(object):
     call_id = None
     godead_timeout = 10.0
     acct = None
+    finfo_displayed = False
 
     def failed_msg(self):
-        msg = '%s: subclass %s failed, acct=%s' % (self.my_name(), \
-          str(self.__class__), str(self.acct))
+        msg = '%s: subclass %s failed, call_id=%s, acct=%s' % (self.my_name(), \
+          str(self.__class__), str(self.call_id), str(self.acct))
         return msg
 
 class a_test1(test):
@@ -239,6 +240,7 @@ class b_test1(test):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
-            if self.debug_lvl > -1:
-                print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
+            if self.debug_lvl > -1 and not self.finfo_displayed:
+                print(self.failed_msg())
+                self.finfo_displayed = True
         self.tccfg.done_cb(self)

@@ -88,7 +88,8 @@ class b_test_reinv_onhold(b_test_reinvite):
         if self.onhold_count != 3 or self.offhold_count != 2:
             if self.debug_lvl > -1:
                 fmsg = self.failed_msg()
-                print('%s: onhold_count = %d, offhold_count = %d\n' % \
+                print('%s: onhold_count = %d, offhold_count = %d' % \
                   (fmsg, self.onhold_count, self.offhold_count))
+                self.finfo_displayed = True
             self.nerrs += 1
         return b_test_reinvite.alldone(self, ua)
