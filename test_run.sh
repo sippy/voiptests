@@ -130,10 +130,11 @@ rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -f -s stdio: -s "${RTP
   -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
   -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 -6 '/::' -l '0.0.0.0' ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
 RTPP_PID=${!}
+sleep 1
 i=0
 while [ ! -e "${RTPP_SOCK_BARE}" ]
 do
-  if [ ${i} -gt 5 ]
+  if [ ${i} -gt 4 ]
   then
     report_rc_log 1 "rtpproxy.rout rtpproxy.log" "Waiting for the RTPproxy to become ready"
   fi
