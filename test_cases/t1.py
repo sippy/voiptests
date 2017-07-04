@@ -47,6 +47,7 @@ class test(object):
     def failed_msg(self):
         msg = '%s: subclass %s failed, acct=%s' % (self.my_name(), \
           str(self.__class__), str(self.acct))
+        return msg
 
 class a_test1(test):
     cld = 'bob_1'
