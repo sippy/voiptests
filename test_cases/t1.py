@@ -137,8 +137,8 @@ class a_test1(test):
           dead_cbs = (self.alldone,))
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
-        self.call_id = uaO.cId
-        event = CCEventTry((SipCallId(), SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
+        self.call_id = SipCallId()
+        event = CCEventTry((self.call_id, SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
           None, 'Alice Smith'))
         self.run(uaO, event)
 
@@ -180,7 +180,7 @@ class b_test1(test):
         uaA.compact_sip = self.compact_sip
         Timeout(self.ring, self.ring_ival, 1, uaA)
         self.body = body
-        self.call_id = uaA.cId
+        self.call_id = req.getHFBody('call-id')
         return self.complete_answer(uaA, req, sip_t)
 
     def complete_answer(self, ua, req, sip_t):
