@@ -27,26 +27,38 @@ from test_cases.t1 import a_test1, b_test1
 
 from sippy.Timeout import Timeout
 
-class a_test_reinvite(a_test1):
+class test_reinvite(object):
+    reinvite = None
+
+    def connected(self, ua):
+        if self.reinvite != None:
+            Timeout(self.reinvite, self.disconnect_ival / 2, 1, ua)
+
+class a_test_reinvite(a_test1, test_reinvite):
     cld = 'bob_reinvite'
     cli = 'alice_reinvite'
     compact_sip = False
 
     def connected(self, ua, rtime, origin):
-        Timeout(self.reinvite, self.disconnect_ival / 2, 1, ua)
+        test_reinvite.connected(self, ua)
         a_test1.connected(self, ua, rtime, origin)
 
     def alldone(self, ua):
         if not self.reinvite_done or not self.disconnect_done or self.nerrs > 0:
-            print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
-              str(self.__class__), str(self.acct))
+            if self.debug_lvl > -1:
+                print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
+                  str(self.__class__), str(self.acct))
         else:
             self.rval = 0
         self.tccfg.done_cb(self)
 
-class b_test_reinvite(b_test1):
+class b_test_reinvite(b_test1, test_reinvite):
     cli = 'bob_reinvite'
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 5.0
     disconnect_ival = 16
+
+    def connected(self, ua, rtime, origin):
+        test_reinvite.connected(self, ua)
+        b_test1.connected(self, ua, rtime, origin)
