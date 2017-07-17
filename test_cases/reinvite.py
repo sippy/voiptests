@@ -29,9 +29,6 @@ from sippy.Timeout import Timeout
 
 class test_reinvite(object):
     reinvite = None
-    ring_ival = 1.0
-    answer_ival = 5.0
-    disconnect_ival = 16.0
 
     def connected(self, ua):
         if self.reinvite != None:
@@ -61,6 +58,9 @@ class a_test_reinvite(a_test1, test_reinvite):
 class b_test_reinvite(b_test1, test_reinvite):
     cli = 'bob_reinvite'
     compact_sip = True
+    ring_ival = 1.0
+    answer_ival = 5.0
+    disconnect_ival = 16
 
     def connected(self, ua, rtime, origin):
         test_reinvite.connected(self, ua)
