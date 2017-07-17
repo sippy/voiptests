@@ -32,7 +32,10 @@ class test_reinvite(object):
 
     def connected(self, ua):
         if self.reinvite != None:
-            Timeout(self.reinvite, self.disconnect_ival / 2, 1, ua)
+            Timeout(self.reinvite, self.get_reinvite_ival(), 1, ua)
+
+    def get_reinvite_ival(self):
+        return self.disconnect_ival / 2.0
 
 class a_test_reinvite(a_test1, test_reinvite):
     cld = 'bob_reinvite'
