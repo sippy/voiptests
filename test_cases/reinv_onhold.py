@@ -37,7 +37,7 @@ class a_test_reinv_onhold(a_test_reinvite):
 
     def __init__(self, *args, **kwargs):
         while True:
-            self.sched = [0.6 + (random() * 2.1) for x in range(0, 4)]
+            self.sched = [0.1 + (random() * 0.5) for x in range(0, 4)]
             if sum(self.sched) < self.ring_ival + self.answer_ival + \
               self.get_reinvite_ival() - self.disconnect_ival:
                 break
