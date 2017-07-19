@@ -61,7 +61,15 @@ class b_test_reinvite(b_test1, test_reinvite):
     ring_ival = 1.0
     answer_ival = 5.0
     disconnect_ival = 16
+    reinv_answ_delay = 0.0
 
     def connected(self, ua, rtime, origin):
         test_reinvite.connected(self, ua)
         b_test1.connected(self, ua, rtime, origin)
+
+    def process_reinvite(self, ua):
+        if self.reinv_answ_delay > 0:
+            Timeout(b_test1.process_reinvite, self.reinv_answ_delay, 1, self, \
+              ua)
+            return
+        b_test1.process_reinvite(self, ua)
