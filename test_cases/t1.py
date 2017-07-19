@@ -219,15 +219,18 @@ class b_test1(test):
         if self.debug_lvl > 0:
             print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
         if isinstance(event, CCEventUpdate):
-            sdp_body = ua.lSDP.getCopy()
-            for sect in sdp_body.content.sections:
-                if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
-                    continue
-                sect.m_header.port -= 10
-            sdp_body.content.o_header.version += 1
-            event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
-            ua.recvEvent(event)
+            self.process_reinvite(ua)
             self.nupdates += 1
+
+    def process_reinvite(self, ua):
+        sdp_body = ua.lSDP.getCopy()
+        for sect in sdp_body.content.sections:
+            if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
+                continue
+            sect.m_header.port -= 10
+        sdp_body.content.o_header.version += 1
+        event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
+        ua.recvEvent(event)
 
     def disconnected(self, ua, rtime, origin, result = 0):
         if origin in ('switch', 'caller'):
