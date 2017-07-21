@@ -25,7 +25,7 @@
 
 from sippy.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
-  CCEventPreConnect, CCEventRing, CCEventUpdate, CCEventFail
+  CCEventPreConnect, CCEventRing, CCEventFail
 from sippy.SipCallId import SipCallId
 from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
@@ -55,51 +55,23 @@ class a_test1(test):
     cli = 'alice_1'
     disconnect_ival = 9.0
     cancel_ival = None
-    reinvite_in_progress = False
-    reinvite_done = False
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
           isinstance(event, CCEventPreConnect):
             code, reason, sdp_body = event.getData()
-            if self.reinvite_in_progress and isinstance(event, CCEventConnect):
-                self.reinvite_in_progress = False
-                sdp_body.parse()
-                if not self.tccfg.checkhostport(sdp_body):
-                    self.nerrs += 1
-                    raise ValueError('Alice: SDP body has failed validation:\n%s' %
-                      str(sdp_body))
-                self.reinvite_done = True
             if not (isinstance(event, CCEventRing) and sdp_body == None):
                 sdp_body.parse()
                 if not self.tccfg.checkhostport(sdp_body):
                     self.nerrs += 1
                     raise ValueError('Alice: SDP body has failed validation:\n%s' %
                       str(sdp_body))
-        if self.reinvite_in_progress and (isinstance(event, CCEventDisconnect) or \
-          isinstance(event, CCEventFail)):
-            self.nerrs += 1
-            raise ValueError('Alice: re-INVITE has failed')
         if self.debug_lvl > 0:
             print '%s: Incoming event: %s' % (self.my_name(), event)
 
     def connected(self, ua, rtime, origin):
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         self.connect_done = True
-
-    def reinvite(self, ua, alter_port = True):
-        if not self.connect_done or self.disconnect_done:
-            return
-        sdp_body = ua.lSDP.getCopy()
-        sdp_body.content.o_header.version += 1
-        if alter_port:
-            for sect in sdp_body.content.sections:
-                if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
-                    continue
-                sect.m_header.port += 10
-        event = CCEventUpdate(sdp_body, origin = 'switch')
-        self.reinvite_in_progress = True
-        ua.recvEvent(event)
 
     def my_name(self):
         return 'Alice(%s)' % (self.cli,)
@@ -155,7 +127,6 @@ class b_test1(test):
     answer_ival = None
     disconnect_ival = None
     cli = 'bob_1'
-    nupdates = 0
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
@@ -218,19 +189,6 @@ class b_test1(test):
     def recvEvent(self, event, ua):
         if self.debug_lvl > 0:
             print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
-        if isinstance(event, CCEventUpdate):
-            self.process_reinvite(ua)
-            self.nupdates += 1
-
-    def process_reinvite(self, ua):
-        sdp_body = ua.lSDP.getCopy()
-        for sect in sdp_body.content.sections:
-            if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
-                continue
-            sect.m_header.port -= 10
-        sdp_body.content.o_header.version += 1
-        event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
-        ua.recvEvent(event)
 
     def disconnected(self, ua, rtime, origin, result = 0):
         if origin in ('switch', 'caller'):

@@ -26,50 +26,100 @@
 from test_cases.t1 import a_test1, b_test1
 
 from sippy.Timeout import Timeout
+from sippy.CCEvents import CCEventDisconnect, CCEventConnect, \
+  CCEventUpdate, CCEventFail
 
 class test_reinvite(object):
-    reinvite = None
+    reinvite_ival = None
+    reinvite_in_progress = False
+    reinvite_done = False
+    nupdates = 0
+    reinv_answ_delay = 0.0
 
-    def connected(self, ua):
-        if self.reinvite != None:
-            Timeout(self.reinvite, self.get_reinvite_ival(), 1, ua)
+    def connected(self, ua, *args):
+        #print 'test_reinvite.connected'
+        rval = super(test_reinvite, self).connected(ua, *args)
+        if self.reinvite_ival != None:
+            Timeout(self.reinvite, self.reinvite_ival, 1, ua)
+        return rval
+
+    def complete_answer(self, ua, *args):
+        rval = super(test_reinvite, self).complete_answer(ua, *args)
+        if self.reinvite_ival != None:
+            Timeout(self.reinvite, self.reinvite_ival, 1, ua)
+        return rval
+
+    def reinvite(self, ua, alter_port = True):
+        if not self.connect_done or self.disconnect_done:
+            return
+        sdp_body = ua.lSDP.getCopy()
+        sdp_body.content.o_header.version += 1
+        if alter_port:
+            for sect in sdp_body.content.sections:
+                if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
+                    continue
+                sect.m_header.port += 10
+        event = CCEventUpdate(sdp_body, origin = 'switch')
+        self.reinvite_in_progress = True
+        ua.recvEvent(event)
 
     def get_reinvite_ival(self):
-        return self.disconnect_ival / 2.0
+        return b_test_reinvite.disconnect_ival / 2.0
 
-class a_test_reinvite(a_test1, test_reinvite):
+    def recvEvent(self, event, ua):
+        #print 'recvEvent'
+        if isinstance(event, CCEventUpdate):
+            self.process_reinvite(ua)
+            self.nupdates += 1
+            return
+        if not self.reinvite_in_progress:
+            return super(test_reinvite, self).recvEvent(event, ua)
+        if isinstance(event, CCEventConnect):
+            self.reinvite_in_progress = False
+        elif (isinstance(event, CCEventDisconnect) or \
+          isinstance(event, CCEventFail)):
+            self.nerrs += 1
+            raise ValueError('%s: re-INVITE has failed' % (self.my_name(),))
+        rval = super(test_reinvite, self).recvEvent(event, ua)
+        self.reinvite_done = True
+        #print 'self.reinvite_done = True'
+        return rval
+
+    def process_reinvite(self, ua):
+        if self.reinv_answ_delay > 0:
+            Timeout(self._process_reinvite, self.reinv_answ_delay, 1, \
+              ua)
+            return
+        self._process_reinvite(ua)
+
+    def _process_reinvite(self, ua):
+        sdp_body = ua.lSDP.getCopy()
+        for sect in sdp_body.content.sections:
+            if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
+                continue
+            sect.m_header.port -= 10
+        sdp_body.content.o_header.version += 1
+        event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
+        ua.recvEvent(event)
+
+    def alldone(self, ua):
+        if self.reinvite_ival != None and \
+          (not self.reinvite_done or not self.disconnect_done):
+            self.nerrs += 1
+        return super(test_reinvite, self).alldone(ua)
+
+class a_test_reinvite(test_reinvite, a_test1):
     cld = 'bob_reinvite'
     cli = 'alice_reinvite'
     compact_sip = False
 
-    def connected(self, ua, rtime, origin):
-        test_reinvite.connected(self, ua)
-        a_test1.connected(self, ua, rtime, origin)
+    def __init__(self, *args):
+        self.reinvite_ival = self.get_reinvite_ival()
+        a_test1.__init__(self, *args)
 
-    def alldone(self, ua):
-        if not self.reinvite_done or not self.disconnect_done or self.nerrs > 0:
-            if self.debug_lvl > -1:
-                print '%s: subclass %s failed, acct=%s' % (self.my_name(), \
-                  str(self.__class__), str(self.acct))
-        else:
-            self.rval = 0
-        self.tccfg.done_cb(self)
-
-class b_test_reinvite(b_test1, test_reinvite):
-    cli = 'bob_reinvite'
+class b_test_reinvite(test_reinvite, b_test1):
+    cli = a_test_reinvite.cld
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 5.0
     disconnect_ival = 16
-    reinv_answ_delay = 0.0
-
-    def connected(self, ua, rtime, origin):
-        test_reinvite.connected(self, ua)
-        b_test1.connected(self, ua, rtime, origin)
-
-    def process_reinvite(self, ua):
-        if self.reinv_answ_delay > 0:
-            Timeout(b_test1.process_reinvite, self.reinv_answ_delay, 1, self, \
-              ua)
-            return
-        b_test1.process_reinvite(self, ua)
