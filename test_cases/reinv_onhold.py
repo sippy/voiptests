@@ -69,6 +69,9 @@ class a_test_reinv_onhold(a_test_reinvite):
         if len(self.sched) > 0:
             Timeout(self.reinvite, self.sched.pop(), 1, ua)
 
+    def get_reinvite_ival(self):
+        return a_test_reinvite.get_reinvite_ival(self) / 2.0
+
 class b_test_reinv_onhold(b_test_reinvite):
     cli = 'bob_reinv_onhold'
     onhold_count = 0
