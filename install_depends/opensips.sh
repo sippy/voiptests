@@ -27,6 +27,10 @@ then
   #then
   #  patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
   #fi
+  if [ "${MM_BRANCH}" != "1.11" ]
+  then
+    patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/mod.rtpproxy_iodebug.diff
+  fi
 fi
 if [ "${MM_TYPE}" = "b2bua" ]
 then
