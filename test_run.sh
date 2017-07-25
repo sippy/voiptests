@@ -24,8 +24,6 @@ start_mm() {
   then
     rm "${MM_PIDF}"
   fi
-  MM_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
-  MM_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`
   case "${MM_TYPE}" in
   b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
