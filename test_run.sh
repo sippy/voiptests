@@ -24,6 +24,7 @@ start_mm() {
   then
     rm "${MM_PIDF}"
   fi
+  MM_CFG=""
   case "${MM_TYPE}" in
   b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
@@ -42,18 +43,20 @@ start_mm() {
     ;;
 
   opensips)
-    for file in opensips.cfg.in rtpproxy.opensips.output.in
+    MM_CFG="opensips.cfg"
+    for file in "${MM_CFG}.in" rtpproxy.opensips.output.in
     do
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-       -DOPENSIPS_VER_FULL=${MM_VER_FULL} ${file} | grep -v '^#' > ${file%.in}
+       -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" | grep -v '^#' > "${file%.in}"
     done
-    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -C
-    ${BUILDDIR}/dist/opensips/opensips -f opensips.cfg -F -E -n 1 &
+    ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
+    ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -F -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
     ;;
 
   kamailio)
+    MM_CFG="kamailio.cfg"
     if [ "${MM_BRANCH}" != "master" ]
     then
       KROOT="${BUILDDIR}/dist/kamailio"
@@ -63,14 +66,14 @@ start_mm() {
     fi
     KBIN="${KROOT}/kamailio"
     KAM_MPATH="${KROOT}/modules/"
-    for file in kamailio.cfg.in rtpproxy.kamailio.output.in
+    for file in "${MM_CFG}.in" rtpproxy.kamailio.output.in
     do
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\" \
-       ${file} | grep -v '^#' > ${file%.in}
+       "${file}" | grep -v '^#' > "${file%.in}"
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
-    "${KBIN}" ${KOPTS} -f kamailio.cfg -DD -E -n 1 &
+    "${KBIN}" ${KOPTS} -f "${MM_CFG}" -DD -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
     ;;
@@ -174,9 +177,9 @@ rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
 RTPP_CHECK_RC="${?}"
 
-report_rc_log "${ALICE_RC}" "alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
-report_rc_log "${BOB_RC}" "bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
-report_rc_log "${RTPP_RC}" rtpproxy.log "Checking RTPproxy exit code"
+report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
+report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
+report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log" "Checking RTPproxy exit code"
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
