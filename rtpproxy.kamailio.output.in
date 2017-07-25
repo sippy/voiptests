@@ -1,7 +1,7 @@
-nsess_created=30 nsess_destroyed=30 nsess_timeout=0 nsess_complete=18 nsess_nortp=18 nsess_owrtp=0 nsess_nortcp=18 nsess_owrtcp=0
+nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
 #if KAMAILIO_VER_FULL != master
 ncmds_rcvd=138 ncmds_succd=137 ncmds_errs=0 ncmds_repld=137
 #else
-ncmds_rcvd=134 ncmds_succd=133 ncmds_errs=0 ncmds_repld=133
+ncmds_rcvd=144 ncmds_succd=143 ncmds_errs=0 ncmds_repld=143
 #endif
 MEMDEB: all clear
