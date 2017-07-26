@@ -19,8 +19,10 @@ loadmodule "dialog/dialog.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 loadmodule "uri/uri.so"
+#if 0
 #if OPENSIPS_VER >= 23
 loadmodule "xlog/xlog.so"
+#endif
 #endif
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
