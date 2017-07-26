@@ -17,6 +17,7 @@ cd "${BUILDDIR}/dist"
 if [ "${MM_TYPE}" = "opensips" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
+  git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
   if [ "${MM_BRANCH}" != "1.11" -a "${MM_BRANCH}" != "2.1" -a \
    "${MM_BRANCH}" != "2.2" -a "${MM_BRANCH}" != "2.3" ]
@@ -38,11 +39,14 @@ then
 else
   git clone git://github.com/sippy/b2bua.git
 fi
+git -C b2bua rev-parse HEAD
 git clone -b "${RTPP_BRANCH}" --recursive git://github.com/sippy/rtpproxy.git
+git -C rtpproxy rev-parse HEAD
 #git -C rtpproxy submodule update --init --recursive
 if [ "${MM_TYPE}" = "kamailio" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/kamailio/kamailio.git kamailio
+  git -C kamailio rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
   if [ "${MM_BRANCH}" = "4.1" ]
