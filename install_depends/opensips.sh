@@ -30,7 +30,10 @@ then
   #fi
   if [ "${MM_BRANCH}" != "1.11" ]
   then
-    patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/mod.rtpproxy_iodebug.diff
+    for p in mod.rtpproxy_iodebug.diff mod.rtpproxy_retry.diff
+    do
+      patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/${p}
+    done
   fi
 fi
 if [ "${MM_TYPE}" = "b2bua" ]
