@@ -85,6 +85,7 @@ class a_test(object):
                 atype = ttype[0]
             cli += '_ipv%s' % atype[-1]
             subtest_class._tccfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
+            print 'tcfg.gen_tccfg(%s, self.subtest_done, %s)' % (atype, cli)
             i += 1
         atests = list(atests)
         shuffle(atests)
