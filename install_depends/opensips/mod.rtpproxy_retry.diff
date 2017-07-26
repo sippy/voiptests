@@ -27,7 +27,7 @@ index a0049bb..6e4f655 100644
  		s_errno = (len < 0) ? errno : 0;
  		close(fd);
 +		if (s_errno == ECONNRESET && nretry > 0) {
-+			LM_WARN("RTP proxy reset connection, retrying...");
++			LM_WARN("RTP proxy reset connection, retrying...\n");
 +			nretry--;
 +			goto retry;
 +		}
