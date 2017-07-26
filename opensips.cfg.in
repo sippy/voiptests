@@ -19,6 +19,9 @@ loadmodule "dialog/dialog.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 loadmodule "uri/uri.so"
+#if OPENSIPS_VER >= 23
+loadmodule "xlog/xlog.so"
+#endif
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
@@ -79,6 +82,9 @@ route {
 
 onreply_route[1]
 {
+#if OPENSIPS_VER >= 23
+    xlog("OpenSIPS received a reply from $si\n");
+#endif
     if (status=~"(183)|2[0-9][0-9]") {
         if(!search("^Content-Length:[ ]*0")) {
             rtpproxy_answer("r");
