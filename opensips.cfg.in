@@ -85,7 +85,7 @@ route {
 
 onreply_route[1]
 {
-    XLOG("OpenSIPS received a reply $rm from $si\n");
+    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
     if (status=~"(183)|2[0-9][0-9]") {
         XLOG("  calling search()\n");
         if(!search("^Content-Length:[ ]*0")) {
