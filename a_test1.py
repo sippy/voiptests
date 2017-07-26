@@ -71,7 +71,7 @@ class a_test(object):
         ttype = tcfg.ttype
         if len(ttype) == 1:
             ttype += ttype
-        atests = [[x,] for x in ALL_TESTS * len(ttype)]]
+        atests = [[x,] for x in ALL_TESTS * len(ttype)]
         for subtest_list in atests:
             subtest_class = subtest_list[0]
             if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
