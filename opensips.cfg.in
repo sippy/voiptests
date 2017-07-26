@@ -88,7 +88,9 @@ onreply_route[1]
     xlog("OpenSIPS received a reply from $si\n");
 #endif
     if (status=~"(183)|2[0-9][0-9]") {
+        xlog("  calling search()");
         if(!search("^Content-Length:[ ]*0")) {
+            xlog("    calling rtpproxy_answer()");
             rtpproxy_answer("r");
             ##rtpproxy_stream2uas("ringback", "10");
         };
