@@ -60,6 +60,14 @@ ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test_reinv_fail, a_test_reinv_brkn1, a_test_reinv_brkn2, \
   a_test_reinv_onhold, a_test_reinv_frombob)
 
+class a_cfg(object):
+    test_class = None
+    disabled = False
+    tcfg = None
+    
+    def __init__(self, test_class):
+        self.test_class = test_class
+
 class a_test(object):
     nsubtests_running = 0
     rval = 1
@@ -71,9 +79,9 @@ class a_test(object):
         ttype = tcfg.ttype
         if len(ttype) == 1:
             ttype += ttype
-        atests = [[x,] for x in ALL_TESTS * len(ttype)]
-        for subtest_list in atests:
-            subtest_class = subtest_list[0]
+        atests = [a_cfg(x) for x in ALL_TESTS * len(ttype)]
+        for subtest_cfg in atests:
+            subtest_class = subtest_cfg.test_class
             if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
                 subtest_class.disabled = True
                 i += 1
@@ -85,14 +93,14 @@ class a_test(object):
             else:
                 atype = ttype[0]
             cli += '_ipv%s' % atype[-1]
-            subtest_list.append(tcfg.gen_tccfg(atype, self.subtest_done, cli))
+            subtest_cfg.tcfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
             print 'tcfg.gen_tccfg(%s, self.subtest_done, %s)' % (atype, cli)
             i += 1
         shuffle(atests)
-        for subtest_class, tccfg in atests:
-            if subtest_class.disabled:
+        for subtest_cfg in atests:
+            if subtest_cfg.disabled:
                 continue
-            subtest = subtest_class(tccfg)
+            subtest = subtest_cfg.test_class(subtest_cfg.tcfg)
             self.nsubtests_running += 1
         self.rval = self.nsubtests_running
         Timeout(self.timeout, tcfg.test_timeout, 1)
