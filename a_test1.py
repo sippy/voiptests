@@ -83,10 +83,10 @@ class a_test(object):
         for subtest_cfg in atests:
             subtest_class = subtest_cfg.test_class
             if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
-                subtest_class.disabled = True
+                subtest_cfg.disabled = True
                 i += 1
                 continue
-            subtest_class.disabled = False
+            subtest_cfg.disabled = False
             cli = subtest_class.cli
             if i >= len(ALL_TESTS):
                 atype = ttype[1]
