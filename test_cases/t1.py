@@ -35,6 +35,7 @@ from random import random
 class test(object):
     rval = 1
     nerrs = 0
+    ring_done = False
     connect_done = False
     disconnect_done = False
     compact_sip = False
@@ -50,6 +51,15 @@ class test(object):
           str(self.__class__), str(self.call_id), str(self.acct))
         return msg
 
+    def alldone(self, ua):
+        if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
+            self.rval = 0
+        else:
+            if self.debug_lvl > -1 and not self.finfo_displayed:
+                print(self.failed_msg())
+                self.finfo_displayed = True
+        self.tccfg.done_cb(self)
+
 class a_test1(test):
     cld = 'bob_1'
     cli = 'alice_1'
@@ -57,6 +67,8 @@ class a_test1(test):
     cancel_ival = None
 
     def recvEvent(self, event, ua):
+        if isinstance(event, CCEventRing) and not self.ring_done:
+            self.ring_done = True
         if isinstance(event, CCEventRing) or isinstance(event, CCEventConnect) or \
           isinstance(event, CCEventPreConnect):
             code, reason, sdp_body = event.getData()
@@ -95,11 +107,6 @@ class a_test1(test):
         if self.debug_lvl > 0:
             print '%s: disconnected' % self.my_name(), rtime, origin, result, self.acct
 
-    def alldone(self, ua):
-        if self.connect_done and self.disconnect_done and self.nerrs == 0:
-            self.rval = 0
-        self.tccfg.done_cb(self)
-
     def __init__(self, tccfg):
         self.tccfg = tccfg
         if tccfg.cli != None:
@@ -120,7 +127,6 @@ class a_test1(test):
             Timeout(self.cancel, self.cancel_ival, 1, ua)
 
 class b_test1(test):
-    ring_done = False
     body = None
     atype = 'IP4'
     ring_ival = 5.0
@@ -196,12 +202,3 @@ class b_test1(test):
         self.acct = ua.getAcct()
         if self.debug_lvl > 0:
             print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done
-
-    def alldone(self, ua):
-        if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
-            self.rval = 0
-        else:
-            if self.debug_lvl > -1 and not self.finfo_displayed:
-                print(self.failed_msg())
-                self.finfo_displayed = True
-        self.tccfg.done_cb(self)
