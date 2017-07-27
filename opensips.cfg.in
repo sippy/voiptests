@@ -32,6 +32,7 @@ listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
 
 route {
+    XLOG("OpenSIPS received a request $rm from $si\n");
     ## initial sanity checks -- messages with
     ## max_forwards==0, or excessively long requests
     if (!mf_process_maxfwd_header("10")) {
