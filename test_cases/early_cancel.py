@@ -32,7 +32,7 @@ class test_early_cancel(object):
         if self.disconnect_done:
             duration, delay, connected, disconnected = self.acct
             if (duration, connected, disconnected) == (0, False, True) and \
-              round(delay, 1) < self.max_delay:
+              round(delay, 1) <= self.max_delay:
                 self.rval = 0
             else:
                 if self.debug_lvl > -1:
