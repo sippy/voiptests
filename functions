@@ -91,10 +91,11 @@ fi
 #  TEST_SET="${TEST_SET}"
 #fi
 
-#if [ "${MM_TYPE}" = "opensips" -a "${MM_BRANCH}" = "2.3" ]
-#then
+if [ "${MM_TYPE}" = "opensips" -a "${MM_BRANCH}" = "2.3" ]
+then
 #  TEST_SET=`echo ${TEST_SET} | sed 's|,early_cancel_lost100|| ; s|,early_cancel||'`
-#fi
+  MM_ARGS="-dddd"
+fi
 
 forcefail() {
   RC=${1}

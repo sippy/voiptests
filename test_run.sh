@@ -50,7 +50,7 @@ start_mm() {
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" | grep -v '^#' > "${file%.in}"
     done
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
-    ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -F -E -n 1 &
+    ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" ${MM_ARGS} -F -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
     ;;
