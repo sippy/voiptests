@@ -17,6 +17,10 @@ cd "${BUILDDIR}/dist"
 if [ "${MM_TYPE}" = "opensips" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
+  if [ "${MM_REV}" != "${MM_BRANCH}" ]
+  then
+    git -C opensips checkout "${MM_REV}"
+  fi
   git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
   if [ "${MM_BRANCH}" != "1.11" -a "${MM_BRANCH}" != "2.1" -a \
