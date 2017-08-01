@@ -95,7 +95,7 @@ fi
 if [ "${MM_TYPE}" = "opensips" -a "${MM_BRANCH}" = "2.3" ]
 then
 #  TEST_SET=`echo ${TEST_SET} | sed 's|,early_cancel_lost100|| ; s|,early_cancel||'`
-  MM_ARGS="-dddd"
+#nonono  MM_ARGS="-dddd"
 fi
 
 forcefail() {
