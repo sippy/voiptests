@@ -131,7 +131,7 @@ report_rc_log() {
     then
       for logf in ${FAIL_LOGFILES}
       do
-        cat -n "${logf}" | grep -v 'DBUG:main:GLOBAL:' | grep -v 'DBUG:rtpp_proc_async_run:GLOBAL:' >&2
+        cat -s -n "${logf}" | grep -v 'DBUG:main:GLOBAL:' | grep -v 'DBUG:rtpp_proc_async_run:GLOBAL:' >&2
       done
     fi
     fail_rc "${RC}" "${@}"
