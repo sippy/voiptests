@@ -1,6 +1,6 @@
 mpath="dist/opensips/modules/"
 
-# if ! OPENSIPS_VER < 21
+# if OPENSIPS_VER >= 21 || OPENSIPS_VER_FULL == "master"
 loadmodule "proto_udp.so"
 ## dialog is now required by the rtpproxy, not sure why, but OK
 loadmodule "dialog/dialog.so"
@@ -14,10 +14,10 @@ loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 loadmodule "uri/uri.so"
 
-#if OPENSIPS_VER < 23
-# define XLOG(...)
-#else
+#if OPENSIPS_VER >= 23 || OPENSIPS_VER_FULL == "master"
 # define XLOG xlog
+#else
+# define XLOG(...)
 #endif
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
