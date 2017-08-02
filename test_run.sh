@@ -47,7 +47,8 @@ start_mm() {
     for file in "${MM_CFG}.in" rtpproxy.opensips.output.in
     do
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-       -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" | grep -v '^#' > "${file%.in}"
+       -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" | grep -v '^#' | \
+       cat -s > "${file%.in}"
     done
     set +e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
@@ -74,7 +75,7 @@ start_mm() {
     do
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\" \
-       "${file}" | grep -v '^#' > "${file%.in}"
+       "${file}" | cat -s | grep -v '^#' | cat -s > "${file%.in}"
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
     "${KBIN}" ${KOPTS} -f "${MM_CFG}" -DD -E -n 1 &
