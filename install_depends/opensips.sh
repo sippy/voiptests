@@ -16,13 +16,14 @@ cd "${BUILDDIR}/dist"
 
 if [ "${MM_TYPE}" = "opensips" ]
 then
+  MM_DIR="${BUILDDIR}/dist/opensips"
   git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
   if [ "${MM_REV}" != "${MM_BRANCH}" ]
   then
     git -C opensips checkout "${MM_REV}"
   fi
   git -C opensips rev-parse HEAD
-  perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
+  perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
   if [ "${MM_BRANCH}" != "1.11" -a "${MM_VER}" != "21" -a \
    "${MM_VER}" != "22" -a "${MM_BRANCH}" != "2.3" -a "${MM_BRANCH}" != "master" ]
   then
@@ -30,13 +31,18 @@ then
   fi
   #if [ "${MM_BRANCH}" = "1.11" ]
   #then
-  #  patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
+  #  git -C opensips apply ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
   #fi
   if [ "${MM_BRANCH}" != "1.11" ]
   then
-    for p in mod.rtpproxy_iodebug.diff mod.rtpproxy_retry.diff
+    MM_PATCH_SET="mod.rtpproxy_retry.diff"
+    if [ "${MM_BRANCH}" != "master" ]
+    then
+      MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
+    fi
+    for p in ${MM_PATCH_SET}
     do
-      patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/${p}
+      git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
     done
   fi
   if [ "${MM_BRANCH}" = "2.3" -o "${MM_BRANCH}" = "master" ]
@@ -72,9 +78,9 @@ if [ "${MM_TYPE}" = "opensips" ]
 then
   for m in ${MM_KILL_MODULES}
   do
-    rm -rf "${BUILDDIR}/dist/opensips/modules/${m}"
+    rm -rf "${MM_DIR}/modules/${m}"
   done
-  ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" \
+  ${MAKE_CMD} -C "${MM_DIR}" CC_NAME=gcc CC="${CC}" \
    all modules
 fi
 if [ "${MM_TYPE}" = "kamailio" ]
