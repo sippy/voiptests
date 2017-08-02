@@ -42,7 +42,7 @@ then
   if [ "${MM_BRANCH}" = "2.3" ]
   then
     git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
-    MAKE_EXTRA_ARGS="skip_modules=\"event_routing\""
+    MM_KILL_MODULES="event_routing"
   fi
 fi
 if [ "${MM_TYPE}" = "b2bua" ]
@@ -70,8 +70,12 @@ fi
 ##bash
 if [ "${MM_TYPE}" = "opensips" ]
 then
+  for m in ${MM_KILL_MODULES}
+  do
+    rm -rf "${BUILDDIR}/dist/opensips/modules/${m}"
+  done
   ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" \
-   ${MAKE_EXTRA_ARGS} all modules
+   all modules
 fi
 if [ "${MM_TYPE}" = "kamailio" ]
 then
