@@ -12,7 +12,7 @@ ncmds_rcvd=140 ncmds_succd=139 ncmds_errs=0 ncmds_repld=139
 #  if OPENSIPS_VER < 22
 ncmds_rcvd=131 ncmds_succd=130 ncmds_errs=0 ncmds_repld=130
 #  else
-ncmds_rcvd=126 ncmds_succd=125 ncmds_errs=0 ncmds_repld=125
+ncmds_rcvd=143 ncmds_succd=142 ncmds_errs=0 ncmds_repld=142
 #  endif
 # endif
 #endif
