@@ -70,7 +70,8 @@ fi
 ##bash
 if [ "${MM_TYPE}" = "opensips" ]
 then
-  ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" ${MAKE_EXTRA_ARGS} all modules
+  ${MAKE_CMD} -C "${BUILDDIR}/dist/opensips" CC_NAME=gcc CC="${CC}" \
+   skip_modules="event_routing" all modules
 fi
 if [ "${MM_TYPE}" = "kamailio" ]
 then
