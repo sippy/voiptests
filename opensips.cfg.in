@@ -20,6 +20,12 @@ loadmodule "uri/uri.so"
 # define XLOG(...)
 #endif
 
+#if OPENSIPS_VER_FULL == master
+#define IS_METHOD    is_method
+#else
+#define IS_METHOD(m) method == m
+#endif
+
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
 listen=udp:127.0.0.1:5060
@@ -45,7 +51,7 @@ route {
         exit;
     };
 
-    if (method == "INVITE") {
+    if (IS_METHOD("INVITE")) {
         t_reply("100", "Trying");
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
@@ -56,7 +62,7 @@ route {
         };
     };
 
-    if (method == "BYE") {
+    if (IS_METHOD("BYE")) {
         RTPP_UNFORCE();
     };
 
