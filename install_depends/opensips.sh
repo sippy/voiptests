@@ -24,7 +24,7 @@ then
   git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' ${BUILDDIR}/dist/opensips/Makefile.defs
   if [ "${MM_BRANCH}" != "1.11" -a "${MM_VER}" != "21" -a \
-   "${MM_VER}" != "22" -a "${MM_BRANCH}" != "2.3" ]
+   "${MM_VER}" != "22" -a "${MM_BRANCH}" != "2.3" -a "${MM_BRANCH}" != "master" ]
   then
     git -C opensips apply ${BUILDDIR}/install_depends/opensips/rtpproxy_ip6.patch
   fi
@@ -39,7 +39,7 @@ then
       patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/${p}
     done
   fi
-  if [ "${MM_BRANCH}" = "2.3" ]
+  if [ "${MM_BRANCH}" = "2.3" -o "${MM_BRANCH}" = "master" ]
   then
     git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
     MM_KILL_MODULES="event_routing"
