@@ -39,6 +39,10 @@ then
       patch -p1 -s -d opensips < ${BUILDDIR}/install_depends/opensips/${p}
     done
   fi
+  if [ "${MM_BRANCH}" = "2.3" ]
+  then
+    git -C opensips revert 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
+  fi
 fi
 if [ "${MM_TYPE}" = "b2bua" ]
 then
