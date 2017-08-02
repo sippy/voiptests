@@ -41,7 +41,7 @@ then
   fi
   if [ "${MM_BRANCH}" = "2.3" ]
   then
-    git -C opensips revert 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
+    GIT_AUTHOR_EMAIL="foo@bar.com" GIT_AUTHOR_NAME="Foo Bar" git -C opensips revert 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
   fi
 fi
 if [ "${MM_TYPE}" = "b2bua" ]
