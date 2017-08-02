@@ -40,7 +40,7 @@ route {
         exit;
     };
 
-    if (msg:len >=  2048 ) {
+    if (msg:len >= max_len) {
         sl_send_reply("513", "Message too big");
         exit;
     };
