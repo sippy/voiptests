@@ -3,7 +3,7 @@ nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nort
 #else
 nsess_created=30 nsess_destroyed=30 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
 #endif
-#if OPENSIPS_VER_FULL >= 211 /* && OPENSIPS_VER_FULL != 21 && OPENSIPS_VER_FULL != 22 */
+#if OPENSIPS_VER_FULL == 211 /* && OPENSIPS_VER_FULL != 21 && OPENSIPS_VER_FULL != 22 */
 ncmds_rcvd=126 ncmds_succd=125 ncmds_errs=0 ncmds_repld=125
 #else
 # if OPENSIPS_VER_FULL == 111
