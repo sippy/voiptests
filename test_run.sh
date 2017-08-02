@@ -49,7 +49,11 @@ start_mm() {
       cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" | grep -v '^#' > "${file%.in}"
     done
+    set +e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
+    MM_DRUN_RC="${?}"
+    report_rc_log "${MM_DRUN_RC}" "${MM_CFG}" "Checking ${MM_TYPE} config"
+    set -e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" ${MM_ARGS} -F -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
