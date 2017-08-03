@@ -15,11 +15,7 @@ ncmds_rcvd=131 ncmds_succd=130 ncmds_errs=0 ncmds_repld=130
 #   if OPENSIPS_VER < 23
 ncmds_rcvd=171 ncmds_succd=170 ncmds_errs=0 ncmds_repld=170
 #   else
-#    if OPENSIPS_VER_FULL != "master"
 ncmds_rcvd=226 ncmds_succd=225 ncmds_errs=0 ncmds_repld=225
-#    else
-ncmds_rcvd=237 ncmds_succd=236 ncmds_errs=0 ncmds_repld=236
-#    endif
 #   endif
 #  endif
 # endif
