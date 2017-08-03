@@ -28,8 +28,10 @@ loadmodule "uri/uri.so"
 
 #if OPENSIPS_VER_FULL == master
 #define IS_METHOD    is_method
+#define IS_SPORT(p)   $sp == p
 #else
 #define IS_METHOD(m) method == m
+#define IS_SPORT(p)   src_port == p
 #endif
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
@@ -82,7 +84,7 @@ route {
     };
 
 
-    if (src_port == 5061) {
+    if (IS_SPORT(5061)) {
         rewriteport("5062");
     } else {
         rewriteport("5061");
