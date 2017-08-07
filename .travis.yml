@@ -1,5 +1,6 @@
 # force run: 41
 language: python
+dist: precise
 python:
   - "2.7"
 before_install:
