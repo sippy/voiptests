@@ -4,6 +4,7 @@ python:
   - "2.7"
 before_install:
   - sh -x ./install_depends/opensips.sh
+  - sudo -H DEBIAN_FRONTEND=noninteractive apt-get install gdb
 script:
     sh -x ./test_run.sh
 env:
