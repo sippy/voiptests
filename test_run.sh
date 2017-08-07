@@ -53,6 +53,9 @@ start_mm() {
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" ${MM_ARGS} -F -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
+    (sleep 5; ${BUILDDIR}/dist/opensips/scripts/opensipsctl trap)&
+    (sleep 10; ${BUILDDIR}/dist/opensips/scripts/opensipsctl trap)&
+    (sleep 15; ${BUILDDIR}/dist/opensips/scripts/opensipsctl trap)&
     ;;
 
   kamailio)
