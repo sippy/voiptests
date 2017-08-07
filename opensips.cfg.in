@@ -19,6 +19,7 @@ loadmodule "dialog/dialog.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 loadmodule "uri/uri.so"
+loadmodule "mi_fifo/mi_fifo.so"
 
 #if OPENSIPS_VER >= 23
 # define XLOG xlog
@@ -27,6 +28,8 @@ loadmodule "uri/uri.so"
 #endif
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
+
+modparam("mi_fifo", "fifo_name", "/tmp/opensips_fifo")
 
 listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
