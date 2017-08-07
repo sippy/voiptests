@@ -3,7 +3,8 @@ language: python
 python:
   - "2.7"
 before_install:
-  - docker pull ubuntu:precise
+#  - docker pull ubuntu:precise
+  - echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6
   - sh -x ./install_depends/opensips.sh
   - sudo -H DEBIAN_FRONTEND=noninteractive apt-get install gdb
 script:
