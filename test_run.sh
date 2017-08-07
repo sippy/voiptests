@@ -180,7 +180,7 @@ rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
 RTPP_CHECK_RC="${?}"
 
-report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
+report_rc_log "${ALICE_RC}" "${MM_CFG} /tmp/gdb_opensips_2017* alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
 report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log" "Checking RTPproxy exit code"
 if [ x"${MM_LOG}" != x"" ]
