@@ -45,5 +45,5 @@ class b_test11(b_test1):
             self.rval = 0
         else:
             if self.debug_lvl > -1:
-                print('Bob(%s): subclass %s failed' % (self.cli, str(self.__class__)))
+                print('%s: subclass %s failed' % (self.my_name(), str(self.__class__)))
         self.tccfg.done_cb(self)

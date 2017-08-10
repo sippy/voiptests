@@ -44,9 +44,10 @@ class b_test13(b_test12):
     answer_ival = 70.0
 
     def alldone(self, ua):
-        #print 'b_test13.alldone', self.ring_done
+        #print('b_test13.alldone', self.ring_done)
         if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
-            print 'Bob(%s): subclass %s failed' % (self.cli, str(self.__class__))
+            if self.debug_lvl > -1:
+                print('%s: subclass %s failed' % (self.my_name(), str(self.__class__)))
         self.tccfg.done_cb(self)
