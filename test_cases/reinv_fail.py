@@ -36,10 +36,11 @@ class a_test_reinv_fail(a_test_reinvite):
         if self.reinvite_in_progress and not isinstance(event, CCEventRing):
             if not (isinstance(event, CCEventFail) or isinstance(event, CCEventDisconnect)):
                 self.nerrs += 1
-                raise ValueError('Alice: re-INVITE has NOT failed')
+                raise ValueError('%s: re-INVITE has NOT failed' % (self.failed_msg(),))
             self.reinvite_in_progress = False
             self.reinvite_done = True
-            print '%s: Incoming event: %s, ignoring' % (self.my_name(), event)
+            if self.debug_lvl > 0:
+                print('%s: Incoming event: %s, ignoring' % (self.my_name(), event))
             return
         return (a_test_reinvite.recvEvent(self, event, ua))
 
@@ -48,6 +49,7 @@ class b_test_reinv_fail(b_test_reinvite):
     def recvEvent(self, event, ua):
         if not isinstance(event, CCEventUpdate):
             return (b_test_reinvite.recvEvent(self, event, ua))
-        print 'Bob(%s): Incoming event: %s, generating failure' % (self.cli, str(event))
+        if self.debug_lvl > 0:
+            print('Bob(%s): Incoming event: %s, generating failure' % (self.cli, str(event)))
         event = CCEventFail((408, 'Nobody is Home'))
         ua.recvEvent(event)

@@ -37,7 +37,7 @@ class test_reinvite(object):
     reinv_answ_delay = 0.0
 
     def connected(self, ua, *args):
-        #print 'test_reinvite.connected'
+        #print('test_reinvite.connected')
         rval = super(test_reinvite, self).connected(ua, *args)
         if self.reinvite_ival != None:
             Timeout(self.reinvite, self.reinvite_ival, 1, ua)
@@ -67,7 +67,7 @@ class test_reinvite(object):
         return b_test_reinvite.disconnect_ival / 2.0
 
     def recvEvent(self, event, ua):
-        #print 'recvEvent'
+        #print('recvEvent')
         if isinstance(event, CCEventUpdate):
             self.process_reinvite(ua)
             self.nupdates += 1
@@ -79,10 +79,10 @@ class test_reinvite(object):
         elif (isinstance(event, CCEventDisconnect) or \
           isinstance(event, CCEventFail)):
             self.nerrs += 1
-            raise ValueError('%s: re-INVITE has failed' % (self.my_name(),))
+            raise ValueError('%s: re-INVITE has failed' % (self.failed_msg(),))
         rval = super(test_reinvite, self).recvEvent(event, ua)
         self.reinvite_done = True
-        #print 'self.reinvite_done = True'
+        #print('self.reinvite_done = True')
         return rval
 
     def process_reinvite(self, ua):
