@@ -76,8 +76,8 @@ class a_test1(test):
                 sdp_body.parse()
                 if not self.tccfg.checkhostport(sdp_body):
                     self.nerrs += 1
-                    raise ValueError('Alice: SDP body has failed validation:\n%s' %
-                      str(sdp_body))
+                    raise ValueError('%s: SDP body has failed validation:\n%s' %
+                      (self.my_name(), str(sdp_body)))
         if self.debug_lvl > 0:
             print('%s: Incoming event: %s' % (self.my_name(), event))
 
@@ -148,8 +148,8 @@ class b_test1(test):
         in_body.parse()
         if not self.tccfg.checkhostport(in_body):
             self.nerrs += 1
-            raise ValueError('Bob(%s): hostport validation has failed (%s):\n%s' % \
-              (str(self.__class__), self.atype, in_body))
+            raise ValueError('%s: class %s: hostport validation has failed (%s):\n%s' % \
+              (self.my_name(), str(self.__class__), self.atype, in_body))
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
@@ -164,7 +164,7 @@ class b_test1(test):
         return ua.recvRequest(req, sip_t)
 
     def ring(self, ua):
-        #print('Bob(%s): ring: %s %s' % (self.cli, self.ring_done, self.disconnect_done))
+        #print('%s: ring: %s %s' % (self.my_name(), self.cli, self.ring_done, self.disconnect_done))
         if self.connect_done or self.disconnect_done:
             return
         event = CCEventRing((180, 'Ringing', None), origin = 'switch')
@@ -194,11 +194,11 @@ class b_test1(test):
 
     def recvEvent(self, event, ua):
         if self.debug_lvl > 0:
-            print('Bob(%s): Incoming event: %s' % (self.cli, str(event)))
+            print('%s: Incoming event: %s' % (self.my_name(), str(event)))
 
     def disconnected(self, ua, rtime, origin, result = 0):
         if origin in ('switch', 'caller'):
             self.disconnect_done = True
         self.acct = ua.getAcct()
         if self.debug_lvl > 0:
-            print('Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done)
+            print('%s: disconnected' % self.my_name(), rtime, origin, result, self.acct, self.ring_done)
