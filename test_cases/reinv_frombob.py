@@ -43,5 +43,5 @@ class b_test_reinv_frombob(test_reinvite, b_test1):
         b_test1.__init__(self, *args)
 
     def reinvite(self, ua, *args):
-        #print 'b_test_reinv_frombob.reinvite()'
+        #print('b_test_reinv_frombob.reinvite()')
         super(b_test_reinv_frombob, self).reinvite(ua, *args)
