@@ -79,7 +79,7 @@ class a_test1(test):
                     raise ValueError('Alice: SDP body has failed validation:\n%s' %
                       str(sdp_body))
         if self.debug_lvl > 0:
-            print '%s: Incoming event: %s' % (self.my_name(), event)
+            print('%s: Incoming event: %s' % (self.my_name(), event))
 
     def connected(self, ua, rtime, origin):
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
@@ -105,7 +105,7 @@ class a_test1(test):
             self.disconnect_done = True
         self.acct = ua.getAcct()
         if self.debug_lvl > 0:
-            print '%s: disconnected' % self.my_name(), rtime, origin, result, self.acct
+            print('%s: disconnected' % self.my_name(), rtime, origin, result, self.acct)
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
@@ -164,7 +164,7 @@ class b_test1(test):
         return ua.recvRequest(req, sip_t)
 
     def ring(self, ua):
-        #print 'Bob(%s): ring: %s %s' % (self.cli, self.ring_done, self.disconnect_done)
+        #print('Bob(%s): ring: %s %s' % (self.cli, self.ring_done, self.disconnect_done))
         if self.connect_done or self.disconnect_done:
             return
         event = CCEventRing((180, 'Ringing', None), origin = 'switch')
@@ -194,11 +194,11 @@ class b_test1(test):
 
     def recvEvent(self, event, ua):
         if self.debug_lvl > 0:
-            print 'Bob(%s): Incoming event: %s' % (self.cli, str(event))
+            print('Bob(%s): Incoming event: %s' % (self.cli, str(event)))
 
     def disconnected(self, ua, rtime, origin, result = 0):
         if origin in ('switch', 'caller'):
             self.disconnect_done = True
         self.acct = ua.getAcct()
         if self.debug_lvl > 0:
-            print 'Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done
+            print('Bob(%s): disconnected' % self.cli, rtime, origin, result, self.acct, self.ring_done)
