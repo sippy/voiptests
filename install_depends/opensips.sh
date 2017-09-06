@@ -72,6 +72,10 @@ then
     patch -p1 -s -d kamailio < ${BUILDDIR}/install_depends/kamailio/rtpproxy_ip6.patch
   fi
 fi
+if [ "${MM_TYPE}" = "go-b2bua" ]
+then
+    git clone -b "${MM_BRANCH}" --recursive git://github.com/sippy/go-b2bua.git
+fi
 
 ##bash
 if [ "${MM_TYPE}" = "opensips" ]
@@ -87,6 +91,15 @@ if [ "${MM_TYPE}" = "kamailio" ]
 then
   ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="${CC}" \
    include_modules="sl tm rr maxfwd rtpproxy textops" skip_modules="erlang" all modules
+fi
+if [ "${MM_TYPE}" = "go-b2bua" ]
+then
+    curl -sL -o gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
+    chmod +x gimme
+    eval "$(./gimme 1.7)"
+    go version
+    which go
+    ${MAKE_CMD} -C "${BUILDDIR}/dist/go-b2bua/b2bua_radius" all
 fi
 cd rtpproxy
 ./configure
