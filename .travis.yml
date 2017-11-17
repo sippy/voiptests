@@ -3,6 +3,9 @@ language: python
 python:
   - "2.7"
 before_install:
+  - echo "+++ hosts +++"
+  - cat /etc/hosts
+  - echo "--- hosts ---"
   - sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
   - sh -x ./install_depends/opensips.sh
 script:
