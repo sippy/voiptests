@@ -24,19 +24,20 @@ class test_case_config(object):
     nh_address = None
 
     def checkhostport(self, sdp_body):
+        reason = 'all good'
         for i in range(0, len(sdp_body.content.sections)):
             sect = sdp_body.content.sections[i]
             if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
                 continue
             if not self.portrange.isinrange(sect.m_header.port):
-                return False
-            if self.atype == 'IP4' and sect.c_header.atype == 'IP4' and \
-              sect.c_header.addr == self.nh_address[0]:
-                continue
-            if self.atype == 'IP6' and sect.c_header.atype == 'IP6' and \
-              sect.c_header.addr in ('::1', '0:0:0:0:0:0:0:1'):
-                continue
-            return False
+                return (False, 'not self.portrange.isinrange(%d)' % (sect.m_header.port,))
+            if self.atype == 'IP4' and (sect.c_header.atype != 'IP4' or \
+              sect.c_header.addr != self.nh_address[0]):
+                 return (False, 'expected IPv4 address (%s)' % (self.nh_address[0],))
+            if self.atype == 'IP6' and (sect.c_header.atype != 'IP6' or not \
+              sect.c_header.addr in ('::1', '0:0:0:0:0:0:0:1')):
+                return (False, 'expected IPv6 address %s or %s' % ('::1', '0:0:0:0:0:0:0:1',))
+            continue
         return True
 
 class test_config(object):

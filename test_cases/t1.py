@@ -75,10 +75,11 @@ class a_test1(test):
             code, reason, sdp_body = event.getData()
             if not (isinstance(event, CCEventRing) and sdp_body == None):
                 sdp_body.parse()
-                if not self.tccfg.checkhostport(sdp_body):
+                cres, why = self.tccfg.checkhostport(sdp_body)
+                if not cres:
                     self.nerrs += 1
-                    raise ValueError('%s: SDP body has failed validation:\n%s' %
-                      (self.my_name(), str(sdp_body)))
+                    raise ValueError('%s: SDP body has failed validation: %s:\n%s' %
+                      (self.my_name(), why, str(sdp_body)))
         if self.debug_lvl > 0:
             print('%s: Incoming event: %s' % (self.my_name(), event))
 
@@ -147,10 +148,11 @@ class b_test1(test):
             return
         in_body = req.getBody()
         in_body.parse()
-        if not self.tccfg.checkhostport(in_body):
+        cres, why = self.tccfg.checkhostport(in_body)
+        if not cres:
             self.nerrs += 1
-            raise ValueError('%s: class %s: hostport validation has failed (%s):\n%s' % \
-              (self.my_name(), str(self.__class__), self.atype, in_body))
+            raise ValueError('%s: class %s: hostport validation has failed (%s): %s:\n%s' % \
+              (self.my_name(), str(self.__class__), self.atype, why, in_body))
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
