@@ -24,7 +24,6 @@ class test_case_config(object):
     nh_address = None
 
     def checkhostport(self, sdp_body):
-        reason = 'all good'
         for i in range(0, len(sdp_body.content.sections)):
             sect = sdp_body.content.sections[i]
             if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
@@ -38,7 +37,7 @@ class test_case_config(object):
               sect.c_header.addr in ('::1', '0:0:0:0:0:0:0:1')):
                 return (False, 'expected IPv6 address %s or %s' % ('::1', '0:0:0:0:0:0:0:1',))
             continue
-        return True
+        return (True, 'all good')
 
 class test_config(object):
     global_config = None
