@@ -73,7 +73,7 @@ start_mm() {
 
   kamailio)
     MM_CFG="kamailio.cfg"
-    if [ "${MM_BRANCH}" != "master" ]
+    if [ "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "5.0" ]
     then
       KROOT="${BUILDDIR}/dist/kamailio"
     else
