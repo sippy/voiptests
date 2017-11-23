@@ -1,5 +1,5 @@
 nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
-#if (KAMAILIO_VER_FULL != master) && (KAMAILIO_VER_FULL != 5.0)
+#if (KAMAILIO_VER_FULL != master) && (KAMAILIO_VER_FULL < 50)
 ncmds_rcvd=148 ncmds_succd=147 ncmds_errs=0 ncmds_repld=147
 #else
 ncmds_rcvd=144 ncmds_succd=143 ncmds_errs=0 ncmds_repld=143
