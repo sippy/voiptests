@@ -89,6 +89,11 @@ start_mm() {
        "${file}" | cat -s | grep -v '^#' | cat -s > "${file%.in}"
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
+    set +e
+    "${KBIN}" ${KOPTS} -f "${MM_CFG}" -c
+    MM_DRUN_RC="${?}"
+    report_rc_log "${MM_DRUN_RC}" "${MM_CFG}" "Checking ${MM_TYPE} config"
+    set -e
     "${KBIN}" ${KOPTS} -f "${MM_CFG}" -DD -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
