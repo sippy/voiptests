@@ -27,8 +27,8 @@ class PortRange(object):
 if __name__ == '__main__':
     pr = PortRange('16-65500')
     for i in range(0, 10):
-        print pr.gennotinrange()
-    print pr.isinrange(4)
-    print pr.isinrange(36)
-    print pr.isinrange(21311)
-    print pr.isinrange(65502)
+        print(pr.gennotinrange())
+    print(pr.isinrange(4))
+    print(pr.isinrange(36))
+    print(pr.isinrange(21311))
+    print(pr.isinrange(65502))
