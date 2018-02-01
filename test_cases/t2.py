@@ -26,7 +26,7 @@
 from test_cases.t1 import a_test1, b_test1
 
 from sippy.CCEvents import CCEventRing
-from sippy.Timeout import Timeout
+from sippy.Time.Timeout import Timeout
 
 class a_test2(a_test1):
     cld = 'bob_2'

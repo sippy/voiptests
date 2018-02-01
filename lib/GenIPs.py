@@ -19,4 +19,4 @@ def genIP(atype = None):
 
 if __name__ == '__main__':
     while True:
-        print genIP()
+        print(genIP())
