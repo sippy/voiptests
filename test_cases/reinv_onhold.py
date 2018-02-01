@@ -26,7 +26,7 @@
 from random import random
 
 from sippy.CCEvents import CCEventUpdate
-from sippy.Timeout import Timeout
+from sippy.Time.Timeout import Timeout
 
 from test_cases.reinvite import a_test_reinvite, b_test_reinvite
 
