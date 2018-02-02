@@ -25,7 +25,7 @@
 
 from test_cases.t1 import a_test1, b_test1
 
-from sippy.Timeout import Timeout
+from sippy.Time.Timeout import Timeout
 from sippy.CCEvents import CCEventDisconnect, CCEventConnect, \
   CCEventUpdate, CCEventFail
 

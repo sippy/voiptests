@@ -26,7 +26,7 @@
 ##import sys
 ##sys.path.insert(0, 'dist/b2bua')
 
-from sippy.Timeout import Timeout
+from sippy.Time.Timeout import Timeout
 from sippy.SipTransactionManager import SipTransactionManager
 from twisted.internet import reactor
 from random import random

@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from sippy.Timeout import Timeout
+from sippy.Time.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
   CCEventPreConnect, CCEventRing, CCEventFail
 from sippy.SipCallId import SipCallId, gen_test_cid
