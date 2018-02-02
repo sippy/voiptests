@@ -51,11 +51,19 @@ then
   #  MM_KILL_MODULES="event_routing"
   #fi
 fi
+
+git clone git://github.com/sobomax/libelperiodic.git
+cd libelperiodic
+./configure
+${MAKE_CMD} all install
+python setup.py build install
+cd ..
+
 if [ "${MM_TYPE}" = "b2bua" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/sippy/b2bua.git
 else
-  git clone git://github.com/sippy/b2bua.git
+  git clone -b elperiodic git://github.com/sippy/b2bua.git
 fi
 git -C b2bua rev-parse HEAD
 git clone -b "${RTPP_BRANCH}" --recursive git://github.com/sippy/rtpproxy.git
