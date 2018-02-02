@@ -33,7 +33,7 @@ sys.path.insert(0, 'dist/b2bua')
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
-from twisted.internet import reactor
+from sippy.Core.EventDispatcher import ED2
 
 from lib.PortRange import PortRange
 from lib.test_config import test_config
@@ -123,6 +123,6 @@ if __name__ == '__main__':
         sleep(pre_wait)
     acore = a_test(tcfg)
 
-    reactor.run(installSignalHandlers = True)
+    ED2.loop()
 
     sys.exit(acore.rval)

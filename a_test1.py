@@ -28,7 +28,7 @@
 
 from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Time.Timeout import Timeout
-from twisted.internet import reactor
+from sippy.Core.EventDispatcher import ED2
 from random import shuffle
 
 from test_cases.t1 import a_test1
@@ -113,7 +113,7 @@ class a_test(object):
         if subtest.rval == 0:
             self.rval -= 1
         if self.nsubtests_running == 0:
-            reactor.crash()
+            ED2.breakLoop()
 
     def timeout(self):
-        reactor.crash()
+        ED2.breakLoop()
