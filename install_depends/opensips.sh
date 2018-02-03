@@ -56,9 +56,10 @@ git clone git://github.com/sobomax/libelperiodic.git
 cd libelperiodic
 ./configure
 ${MAKE_CMD} all
+python setup.py build
 sudo ${MAKE_CMD} install
 sudo ldconfig
-python setup.py build install
+sudo python setup.py install
 cd ..
 
 if [ "${MM_TYPE}" = "b2bua" ]
