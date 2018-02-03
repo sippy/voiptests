@@ -57,6 +57,7 @@ cd libelperiodic
 ./configure
 ${MAKE_CMD} all
 sudo ${MAKE_CMD} install
+sudo ldconfig
 python setup.py build install
 cd ..
 
