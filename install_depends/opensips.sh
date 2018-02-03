@@ -55,7 +55,8 @@ fi
 git clone git://github.com/sobomax/libelperiodic.git
 cd libelperiodic
 ./configure
-${MAKE_CMD} all install
+${MAKE_CMD} all
+sudo ${MAKE_CMD} install
 python setup.py build install
 cd ..
 
