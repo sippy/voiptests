@@ -1,7 +1,7 @@
 # force run: 41
 language: python
 python:
-  - "2.7"
+  - "3.6"
 before_install:
   - echo "+++ hosts orig +++"
   - cat /etc/hosts
