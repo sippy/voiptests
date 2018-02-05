@@ -34,6 +34,8 @@ class a_test_reinv_onhold(a_test_reinvite):
     cld = 'bob_reinv_onhold'
     cli = 'alice_reinv_onhold'
     sched = None
+    onhold_count = 0
+    offhold_count = 0
 
     def __init__(self, *args, **kwargs):
         while True:
@@ -42,7 +44,7 @@ class a_test_reinv_onhold(a_test_reinvite):
               b_test_reinv_onhold.answer_ival + self.get_reinvite_ival() - \
               self.disconnect_ival:
                 break
-        #print('%s: self.sched = %s' % (self.my_name(), self.sched))
+        print('%s: self.sched = %s' % (self.my_name(), self.sched))
         a_test_reinvite.__init__(self, *args, **kwargs)
 
     def reinvite(self, ua):
@@ -58,6 +60,7 @@ class a_test_reinv_onhold(a_test_reinvite):
             while 'sendrecv' in sect.a_headers:
                 sect.a_headers.remove('sendrecv')
         rval = a_test_reinvite.reinvite(self, ua, alter_port = False)
+        self.onhold_count += 1
         ua.lSDP = sdp_body_bak
         if len(self.sched) > 0:
             # Take call off-hold little bit later
@@ -66,11 +69,20 @@ class a_test_reinv_onhold(a_test_reinvite):
 
     def off_hold(self, ua):
         a_test_reinvite.reinvite(self, ua, alter_port = False)
+        self.offhold_count += 1
         if len(self.sched) > 0:
             Timeout(self.reinvite, self.sched.pop(), 1, ua)
 
     def get_reinvite_ival(self):
         return a_test_reinvite.get_reinvite_ival(self) / 2.0
+
+    def disconnect(self, ua):
+        if self.disconnect_done:
+            return
+        if self.onhold_count != 3 or self.offhold_count != 2:
+            Timeout(self.disconnect, 1.0, 1, ua)
+            return
+        a_test_reinvite.disconnect(self, ua)
 
 class b_test_reinv_onhold(b_test_reinvite):
     cli = 'bob_reinv_onhold'
