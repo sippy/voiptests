@@ -1,10 +1,10 @@
-#if OPENSIPS_VER_FULL == 111
+#if OPENSIPS_VER_FULL == 111 || OPENSIPS_VER_FULL == master
 nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
 #else
 nsess_created=30 nsess_destroyed=30 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
 #endif
 #if OPENSIPS_VER_FULL == master
-ncmds_rcvd=237 ncmds_succd=236 ncmds_errs=0 ncmds_repld=236
+ncmds_rcvd=241 ncmds_succd=240 ncmds_errs=0 ncmds_repld=240
 #else
 # if OPENSIPS_VER_FULL == 211 /* && OPENSIPS_VER_FULL != 21 && OPENSIPS_VER_FULL != 22 */
 ncmds_rcvd=126 ncmds_succd=125 ncmds_errs=0 ncmds_repld=125
