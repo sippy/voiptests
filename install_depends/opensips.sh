@@ -74,7 +74,7 @@ then
 fi
 if [ "${MM_TYPE}" = "go-b2bua" ]
 then
-    git clone -b "${MM_BRANCH}" --recursive git://github.com/sippy/go-b2bua.git
+  git clone -b "${MM_BRANCH}" --recursive git://github.com/sippy/go-b2bua.git
 fi
 
 ##bash
