@@ -15,6 +15,8 @@ before_install:
   - echo "+++ hosts patched +++"
   - cat /etc/hosts
   - echo "--- hosts patched ---"
+  - sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
+  - sudo -H DEBIAN_FRONTEND=noninteractive apt-get install gpp
   - sh -x ./install_depends/opensips.sh
 script:
     sh -x ./test_run.sh

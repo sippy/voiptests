@@ -45,16 +45,11 @@ then
       git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
     done
   fi
-  if [ "${MM_BRANCH}" = "2.3" ]
-  then
-    git -C opensips revert -n a45d4dcaf046bb273cfe5905ac035845a6867945
+  #if [ "${MM_BRANCH}" = "2.3" ]
+  #then
+  #  git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
   #  MM_KILL_MODULES="event_routing"
-  fi
-  if [ "${MM_BRANCH}" = "2.2" ]
-  then
-    git -C opensips revert -n dc258b09da9dcbc654f30365c6a0e8d4be015e6f
-  #  MM_KILL_MODULES="event_routing"
-  fi
+  #fi
 fi
 
 git clone git://github.com/sobomax/libelperiodic.git
@@ -89,7 +84,7 @@ then
 fi
 if [ "${MM_TYPE}" = "go-b2bua" ]
 then
-    git clone -b "${MM_BRANCH}" --recursive git://github.com/sippy/go-b2bua.git
+  git clone -b "${MM_BRANCH}" --recursive git://github.com/sippy/go-b2bua.git
 fi
 
 ##bash
