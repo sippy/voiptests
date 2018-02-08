@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -o pipefail
 set -e
 
 uname -a
