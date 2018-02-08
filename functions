@@ -10,7 +10,7 @@ else
   CC=gcc
   MAKE_CMD=make
 fi
-PP_CMD=gpp -C
+PP_CMD="gpp -C"
 
 MM_TYPE="${MM_TYPE:-b2bua}"
 MM_BRANCH="${MM_BRANCH:-master}"
