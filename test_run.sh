@@ -57,7 +57,7 @@ start_mm() {
     MM_CFG="opensips.cfg"
     for file in "${MM_CFG}.in" rtpproxy.opensips.output.in
     do
-      cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
+      ${PP_CMD} -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" | grep -v '^#' | \
        cat -s > "${file%.in}"
     done
@@ -84,7 +84,7 @@ start_mm() {
     KAM_MPATH="${KROOT}/modules/"
     for file in "${MM_CFG}.in" rtpproxy.kamailio.output.in
     do
-      cpp -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
+      ${PP_CMD} -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\" \
        "${file}" | cat -s | grep -v '^#' | cat -s > "${file%.in}"
     done
