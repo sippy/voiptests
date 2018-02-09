@@ -23,7 +23,7 @@ loadmodule "uri/uri.so"
 #if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master)
 # define XLOG xlog
 #else
-# define XLOG(...)
+# define XLOG(a)
 #endif
 
 #if OPENSIPS_VER_FULL == master
