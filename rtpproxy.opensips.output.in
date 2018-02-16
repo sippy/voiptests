@@ -1,27 +1,33 @@
-#if OPENSIPS_VER_FULL == 111 || OPENSIPS_VER_FULL == master || 1
-nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
-#else
-nsess_created=30 nsess_destroyed=30 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
-#endif
 #if OPENSIPS_VER_FULL == master
-ncmds_rcvd=241 ncmds_succd=240 ncmds_errs=0 ncmds_repld=240
+# define NCMDS_BASE 241
 #else
 # if OPENSIPS_VER_FULL == 211 /* && OPENSIPS_VER_FULL != 21 && OPENSIPS_VER_FULL != 22 */
-ncmds_rcvd=126 ncmds_succd=125 ncmds_errs=0 ncmds_repld=125
+#  define NCMDS_BASE 126
 # else
 #  if OPENSIPS_VER_FULL == 111
-ncmds_rcvd=140 ncmds_succd=139 ncmds_errs=0 ncmds_repld=139
+#   define NCMDS_BASE 140
 #  else
 #   if OPENSIPS_VER < 22
-ncmds_rcvd=135 ncmds_succd=134 ncmds_errs=0 ncmds_repld=134
+#    define NCMDS_BASE 135
 #   else
 #    if OPENSIPS_VER < 23
-ncmds_rcvd=175 ncmds_succd=174 ncmds_errs=0 ncmds_repld=174
+#     define NCMDS_BASE 175
 #    else
-ncmds_rcvd=230 ncmds_succd=229  ncmds_errs=0 ncmds_repld=229
+#     define NCMDS_BASE 230
 #    endif
 #   endif
 #  endif
 # endif
 #endif
+
+#if !defined(NRET)
+#define NRET 0
+#endif
+#define NRCV #eval (NCMDS_BASE + NRET)
+#define NSCV #eval (NRCV - 1 - NRET)
+#define NERV NRET
+#define NRPV #eval (NSCV + NRET)
+
+nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
+ncmds_rcvd=NRCV ncmds_succd=NSCV ncmds_errs=NERV ncmds_repld=NRPV
 MEMDEB: all clear
