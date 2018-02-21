@@ -19,6 +19,13 @@ rtpproxy_cmds_gen() {
   cat "${BUILDDIR}/rtpproxy.stats.input"
 }
 
+pp_file() {
+  file="${1}"
+  shift
+  ${PP_CMD} "${@}" "${file}" -o "${file%.in}.pp"
+  grep -v '^#' "${file%.in}.pp" | cat -s > "${file%.in}"
+}
+
 start_mm() {
   if [ -e "${MM_PIDF}" ]
   then
@@ -57,9 +64,8 @@ start_mm() {
     MM_CFG="opensips.cfg"
     for file in "${MM_CFG}.in" rtpproxy.opensips.output.in
     do
-      ${PP_CMD} -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-       -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" -o "${file%.in}.pp"
-      grep -v '^#' "${file%.in}.pp" | cat -s > "${file%.in}"
+      pp_file "${file}" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
+       -DOPENSIPS_VER_FULL=${MM_VER_FULL}
     done
     set +e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
@@ -84,10 +90,8 @@ start_mm() {
     KAM_MPATH="${KROOT}/modules/"
     for file in "${MM_CFG}.in" rtpproxy.kamailio.output.in
     do
-      ${PP_CMD} -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
-       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\" \
-       "${file}" -o "${file%.in}.pp"
-      cat -s "${file%.in}.pp" | grep -v '^#' | cat -s > "${file%.in}"
+      pp_file "${file}" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
+       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\"
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
     set +e
