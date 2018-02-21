@@ -20,14 +20,4 @@
 # endif
 #endif
 
-#if !defined(NRET)
-#define NRET 0
-#endif
-#define NRCV #eval (NCMDS_BASE + NRET)
-#define NSCV #eval (NRCV - 1 - NRET)
-#define NERV NRET
-#define NRPV #eval (NSCV + NRET)
-
-nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
-ncmds_rcvd=NRCV ncmds_succd=NSCV ncmds_errs=NERV ncmds_repld=NRPV
-MEMDEB: all clear
+#include "rtpproxy.common.output.in"
