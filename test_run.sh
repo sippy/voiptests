@@ -19,6 +19,13 @@ rtpproxy_cmds_gen() {
   cat "${BUILDDIR}/rtpproxy.stats.input"
 }
 
+pp_file() {
+  file="${1}"
+  shift
+  ${PP_CMD} "${@}" "${file}" -o "${file%.in}.pp"
+  grep -v '^#' "${file%.in}.pp" | cat -s > "${file%.in}${PP_SUF}"
+}
+
 start_mm() {
   if [ -e "${MM_PIDF}" ]
   then
@@ -55,11 +62,12 @@ start_mm() {
 
   opensips)
     MM_CFG="opensips.cfg"
-    for file in "${MM_CFG}.in" rtpproxy.opensips.output.in
+    pp_file "${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
+     -DOPENSIPS_VER_FULL=${MM_VER_FULL}
+    for nret in 0 1 2
     do
-      ${PP_CMD} -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-       -DOPENSIPS_VER_FULL=${MM_VER_FULL} "${file}" -o "${file%.in}.pp"
-      grep -v '^#' "${file%.in}.pp" | cat -s > "${file%.in}"
+      PP_SUF=".nr${nret}" pp_file rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
+       -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     set +e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
@@ -82,12 +90,12 @@ start_mm() {
     fi
     KBIN="${KROOT}/kamailio"
     KAM_MPATH="${KROOT}/modules/"
-    for file in "${MM_CFG}.in" rtpproxy.kamailio.output.in
+    pp_file "${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
+     -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\"
+    for nret in 0 1 2
     do
-      ${PP_CMD} -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DKAMAILIO_VER=${MM_VER} \
-       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\" \
-       "${file}" -o "${file%.in}.pp"
-      cat -s "${file%.in}.pp" | grep -v '^#' | cat -s > "${file%.in}"
+      PP_SUF=".nr${nret}" pp_file rtpproxy.kamailio.output.in -DKAMAILIO_VER=${MM_VER} \
+       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
     set +e
@@ -196,8 +204,21 @@ RTPP_RC="${?}"
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
-diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
-RTPP_CHECK_RC="${?}"
+if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
+then
+  diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
+  RTPP_CHECK_RC="${?}"
+else
+  for nret in 0 1 2
+  do
+    diff -uB rtpproxy.${MM_TYPE}.output.nr${nret} rtpproxy.rout
+    RTPP_CHECK_RC="${?}"
+    if [ ${RTPP_CHECK_RC} -eq 0 ]
+    then
+      break
+    fi
+  done
+fi
 
 report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
