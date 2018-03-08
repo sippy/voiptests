@@ -1,5 +1,5 @@
 #if OPENSIPS_VER_FULL == master
-# define NCMDS_BASE 241
+# define NCMDS_BASE 153
 #else
 # if OPENSIPS_VER_FULL == 211 /* && OPENSIPS_VER_FULL != 21 && OPENSIPS_VER_FULL != 22 */
 #  define NCMDS_BASE 126
@@ -11,9 +11,17 @@
 #    define NCMDS_BASE 135
 #   else
 #    if OPENSIPS_VER < 23
-#     define NCMDS_BASE 175
+#     if OPENSIPS_VER_FULL == 22
+#      define NCMDS_BASE 135
+#     else
+#      define NCMDS_BASE 175
+#     endif
 #    else
-#     define NCMDS_BASE 230
+#     if OPENSIPS_VER_FULL == 23
+#      define NCMDS_BASE 150
+#     else
+#      define NCMDS_BASE 230
+#     endif
 #    endif
 #   endif
 #  endif
