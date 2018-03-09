@@ -65,7 +65,7 @@ if [ "${MM_TYPE}" = "b2bua" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/sippy/b2bua.git
 else
-  git clone -b elperiodic git://github.com/sippy/b2bua.git
+  git clone -b main git://github.com/sippy/b2bua.git
 fi
 git -C b2bua rev-parse HEAD
 git clone -b "${RTPP_BRANCH}" --recursive git://github.com/sippy/rtpproxy.git
