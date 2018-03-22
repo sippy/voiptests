@@ -44,7 +44,8 @@ class a_test_reinv_onhold(a_test_reinvite):
               b_test_reinv_onhold.answer_ival + self.get_reinvite_ival() - \
               self.disconnect_ival:
                 break
-        print('%s: self.sched = %s' % (self.my_name(), self.sched))
+        if self.debug_lvl > -1:
+            print('%s: self.sched = %s' % (self.my_name(), self.sched))
         a_test_reinvite.__init__(self, *args, **kwargs)
 
     def reinvite(self, ua):
