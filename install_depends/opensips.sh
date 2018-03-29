@@ -25,7 +25,7 @@ then
   git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
   if [ "${MM_BRANCH}" != "1.11" -a "${MM_VER}" != "21" -a \
-   "${MM_VER}" != "22" -a "${MM_BRANCH}" != "2.3" -a "${MM_BRANCH}" != "master" ]
+   "${MM_VER}" != "22" -a "${MM_BRANCH}" != "2.3" -a "${MM_BRANCH}" != "2.4" -a "${MM_BRANCH}" != "master" ]
   then
     git -C opensips apply ${BUILDDIR}/install_depends/opensips/rtpproxy_ip6.patch
   fi
