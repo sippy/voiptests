@@ -17,7 +17,7 @@
 #      define NCMDS_BASE 175
 #     endif
 #    else
-#     if OPENSIPS_VER_FULL == 23
+#     if (OPENSIPS_VER_FULL == 23) || (OPENSIPS_VER_FULL == 24)
 #      define NCMDS_BASE 150
 #     else
 #      define NCMDS_BASE 230
