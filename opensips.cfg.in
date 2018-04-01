@@ -50,7 +50,7 @@ route {
         exit;
     };
 
-#if (OPENSIPS_VER < 24) || OPENSIPS_VER_FULL != master
+#if (OPENSIPS_VER < 24) && (OPENSIPS_VER_FULL != master)
     if (msg:len >= max_len) {
         sl_send_reply("513", "Message too big");
         exit;
