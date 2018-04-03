@@ -6,7 +6,7 @@ loadmodule "proto_udp.so"
 loadmodule "dialog/dialog.so"
 #endif
 
-#if (OPENSIPS_VER_FULL == master)
+#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
 loadmodule "sipmsgops/sipmsgops.so"
 #endif
 
