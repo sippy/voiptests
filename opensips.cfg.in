@@ -26,12 +26,16 @@ loadmodule "uri/uri.so"
 # define XLOG(a)
 #endif
 
-#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
+#if (OPENSIPS_VER_FULL == master)
 #define IS_METHOD    is_method
+#else
+#define IS_METHOD(m) method == m
+#endif
+
+#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
 #define SRC_PORT     $sp
 #define STATUS       $rs
 #else
-#define IS_METHOD(m) method == m
 #define SRC_PORT     src_port
 #define STATUS       status
 #endif
