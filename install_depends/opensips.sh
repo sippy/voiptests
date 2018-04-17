@@ -64,6 +64,10 @@ cd ..
 if [ "${MM_TYPE}" = "b2bua" ]
 then
   git clone -b "${MM_BRANCH}" git://github.com/sippy/b2bua.git
+  if [ "${MM_REV}" != "${MM_BRANCH}" ]
+  then
+    git -C b2bua checkout "${MM_REV}"
+  fi
 else
   git clone -b master git://github.com/sippy/b2bua.git
 fi
