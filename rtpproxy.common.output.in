@@ -8,4 +8,4 @@
 
 nsess_created=32 nsess_destroyed=32 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
 ncmds_rcvd=NRCV ncmds_succd=NSCV ncmds_errs=NERV ncmds_repld=NRPV
-MEMDEB: all clear
+MEMDEB(rtpproxy): all clear

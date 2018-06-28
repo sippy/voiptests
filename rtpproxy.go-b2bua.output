@@ -2,4 +2,4 @@ nsess_created=44 nsess_destroyed=44 nsess_timeout=8 nsess_complete=0 nsess_nortp
 ncmds_rcvd=161 ncmds_succd=152 ncmds_errs=8 ncmds_repld=160
 nsess_created=44 nsess_destroyed=44 nsess_timeout=8 nsess_complete=0 nsess_nortp=0 nsess_owrtp=0 nsess_nortcp=0 nsess_owrtcp=0
 ncmds_rcvd=163 ncmds_succd=154 ncmds_errs=8 ncmds_repld=162
-MEMDEB: all clear
+MEMDEB(rtpproxy): all clear
