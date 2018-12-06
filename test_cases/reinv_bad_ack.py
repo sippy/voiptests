@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Sippy Software, Inc. All rights reserved.
+# Copyright (c) 2018 Sippy Software, Inc. All rights reserved.
 #
 # All rights reserved.
 #
