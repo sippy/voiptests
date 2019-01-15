@@ -82,8 +82,12 @@ class test_reinvite(object):
             raise ValueError('%s: re-INVITE has failed' % (self.failed_msg(),))
         rval = super(test_reinvite, self).recvEvent(event, ua)
         self.reinvite_done = True
+        self.on_reinvite_connected(ua)
         #print('self.reinvite_done = True')
         return rval
+
+    def on_reinvite_connected(self, ua):
+        pass
 
     def process_reinvite(self, ua):
         if self.reinv_answ_delay > 0:
