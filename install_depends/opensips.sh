@@ -40,6 +40,10 @@ then
     then
       MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
     fi
+    if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.1.5" ]
+    then
+      MM_PATCH_SET="2.1_xenial.patch ${MM_PATCH_SET}"
+    fi
     for p in ${MM_PATCH_SET}
     do
       git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
