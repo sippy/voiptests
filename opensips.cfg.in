@@ -1,3 +1,10 @@
+#if !(OPENSIPS_VER_FULL == master)
+#mode quote "`"
+#define INT(x) `"x`"
+#else
+#define INT(x) x
+#endif
+
 mpath="dist/opensips/modules/"
 
 #if (OPENSIPS_VER >= 21) || (OPENSIPS_VER_FULL == master)
@@ -47,14 +54,14 @@ route {
     XLOG("OpenSIPS received a request $rm from $si\n");
     ## initial sanity checks -- messages with
     ## max_forwards==0, or excessively long requests
-    if (!mf_process_maxfwd_header("10")) {
-        sl_send_reply("483","Too Many Hops");
+    if (!mf_process_maxfwd_header(INT(10))) {
+        sl_send_reply(INT(483), "Too Many Hops");
         exit;
     };
 
 #if (OPENSIPS_VER < 24) && (OPENSIPS_VER_FULL != master)
     if (msg:len >= max_len) {
-        sl_send_reply("513", "Message too big");
+        sl_send_reply(INT(513), "Message too big");
         exit;
     };
 #endif
@@ -66,7 +73,7 @@ route {
     };
 
     if (IS_METHOD("INVITE")) {
-        t_reply("100", "Trying");
+        t_reply(INT(100), "Trying");
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
             if (!has_totag()) {
@@ -89,9 +96,9 @@ route {
 
 
     if (SRC_PORT == 5061) {
-        rewriteport("5062");
+        rewriteport(INT(5062));
     } else {
-        rewriteport("5061");
+        rewriteport(INT(5061));
     };
     t_relay();
     ##rtpproxy_stream2uac("ringback", "10");
