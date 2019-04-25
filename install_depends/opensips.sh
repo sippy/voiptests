@@ -49,11 +49,11 @@ then
       git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
     done
   fi
-  #if [ "${MM_BRANCH}" = "2.3" ]
-  #then
+  if [ "${MM_BRANCH}" = "master" ]
+  then
   #  git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
-  #  MM_KILL_MODULES="event_routing"
-  #fi
+    MM_KILL_MODULES="rabbitmq_consumer"
+  fi
 fi
 
 git clone git://github.com/sobomax/libelperiodic.git
