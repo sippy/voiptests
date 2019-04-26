@@ -98,7 +98,7 @@ route {
     if (SRC_PORT == 5061) {
         rewriteport("5062");
     } else {
-        rewriteport("5061"));
+        rewriteport("5061");
     };
     t_relay();
     ##rtpproxy_stream2uac("ringback", "10");
