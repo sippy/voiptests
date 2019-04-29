@@ -1,4 +1,4 @@
-#if (KAMAILIO_VER_FULL != master) && (KAMAILIO_VER_FULL < 50)
+#if (KAMAILIO_VER_FULL != master) && (KAMAILIO_VER_FULL < 44)
 # define NCMDS_BASE 148
 #else
 # define NCMDS_BASE 144
