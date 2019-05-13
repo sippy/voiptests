@@ -63,16 +63,20 @@ class a_test_reinv_onhold(a_test_reinvite):
         rval = a_test_reinvite.reinvite(self, ua, alter_port = False)
         self.onhold_count += 1
         ua.lSDP = sdp_body_bak
-        if len(self.sched) > 0:
-            # Take call off-hold little bit later
-            Timeout(self.off_hold, self.sched.pop(), 1, ua)
         return rval
+
+    def on_reinvite_connected(self, ua):
+        if len(self.sched) > 0:
+            if self.onhold_count > self.offhold_count:
+                # Take call off-hold little bit later
+                Timeout(self.off_hold, self.sched.pop(), 1, ua)
+            else:
+                Timeout(self.reinvite, self.sched.pop(), 1, ua)
+        a_test_reinvite.on_reinvite_connected(self, ua)
 
     def off_hold(self, ua):
         a_test_reinvite.reinvite(self, ua, alter_port = False)
         self.offhold_count += 1
-        if len(self.sched) > 0:
-            Timeout(self.reinvite, self.sched.pop(), 1, ua)
 
     def get_reinvite_ival(self):
         return a_test_reinvite.get_reinvite_ival(self) / 2.0
