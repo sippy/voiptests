@@ -23,6 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from .TExceptions import ScenarioFailure
+
 from test_cases.t1 import a_test1, b_test1
 
 from sippy.Time.Timeout import Timeout
@@ -79,11 +81,12 @@ class test_reinvite(object):
         elif (isinstance(event, CCEventDisconnect) or \
           isinstance(event, CCEventFail)):
             self.nerrs += 1
-            raise ValueError('%s: re-INVITE has failed' % (self.failed_msg(),))
+            raise ScenarioFailure('%s: re-INVITE has failed' % (self.failed_msg(),))
         rval = super(test_reinvite, self).recvEvent(event, ua)
-        self.reinvite_done = True
-        self.on_reinvite_connected(ua)
-        #print('self.reinvite_done = True')
+        if isinstance(event, CCEventConnect):
+            self.reinvite_done = True
+            self.on_reinvite_connected(ua)
+            #print('self.reinvite_done = True')
         return rval
 
     def on_reinvite_connected(self, ua):
