@@ -27,6 +27,9 @@ loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 #if !(OPENSIPS_VER_FULL == master)
 loadmodule "uri/uri.so"
+# define REWRITEPORT(value) $rp = value
+#else
+# define REWRITEPORT(value) rewriteport(INT(value))
 #endif
 
 #if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master)
@@ -96,9 +99,9 @@ route {
 
 
     if (SRC_PORT == 5061) {
-        rewriteport("5062");
+        REWRITEPORT(5062);
     } else {
-        rewriteport("5061");
+        REWRITEPORT(5061);
     };
     t_relay();
     ##rtpproxy_stream2uac("ringback", "10");
