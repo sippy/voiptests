@@ -27,8 +27,6 @@ loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 #if !(OPENSIPS_VER_FULL == master)
 loadmodule "uri/uri.so"
-#else
-loadmodule "cmds/cmds.so"
 #endif
 
 #if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master)
