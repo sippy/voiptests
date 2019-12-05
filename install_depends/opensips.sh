@@ -24,15 +24,6 @@ then
   fi
   git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
-  if [ "${MM_BRANCH}" != "1.11" -a "${MM_VER}" != "21" -a \
-   "${MM_VER}" != "22" -a "${MM_BRANCH}" != "2.3" -a "${MM_BRANCH}" != "2.4" -a "${MM_BRANCH}" != "master" ]
-  then
-    git -C opensips apply ${BUILDDIR}/install_depends/opensips/rtpproxy_ip6.patch
-  fi
-  #if [ "${MM_BRANCH}" = "1.11" ]
-  #then
-  #  git -C opensips apply ${BUILDDIR}/install_depends/tm_none_on_cancel.patch 
-  #fi
   if [ "${MM_BRANCH}" != "1.11" ]
   then
     MM_PATCH_SET="mod.rtpproxy_retry.diff"
