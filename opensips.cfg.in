@@ -1,4 +1,4 @@
-#if !(OPENSIPS_VER_FULL == master)
+#if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
 #mode quote "`"
 #define INT(x) `"x`"
 #else
@@ -25,7 +25,7 @@ loadmodule "rr/rr.so"
 loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
-#if !(OPENSIPS_VER_FULL == master)
+#if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
 loadmodule "uri/uri.so"
 
 # define REWRITEPORT(value) rewriteport(INT(value))
