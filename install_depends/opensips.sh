@@ -64,7 +64,7 @@ then
     git -C b2bua checkout "${MM_REV}"
   fi
 else
-  git clone -b master git://github.com/sippy/b2bua.git
+  git clone -b elp_callfromthread git://github.com/sippy/b2bua.git
 fi
 git -C b2bua rev-parse HEAD
 git clone -b "${RTPP_BRANCH}" --recursive git://github.com/sippy/rtpproxy.git
