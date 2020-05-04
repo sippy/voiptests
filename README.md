@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sippy/voiptests.svg?branch=master)](https://travis-ci.org/sippy/voiptests)
+[![Build Status](https://travis-ci.com/sippy/voiptests.svg?branch=master)](https://travis-ci.com/sippy/voiptests)
 
 # VoIP Intergated Tests Suite
 
