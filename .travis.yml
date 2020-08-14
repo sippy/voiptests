@@ -23,92 +23,9 @@ script:
     sh -x ./test_run.sh
 env:
 ## 1. Tests with Sippy B2BUA
-  - MM_TYPE=b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=unix
-  - MM_TYPE=b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=cunix
-  - MM_TYPE=b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=tcp
-  - MM_TYPE=b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=tcp6
-#
-  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=master RTPPC_TYPE=unix
-  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=master RTPPC_TYPE=cunix
-  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=master RTPPC_TYPE=tcp
-  - MM_TYPE=b2bua MM_BRANCH=PRACK RTPP_BRANCH=master RTPPC_TYPE=tcp6
-#
-## 2. Tests with OpenSIPS
-  - MM_TYPE=opensips MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=1.11 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=1.11 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=1.11 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=2.2.5 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.2.5 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.2.5 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.1 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=2.2 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.2 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.2 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=2.3 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.3 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.3 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=2.4 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=2.4 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=2.4 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=opensips MM_BRANCH=3.0 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=3.0 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=3.0 RTPP_BRANCH=master RTPPC_TYPE=unix
-## 3. Tests with Kamailio
-  - MM_TYPE=kamailio MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=5.3 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=5.3 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=5.3 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=5.2 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=5.2 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=5.2 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=5.1 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=5.1 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=5.1 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=5.0 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=5.0 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=5.0 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=4.4 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=4.4 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=4.4 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=4.3 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=4.3 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=4.3 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=4.2 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=4.2 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=4.2 RTPP_BRANCH=master RTPPC_TYPE=unix
-#
-  - MM_TYPE=kamailio MM_BRANCH=4.1 RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=kamailio MM_BRANCH=4.1 RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=kamailio MM_BRANCH=4.1 RTPP_BRANCH=master RTPPC_TYPE=unix
-## 4. Tests with Go B2BUA
-  - MM_TYPE=go-b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=go-b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=go-b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=unix
-  - MM_TYPE=go-b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=cunix
-  - MM_TYPE=go-b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=tcp
-  - MM_TYPE=go-b2bua MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=tcp6
+  - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=cunix
+  - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=tcp
+  - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=tcp6
