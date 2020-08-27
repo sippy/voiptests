@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/sippy/voiptests.svg?branch=master)](https://travis-ci.com/sippy/voiptests)
 
-# VoIP Intergated Tests Suite
+# VoIP Integrated Tests Suite
 
 ## Description
 
