@@ -15,6 +15,14 @@ def fillhostport(sdp_body, portrange, atype = None):
         sect.m_header.port = portrange.gennotinrange()
         sect.c_header.atype, sect.c_header.addr = genIP(atype)
 
+class AUTH_CREDS(object):
+    username = None
+    password = None
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
 class test_case_config(object):
     global_config = None
     atype = None
@@ -22,6 +30,8 @@ class test_case_config(object):
     done_cb = None
     portrange = None
     nh_address = None
+    uas_creds = None
+    uac_creds = None
 
     def checkhostport(self, sdp_body):
         for i in range(0, len(sdp_body.content.sections)):
@@ -51,6 +61,8 @@ class test_config(object):
 
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
+        tccfg.uac_auth = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
+        tccfg.uas_auth = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
