@@ -30,6 +30,7 @@ from sippy.SipCallId import SipCallId, gen_test_cid
 from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
+from sippy.SipHeader import SipHeader
 
 from random import random
 
