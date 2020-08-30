@@ -116,6 +116,10 @@ class a_test1(test):
         uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,), ltag = gen_test_tag())
+        if tccfg.uac_creds != None:
+            uaO.username = tccfg.uac_creds.username
+            uaO.password = tccfg.uac_creds.password
+
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
         self.call_id = SipCallId(body = gen_test_cid())
