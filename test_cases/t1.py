@@ -157,7 +157,7 @@ class b_test1(test):
             self.nerrs += 1
             raise ValueError('%s: class %s: hostport validation has failed (%s): %s:\n%s' % \
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
-        if tccfg.uas_creds != None:
+        if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
                 challenge = SipHeader(name = 'www-authenticate')
                 challenge.getBody().realm = req.getRURI().host
@@ -165,8 +165,8 @@ class b_test1(test):
                 resp.appendHeader(challenge)
                 return (resp, None, None)
             sip_auth = req.getHFBody('authorization')
-            if sip_auth.username != tccfg.uas_creds.username or \
-              not sip_auth.verify(tccfg.uas_creds.password, req.method):
+            if sip_auth.username != self.tccfg.uas_creds.username or \
+              not sip_auth.verify(self.tccfg.uas_creds.password, req.method):
                 resp = req.genResponse(403, 'Auth Failed')
                 return (resp, None, None)
         # New dialog
