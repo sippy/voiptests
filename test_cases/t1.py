@@ -160,7 +160,10 @@ class b_test1(test):
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
                 challenge = SipHeader(name = 'www-authenticate')
-                challenge.getBody().realm = req.getRURI().host
+                cbody = challenge.getBody()
+                cbody.realm = req.getRURI().host
+                cbody.algorithm = 'MD5'
+                cbody.qop = ('auth',)
                 resp = req.genResponse(401, 'Unauthorized')
                 resp.appendHeader(challenge)
                 return (resp, None, None)
