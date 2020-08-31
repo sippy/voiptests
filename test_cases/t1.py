@@ -170,7 +170,7 @@ class b_test1(test):
                 challenge = SipHeader(name = 'www-authenticate')
                 cbody = challenge.getBody()
                 cbody.realm = req.getRURI().host
-                cbody.algorithm = 'MD5'
+                cbody.algorithm = 'SHA-256'
                 cbody.qop = ('auth',)
                 raise AuthRequired(challenge)
             sip_auth = req.getHFBody('authorization')
