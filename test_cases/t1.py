@@ -31,6 +31,8 @@ from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
 from sippy.SipHeader import SipHeader
+from sippy.SipWWWAuthenticate import SipWWWAuthenticate
+from sippy.Security.SipNonce import DGST_MD5, DGST_SHA256, DGST_SHA512
 
 from random import random
 
@@ -167,11 +169,11 @@ class b_test1(test):
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
-                challenge = SipHeader(name = 'www-authenticate')
-                cbody = challenge.getBody()
+                cbody = SipWWWAuthenticate(enabled_algos = (DGST_SHA256,))
                 cbody.realm = req.getRURI().host
                 cbody.algorithm = 'SHA-256'
                 cbody.qop = ('auth',)
+                challenge = SipHeader(body = cbody)
                 raise AuthRequired(challenge)
             sip_auth = req.getHFBody('authorization')
             if sip_auth.username != self.tccfg.uas_creds.username or \
