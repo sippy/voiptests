@@ -104,6 +104,7 @@ class b_test(object):
             except AuthRequired as ce:
                 resp = req.genResponse(401, 'Unauthorized')
                 resp.appendHeader(ce.challenge)
+                self.nsubtests_running -= 1
                 self.rval -= 1
                 return (resp, None, None)
         return (req.genResponse(501, 'Not Implemented'), None, None)
