@@ -34,6 +34,13 @@ from sippy.SipHeader import SipHeader
 
 from random import random
 
+class AuthRequired(Exception):
+    challenge = None
+
+    def __init__(self, challenge):
+        self.challenge = challenge
+        Exception.__init__(self)
+
 class test(object):
     rval = 1
     nerrs = 0
@@ -165,9 +172,7 @@ class b_test1(test):
                 cbody.realm = req.getRURI().host
                 cbody.algorithm = 'MD5'
                 cbody.qop = ('auth',)
-                resp = req.genResponse(401, 'Unauthorized')
-                resp.appendHeader(challenge)
-                return (resp, None, None)
+                raise AuthRequired(challenge)
             sip_auth = req.getHFBody('authorization')
             if sip_auth.username != self.tccfg.uas_creds.username or \
               not sip_auth.verify(self.tccfg.uas_creds.password, req.method):

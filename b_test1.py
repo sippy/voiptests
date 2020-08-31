@@ -33,7 +33,7 @@ from random import random
 
 from lib.test_config import fillhostport
 
-from test_cases.t1 import b_test1
+from test_cases.t1 import b_test1, AuthRequired
 from test_cases.t2 import b_test2
 from test_cases.t3 import b_test3
 from test_cases.t4 import b_test4
@@ -99,7 +99,13 @@ class b_test(object):
             self.rval += 1
             sdp_body = self.tcfg.bodys[0 if random() < 0.5 else 1].getCopy()
             fillhostport(sdp_body, self.tcfg.portrange, tccfg.atype)
-            return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
+            try:
+                return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
+            except AuthRequired as ce:
+                resp = req.genResponse(401, 'Unauthorized')
+                resp.appendHeader(ce.challenge)
+                self.rval -= 1
+                return (resp, None, None)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):
