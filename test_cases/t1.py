@@ -169,9 +169,9 @@ class b_test1(test):
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
-                cbody = SipWWWAuthenticate(enabled_algos = (DGST_MD5, DGST_SHA512,))
+                cbody = SipWWWAuthenticate(enabled_algos = (DGST_SHA512,))
                 cbody.realm = req.getRURI().host
-                cbody.algorithm = 'SHA-256'
+                cbody.algorithm = 'SHA-512-256'
                 cbody.qop = ('auth',)
                 challenge = SipHeader(body = cbody)
                 raise AuthRequired(challenge)
