@@ -43,6 +43,9 @@ class AuthRequired(Exception):
         self.challenge = challenge
         Exception.__init__(self)
 
+class AuthFailed(Exception):
+    pass
+
 class test(object):
     rval = 1
     nerrs = 0
@@ -178,8 +181,7 @@ class b_test1(test):
             sip_auth = req.getHFBody('authorization')
             if sip_auth.username != self.tccfg.uas_creds.username or \
               not sip_auth.verify(self.tccfg.uas_creds.password, req.method):
-                resp = req.genResponse(403, 'Auth Failed')
-                return (resp, None, None)
+                raise AuthFailed()
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))

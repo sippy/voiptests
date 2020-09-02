@@ -33,7 +33,7 @@ from random import random
 
 from lib.test_config import fillhostport
 
-from test_cases.t1 import b_test1, AuthRequired
+from test_cases.t1 import b_test1, AuthRequired, AuthFailed
 from test_cases.t2 import b_test2
 from test_cases.t3 import b_test3
 from test_cases.t4 import b_test4
@@ -106,6 +106,9 @@ class b_test(object):
                 resp.appendHeader(ce.challenge)
                 self.nsubtests_running -= 1
                 self.rval -= 1
+                return (resp, None, None)
+            except AuthFailed:
+                resp = req.genResponse(403, 'Auth Failed')
                 return (resp, None, None)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
