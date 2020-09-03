@@ -37,10 +37,10 @@ from sippy.Security.SipNonce import DGST_MD5, DGST_SHA256, DGST_SHA512
 from random import random
 
 class AuthRequired(Exception):
-    challenge = None
+    challenges = None
 
-    def __init__(self, challenge):
-        self.challenge = challenge
+    def __init__(self, challenges):
+        self.challenges = challenges
         Exception.__init__(self)
 
 class AuthFailed(Exception):
@@ -172,12 +172,14 @@ class b_test1(test):
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
-                cbody = SipWWWAuthenticate(enabled_algos = (DGST_MD5,))
+                cbody = SipWWWAuthenticate(enabled_algos = (DGST_MD5, DGST_SHA256, DGST_SHA512))
                 cbody.realm = req.getRURI().host
-                #cbody.algorithm = 'SHA-512-256'
-                #cbody.qop = ('auth',)
-                challenge = SipHeader(body = cbody)
-                raise AuthRequired(challenge)
+                cbody.qop = ('auth',)
+                challenges = []
+                for alg in ('SHA-512-256', 'SHA-256', 'MD5'):
+                    cbody.algorithm = alg
+                    challenges.append(SipHeader(body = cbody.getCopy()))
+                raise AuthRequired(challenges)
             sip_auth = req.getHFBody('authorization')
             if sip_auth.username != self.tccfg.uas_creds.username or \
               not sip_auth.verify(self.tccfg.uas_creds.password, req.method):

@@ -103,7 +103,7 @@ class b_test(object):
                 return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
             except AuthRequired as ce:
                 resp = req.genResponse(401, 'Unauthorized')
-                resp.appendHeader(ce.challenge)
+                resp.appendHeaders(ce.challenges)
                 self.nsubtests_running -= 1
                 self.rval -= 1
                 return (resp, None, None)
