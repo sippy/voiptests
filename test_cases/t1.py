@@ -132,6 +132,7 @@ class a_test1(test):
         if tccfg.uac_creds != None:
             uaO.username = tccfg.uac_creds.username
             uaO.password = tccfg.uac_creds.password
+            uaO.auth_enalgs = tccfg.uac_creds.enalgs
 
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
@@ -172,12 +173,12 @@ class b_test1(test):
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
-                enalgs = ('SHA-512-256', 'SHA-256', 'MD5')
-                cbody = SipWWWAuthenticate(enabled_algos = NameList2AlgMask(enalgs))
+                cbody = SipWWWAuthenticate(enabled_algos = \
+                  NameList2AlgMask(self.tccfg.uas_creds.enalgs))
                 cbody.realm = req.getRURI().host
                 cbody.qop = ('auth',)
                 challenges = []
-                for alg in enalgs:
+                for alg in self.tccfg.uas_creds.enalgs:
                     cbody.algorithm = alg
                     challenges.append(SipHeader(body = cbody.getCopy()))
                 raise AuthRequired(challenges)

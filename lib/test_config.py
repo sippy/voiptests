@@ -18,6 +18,7 @@ def fillhostport(sdp_body, portrange, atype = None):
 class AUTH_CREDS(object):
     username = None
     password = None
+    enalgs = ('SHA-512-256', 'SHA-256', 'MD5')
 
     def __init__(self, username, password):
         self.username = username
