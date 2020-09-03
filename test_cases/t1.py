@@ -32,7 +32,7 @@ from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
 from sippy.SipHeader import SipHeader
 from sippy.SipWWWAuthenticate import SipWWWAuthenticate
-from sippy.Security.SipNonce import DGST_MD5, DGST_SHA256, DGST_SHA512
+from sippy.SipAuthorization import NameList2AlgMask
 
 from random import random
 
@@ -172,11 +172,12 @@ class b_test1(test):
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
-                cbody = SipWWWAuthenticate(enabled_algos = (DGST_MD5, DGST_SHA256, DGST_SHA512))
+                enalgs = ('SHA-512-256', 'SHA-256', 'MD5')
+                cbody = SipWWWAuthenticate(enabled_algos = NameList2AlgMask(enalgs))
                 cbody.realm = req.getRURI().host
                 cbody.qop = ('auth',)
                 challenges = []
-                for alg in ('SHA-512-256', 'SHA-256', 'MD5'):
+                for alg in enalgs:
                     cbody.algorithm = alg
                     challenges.append(SipHeader(body = cbody.getCopy()))
                 raise AuthRequired(challenges)
