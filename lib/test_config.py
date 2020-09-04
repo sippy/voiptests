@@ -63,7 +63,6 @@ class test_config(object):
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
         tccfg.uac_creds = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
-        tccfg.uac_creds.enalgs = ('MD5',)
         tccfg.uas_creds = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
         tccfg.global_config = self.global_config
         if self.body != None:
