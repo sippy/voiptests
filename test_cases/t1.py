@@ -173,14 +173,14 @@ class b_test1(test):
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if req.countHFs('authorization') == 0:
-                cbody = SipWWWAuthenticate(enabled_algos = \
-                  NameList2AlgMask(self.tccfg.uas_creds.enalgs))
-                cbody.realm = req.getRURI().host
-                cbody.qop = ('auth',)
                 challenges = []
                 for alg in self.tccfg.uas_creds.enalgs:
+                    cbody = SipWWWAuthenticate(enabled_algos = \
+                      NameList2AlgMask((alg,)))
                     cbody.algorithm = alg
-                    challenges.append(SipHeader(body = cbody.getCopy()))
+                    cbody.realm = req.getRURI().host
+                    cbody.qop = ('auth',)
+                    challenges.append(SipHeader(body = cbody))
                 raise AuthRequired(challenges)
             sip_auth = req.getHFBody('authorization')
             if sip_auth.username != self.tccfg.uas_creds.username or \
