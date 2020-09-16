@@ -172,13 +172,17 @@ class b_test1(test):
             raise ValueError('%s: class %s: hostport validation has failed (%s): %s:\n%s' % \
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
+            if self.tccfg.uas_creds.realm != None:
+                realm = self.tccfg.uas_creds.realm
+            else:
+                realm = req.getRURI().host
             if req.countHFs('authorization') == 0:
                 challenges = []
                 for alg in self.tccfg.uas_creds.enalgs:
                     cbody = SipWWWAuthenticate(enabled_algos = \
                       NameList2AlgMask((alg,)))
                     cbody.algorithm = alg
-                    cbody.realm = req.getRURI().host
+                    cbody.realm = realm
                     cbody.qop = ('auth',)
                     challenges.append(SipHeader(body = cbody))
                 raise AuthRequired(challenges)
