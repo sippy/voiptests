@@ -36,8 +36,15 @@ class a_test_reinv_bad_ack(test_reinvite, a_test1):
         self.reinvite_ival = 1
         a_test1.__init__(self, *args)
 
+    def reinvite(self, ua, alter_port = True):
+        test_reinvite.reinvite(self, ua, alter_port)
+        if not self.connect_done or self.disconnect_done:
+            return
+        ua.tr.uack = True
+
     def on_reinvite_connected(self, ua):
         ua.tr.ack.getHFBody('cseq').cseq = 0
+        ua.global_config['_sip_tm'].sendACK(ua.tr)
 
     def disconnect(self, ua):
         if not self.disconnect_done:
