@@ -36,10 +36,10 @@ then
     then
       MM_PATCH_SET="2.1_xenial.patch ${MM_PATCH_SET}"
     fi
-    for p in ${MM_PATCH_SET}
-    do
+#    for p in ${MM_PATCH_SET}
+#    do
 #      git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
-    done
+#    done
   fi
   if [ "${MM_BRANCH}" = "master" ]
   then
