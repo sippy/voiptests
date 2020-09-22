@@ -38,7 +38,7 @@ then
     fi
     for p in ${MM_PATCH_SET}
     do
-      git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
+#      git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
     done
   fi
   if [ "${MM_BRANCH}" = "master" ]
