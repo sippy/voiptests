@@ -16,8 +16,9 @@ cd "${BUILDDIR}/dist"
 
 if [ "${MM_TYPE}" = "opensips" ]
 then
+  MM_REPO=${MM_REPO:-"git://github.com/OpenSIPS/opensips.git"}
   MM_DIR="${BUILDDIR}/dist/opensips"
-  git clone -b "${MM_BRANCH}" git://github.com/OpenSIPS/opensips.git
+  git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
   if [ "${MM_REV}" != "${MM_BRANCH}" ]
   then
     git -C opensips checkout "${MM_REV}"
@@ -58,7 +59,8 @@ cd ..
 
 if [ "${MM_TYPE}" = "b2bua" ]
 then
-  git clone -b "${MM_BRANCH}" git://github.com/sippy/b2bua.git
+  MM_REPO=${MM_REPO:-"git://github.com/sippy/b2bua.git"}
+  git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
   if [ "${MM_REV}" != "${MM_BRANCH}" ]
   then
     git -C b2bua checkout "${MM_REV}"
@@ -72,7 +74,8 @@ git -C rtpproxy rev-parse HEAD
 #git -C rtpproxy submodule update --init --recursive
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  git clone -b "${MM_BRANCH}" git://github.com/kamailio/kamailio.git kamailio
+  MM_REPO=${MM_REPO:-"git://github.com/kamailio/kamailio.git"}
+  git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
   git -C kamailio rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
@@ -83,7 +86,8 @@ then
 fi
 if [ "${MM_TYPE}" = "go-b2bua" ]
 then
-  git clone -b "${MM_BRANCH}" --recursive git://github.com/sippy/go-b2bua.git
+  MM_REPO=${MM_REPO:-"git://github.com/sippy/go-b2bua.git"}
+  git clone -b "${MM_BRANCH}" --recursive "${MM_REPO}" "${MM_TYPE}"
 fi
 
 ##bash
