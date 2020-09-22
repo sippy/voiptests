@@ -30,7 +30,11 @@ env:
   - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=cunix
   - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=tcp
   - MM_TYPE=b2bua MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=tcp6
-## 2. Tests with OpenSIPS
+## 2. Tests with OpenSIPS (master)
   - MM_TYPE=opensips MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=master RTPP_BRANCH=master RTPPC_TYPE=unix
+## 3. Tests with OpenSIPS (RFC8760)
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 RTPP_BRANCH=master RTPPC_TYPE=unix
