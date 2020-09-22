@@ -32,7 +32,6 @@ from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
 from sippy.SipHeader import SipHeader
 from sippy.SipWWWAuthenticate import SipWWWAuthenticate
-from sippy.SipAuthorization import NameList2AlgMask
 
 from random import random
 
@@ -179,11 +178,7 @@ class b_test1(test):
             if req.countHFs('authorization') == 0:
                 challenges = []
                 for alg in self.tccfg.uas_creds.enalgs:
-                    cbody = SipWWWAuthenticate(enabled_algos = \
-                      NameList2AlgMask((alg,)))
-                    cbody.algorithm = alg
-                    cbody.realm = realm
-                    cbody.qop = ('auth',)
+                    cbody = SipWWWAuthenticate(algorithm = alg, realm = realm)
                     challenges.append(SipHeader(body = cbody))
                 raise AuthRequired(challenges)
             sip_auth = req.getHFBody('authorization')
