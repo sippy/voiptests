@@ -230,4 +230,9 @@ else
   report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
 fi
 report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
-cat alice.log bob.log ${MM_LOG}
+if [ -e /tmp/TRIM_REPORT.trace ]
+then
+  cat /tmp/TRIM_REPORT.trace
+else
+  cat alice.log bob.log ${MM_LOG}
+fi
