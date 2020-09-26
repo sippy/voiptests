@@ -1,4 +1,4 @@
-#if OPENSIPS_VER_FULL == master || OPENSIPS_VER_FULL == RFC8760
+#if OPENSIPS_VER_FULL == master || OPENSIPS_VER_FULL == RFC8760 ||  OPENSIPS_VER_FULL == master_instrumentation
 # define NCMDS_BASE 212
 #else
 #if OPENSIPS_VER >= 24
