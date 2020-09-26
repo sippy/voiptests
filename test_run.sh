@@ -232,7 +232,7 @@ fi
 report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
 if [ -e /tmp/TRIM_REPORT.trace ]
 then
-  bzip2 -9 -c /tmp/TRIM_REPORT.trace | b64encode TRIM_REPORT.trace
+  bzip2 -9 -c /tmp/TRIM_REPORT.trace | base64
 else
   cat alice.log bob.log ${MM_LOG}
 fi
