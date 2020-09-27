@@ -65,6 +65,7 @@ class test_config(object):
         tccfg = test_case_config()
         tccfg.uac_creds = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
         tccfg.uas_creds = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
+        tccfg.uas_creds.realm = 'VoIPTests.NET'
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
