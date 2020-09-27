@@ -27,6 +27,8 @@ loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 #if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
 loadmodule "uri/uri.so"
+loadmodule "uac/uac.so"
+loadmodule "uac_auth/uac_auth.so"
 
 # define REWRITEPORT(value) rewriteport(INT(value))
 #else
@@ -83,6 +85,8 @@ route {
             if (!has_totag()) {
                 /* Get rid of session when INVITE fails unless it's re-INVITE */
                 t_on_failure("1");
+            } else {
+                t_on_failure("uac_auth");
             }
         };
     };
@@ -125,5 +129,23 @@ onreply_route[1]
 failure_route[1]
 {
 
+    route(uac_auth);
     RTPP_UNFORCE();
+}
+
+failure_route[uac_auth]
+{
+    if (t_was_cancelled()) {
+        exit;
+    }
+
+    if (t_check_status("40[17]")) {
+        if (uac_auth()) {
+            xlog("uac_auth() SUCCESS\n");
+            t_relay();
+            exit;
+        } else {
+            xlog("uac_auth() FAILURE\n");
+        }
+    }
 }
