@@ -15,6 +15,8 @@ loadmodule "dialog/dialog.so"
 
 #if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
 loadmodule "sipmsgops/sipmsgops.so"
+loadmodule "uac/uac.so"
+loadmodule "uac_auth/uac_auth.so"
 #endif
 
 #define RTPP_UNFORCE() rtpproxy_unforce()
@@ -27,10 +29,6 @@ loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 #if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
 loadmodule "uri/uri.so"
-loadmodule "uac/uac.so"
-loadmodule "uac_auth/uac_auth.so"
-
-modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 
 # define REWRITEPORT(value) rewriteport(INT(value))
 #else
@@ -47,6 +45,7 @@ modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 #define IS_METHOD    is_method
 #define SRC_PORT     $sp
 #define STATUS       $rs
+modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 #else
 #define IS_METHOD(m) method == m
 #define SRC_PORT     src_port
