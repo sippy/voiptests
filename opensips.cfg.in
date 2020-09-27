@@ -30,6 +30,8 @@ loadmodule "uri/uri.so"
 loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
 
+modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
+
 # define REWRITEPORT(value) rewriteport(INT(value))
 #else
 # define REWRITEPORT(value) $rp = value
