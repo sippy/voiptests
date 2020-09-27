@@ -63,11 +63,11 @@ start_mm() {
   opensips)
     MM_CFG="opensips.cfg"
     pp_file "${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-     -DOPENSIPS_VER_FULL=${MM_VER_FULL}
+     -DOPENSIPS_VER_FULL=master
     for nret in 0 1 2
     do
       PP_SUF=".nr${nret}" pp_file rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
-       -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
+       -DOPENSIPS_VER_FULL=master -DNRET=${nret}
     done
     set +e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
