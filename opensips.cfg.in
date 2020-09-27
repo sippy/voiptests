@@ -130,7 +130,15 @@ onreply_route[1]
 failure_route[1]
 {
 
-    route(uac_auth);
+    if (t_check_status("40[17]")) {
+        if (uac_auth()) {
+            xlog("uac_auth() SUCCESS\n");
+            t_relay();
+            exit;
+        } else {
+            xlog("uac_auth() FAILURE\n");
+        }
+    }
     RTPP_UNFORCE();
 }
 
