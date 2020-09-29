@@ -98,6 +98,7 @@ route {
     };
 
     if (IS_METHOD("BYE")) {
+        XLOG("    calling rtpproxy_unforce()\n");
         RTPP_UNFORCE();
     };
 
@@ -132,6 +133,7 @@ onreply_route[1]
 
 failure_route[invite]
 {
+    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
 #if MM_AUTH == UAC
     if (t_check_status("40[17]")) {
         if (uac_auth()) {
@@ -143,12 +145,14 @@ failure_route[invite]
         }
     }
 #endif
+    XLOG("    calling rtpproxy_unforce()\n");
     RTPP_UNFORCE();
 }
 
 #if MM_AUTH == UAC
 failure_route[re_invite]
 {
+    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
     if (t_was_cancelled()) {
         exit;
     }
