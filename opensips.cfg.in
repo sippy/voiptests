@@ -88,6 +88,7 @@ route {
     };
 
     if (IS_METHOD("BYE")) {
+        XLOG("    calling rtpproxy_unforce()\n");
         RTPP_UNFORCE();
     };
 
@@ -125,5 +126,6 @@ onreply_route[1]
 failure_route[1]
 {
 
+    XLOG("    calling rtpproxy_unforce()\n");
     RTPP_UNFORCE();
 }
