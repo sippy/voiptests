@@ -125,7 +125,7 @@ onreply_route[1]
 
 failure_route[1]
 {
-
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[1]\n");
     XLOG("    calling rtpproxy_unforce()\n");
     RTPP_UNFORCE();
 }
