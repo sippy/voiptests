@@ -32,4 +32,4 @@
 #endif
 #endif
 
-#include "common.in"
+#include "rtpproxy.output/common.in"

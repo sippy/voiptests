@@ -66,8 +66,8 @@ start_mm() {
      -DOPENSIPS_VER_FULL=master -DMM_AUTH="${MM_AUTH}"
     for nret in 0 1 2
     do
-      PP_SUF=".nr${nret}" pp_file rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
-       -DOPENSIPS_VER_FULL=master -DNRET=${nret} -Irtpproxy.output/${MM_AUTH}
+      PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
+       -DOPENSIPS_VER_FULL=master -DNRET=${nret}
     done
     set +e
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
@@ -94,8 +94,8 @@ start_mm() {
      -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\"
     for nret in 0 1 2
     do
-      PP_SUF=".nr${nret}" pp_file rtpproxy.kamailio.output.in -DKAMAILIO_VER=${MM_VER} \
-       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DNRET=${nret} -Irtpproxy.output/${MM_AUTH}
+      PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.kamailio.output.in -DKAMAILIO_VER=${MM_VER} \
+       -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
     set +e
