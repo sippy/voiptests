@@ -21,9 +21,10 @@ rtpproxy_cmds_gen() {
 
 pp_file() {
   file="${1}"
+  fname="`basename ${file}`"
   shift
-  ${PP_CMD} "${@}" "${file}" -o "${file%.in}.pp"
-  grep -v '^#' "${file%.in}.pp" | cat -s > "${file%.in}${PP_SUF}"
+  ${PP_CMD} "${@}" "${file}" -o "${fname%.in}.pp"
+  grep -v '^#' "${fname%.in}.pp" | cat -s > "${fname%.in}${PP_SUF}"
 }
 
 start_mm() {
