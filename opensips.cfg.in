@@ -46,6 +46,7 @@ loadmodule "uri/uri.so"
 #define SRC_PORT     $sp
 #define STATUS       $rs
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
+modparam("uac", "force_dialog", yes)
 #else
 #define IS_METHOD(m) method == m
 #define SRC_PORT     src_port
