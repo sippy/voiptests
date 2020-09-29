@@ -79,8 +79,6 @@ route {
         exit;
     };
 
-    record_route();
-
     if (IS_METHOD("INVITE")) {
         t_reply(INT(100), "Trying");
         if (rtpproxy_offer("r")) {
@@ -101,6 +99,8 @@ route {
         XLOG("    calling rtpproxy_unforce()\n");
         RTPP_UNFORCE();
     };
+
+    record_route();
 
     if (loose_route()) {
         t_relay();
