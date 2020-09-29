@@ -133,15 +133,16 @@ onreply_route[1]
 
 failure_route[invite]
 {
-    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[invite]\n");
 #if MM_AUTH == UAC
     if (t_check_status("40[17]")) {
         if (uac_auth()) {
-            xlog("uac_auth() SUCCESS\n");
+            xlog("    uac_auth() SUCCESS\n");
+            t_on_failure("uac_auth_fail");
             t_relay();
             exit;
         } else {
-            xlog("uac_auth() FAILURE\n");
+            xlog("    uac_auth() FAILURE\n");
         }
     }
 #endif
@@ -152,19 +153,27 @@ failure_route[invite]
 #if MM_AUTH == UAC
 failure_route[re_invite]
 {
-    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[re_invite]\n");
     if (t_was_cancelled()) {
         exit;
     }
 
     if (t_check_status("40[17]")) {
         if (uac_auth()) {
-            xlog("uac_auth() SUCCESS\n");
+            xlog("    uac_auth() SUCCESS\n");
+            t_on_failure("uac_auth_fail");
             t_relay();
             exit;
         } else {
-            xlog("uac_auth() FAILURE\n");
+            xlog("    uac_auth() FAILURE\n");
         }
     }
+}
+
+failure_route[uac_auth_fail]
+{
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[uac_auth_fail]\n");
+    XLOG("    calling rtpproxy_unforce()\n");
+    RTPP_UNFORCE();
 }
 #endif
