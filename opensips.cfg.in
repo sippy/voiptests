@@ -15,8 +15,10 @@ loadmodule "dialog/dialog.so"
 
 #if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
 loadmodule "sipmsgops/sipmsgops.so"
+#if MM_AUTH == UAC
 loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
+#endif
 #endif
 
 #define RTPP_UNFORCE() rtpproxy_unforce()
