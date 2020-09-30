@@ -47,7 +47,9 @@ loadmodule "uri/uri.so"
 #define IS_METHOD    is_method
 #define SRC_PORT     $sp
 #define STATUS       $rs
+#if MM_AUTH == UAC
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
+#endif
 #else
 #define IS_METHOD(m) method == m
 #define SRC_PORT     src_port
