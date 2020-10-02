@@ -98,7 +98,7 @@ route {
             $avp(username)="mightyuser";
             $avp(password)="s3cr3tpAssw0Rd";
             if (!pv_www_authorize("VoIPTests.NET")) {
-                www_challenge("VoIPTests.NET", 1);
+                www_challenge("VoIPTests.NET", "auth");
                 exit;
             }
         }
