@@ -46,3 +46,7 @@ env:
   - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+## 6. Tests with OpenSIPS (RFC8760+auth/UAS)
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=unix

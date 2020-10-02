@@ -19,6 +19,9 @@ loadmodule "sipmsgops/sipmsgops.so"
 loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
 #endif
+#if MM_AUTH == UAS
+loadmodule "auth/auth.so"
+#endif
 #endif
 
 #define RTPP_UNFORCE() rtpproxy_unforce()
@@ -49,6 +52,11 @@ loadmodule "uri/uri.so"
 #define STATUS       $rs
 #if MM_AUTH == UAC
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
+#endif
+#if MM_AUTH == UAS
+modparam("auth", "username_spec", "$var(username)")
+modparam("auth", "password_spec", "$avp(password)")
+modparam("auth", "calculate_ha1", 1)
 #endif
 #else
 #define IS_METHOD(m) method == m
