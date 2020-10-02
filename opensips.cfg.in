@@ -20,6 +20,7 @@ loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
 #endif
 #if MM_AUTH == UAS
+loadmodule "signaling/signaling.so"
 loadmodule "auth/auth.so"
 #endif
 #endif
@@ -54,7 +55,7 @@ loadmodule "uri/uri.so"
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 #endif
 #if MM_AUTH == UAS
-modparam("auth", "username_spec", "$var(username)")
+modparam("auth", "username_spec", "$avp(username)")
 modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
 #endif
@@ -92,6 +93,16 @@ route {
     };
 
     if (IS_METHOD("INVITE")) {
+#if MM_AUTH == UAS
+        if (!has_totag()) {
+            $avp(username)="mightyuser";
+            $avp(password)="s3cr3tpAssw0Rd";
+            if (!pv_www_authorize("VoIPTests.NET")) {
+                www_challenge("VoIPTests.NET", 1);
+                exit;
+            }
+        }
+#endif
         t_reply(INT(100), "Trying");
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
