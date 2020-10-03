@@ -19,7 +19,7 @@ class AUTH_CREDS(object):
     username = None
     password = None
     realm = None
-    enalgs = ('SHA-512-256-sess', 'SHA-256-sess', 'MD5-sess')
+    enalgs = ('SHA-512-256-sess', 'SHA-256-sess', 'MD5-sess', None)
 
     def __init__(self, username, password):
         self.username = username
