@@ -185,7 +185,7 @@ class b_test1(test):
             if sip_auth.username != self.tccfg.uas_creds.username:
                 raise AuthFailed()
             try:
-                if sip_auth.verify(self.tccfg.uas_creds.password, req.method):
+                if not sip_auth.verify(self.tccfg.uas_creds.password, req.method):
                     raise AuthFailed()
             except ValueError:
                 raise AuthFailed()
