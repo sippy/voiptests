@@ -15,7 +15,7 @@ loadmodule "dialog/dialog.so"
 
 #if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
 loadmodule "sipmsgops/sipmsgops.so"
-#if MM_AUTH == UAC
+#if MM_AUTH == UAC || MM_AUTH == UAS
 loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
 #endif
@@ -51,7 +51,7 @@ loadmodule "uri/uri.so"
 #define IS_METHOD    is_method
 #define SRC_PORT     $sp
 #define STATUS       $rs
-#if MM_AUTH == UAC
+#if MM_AUTH == UAC || MM_AUTH == UAS
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 #endif
 #if MM_AUTH == UAS
@@ -101,6 +101,7 @@ route {
                 www_challenge("VoIPTests.NET", "auth");
                 exit;
             }
+            consume_credentials();
         }
 #endif
         t_reply(INT(100), "Trying");
@@ -109,7 +110,7 @@ route {
             if (!has_totag()) {
                 /* Get rid of session when INVITE fails unless it's re-INVITE */
                 t_on_failure("invite");
-#if MM_AUTH == UAC
+#if MM_AUTH == UAC || MM_AUTH == UAS
                 create_dialog();
             } else {
                 t_on_failure("re_invite");
@@ -157,7 +158,7 @@ onreply_route[1]
 failure_route[invite]
 {
     XLOG("OpenSIPS handling $rm failure in from $si in failure_route[invite]\n");
-#if MM_AUTH == UAC
+#if MM_AUTH == UAC || MM_AUTH == UAS
     if (t_check_status("40[17]")) {
         if (uac_auth()) {
             xlog("    uac_auth() SUCCESS\n");
@@ -173,7 +174,7 @@ failure_route[invite]
     RTPP_UNFORCE();
 }
 
-#if MM_AUTH == UAC
+#if MM_AUTH == UAC || MM_AUTH == UAS
 failure_route[re_invite]
 {
     XLOG("OpenSIPS handling $rm failure in from $si in failure_route[re_invite]\n");
