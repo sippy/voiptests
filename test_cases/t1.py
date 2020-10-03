@@ -183,11 +183,12 @@ class b_test1(test):
                 raise AuthRequired(challenges)
             sip_auth = req.getHFBody('authorization')
             if sip_auth.username != self.tccfg.uas_creds.username:
-                try:
-                    if sip_auth.verify(self.tccfg.uas_creds.password, req.method):
-                        raise AuthFailed()
-                except ValueError:
+                raise AuthFailed()
+            try:
+                if sip_auth.verify(self.tccfg.uas_creds.password, req.method):
                     raise AuthFailed()
+            except ValueError:
+                raise AuthFailed()
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
