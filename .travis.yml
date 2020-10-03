@@ -24,29 +24,36 @@ script:
     sh -x ./test_run.sh
 env:
 ## 1. Tests with Sippy B2BUA
-  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
-  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=cunix
-  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=tcp
-  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=tcp6
+#  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=cunix
+#  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=tcp
+#  - MM_TYPE=b2bua MM_BRANCH=RFC8760 MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=tcp6
 ## 2. Tests with OpenSIPS (master)
-  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 3. Tests with OpenSIPS (RFC8760)
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 4. Tests with OpenSIPS (RFC8760+uac_auth)
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 5. Tests with OpenSIPS (master_instrumentation)
-  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 6. Tests with OpenSIPS (RFC8760+auth/UAS)
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=unix
+## 7. Tests with OpenSIPS (RFC8760+uac_auth)
+  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=cunix
+  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=tcp
+  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=tcp6
