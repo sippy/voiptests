@@ -1,6 +1,9 @@
 ##import sys
 ##sys.path.insert(0, 'dist/b2bua')
 
+from imp import find_module, load_module
+import os
+
 from sippy.SdpOrigin import SdpOrigin
 
 from lib.GenIPs import genIP
@@ -24,6 +27,12 @@ class AUTH_CREDS(object):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+
+def load_cfg(side):
+    scn  = os.environ['MM_AUTH']
+    mf = find_module(side + '_cfg', ['scenarios/' + scn,])
+    m = load_module(side + '_cfg', *mf)
+    return m
 
 class test_case_config(object):
     global_config = None
@@ -63,9 +72,10 @@ class test_config(object):
 
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
-        tccfg.uac_creds = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
-        tccfg.uas_creds = AUTH_CREDS('mightyuser', 's3cr3tpAssw0Rd')
-        tccfg.uas_creds.realm = 'VoIPTests.NET'
+        acfg = load_cfg('alice')
+        tccfg.uac_creds = acfg.AUTH_CREDS()
+        bcfg = load_cfg('bob')
+        tccfg.uas_creds = bcfg.AUTH_CREDS()
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
