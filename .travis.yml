@@ -54,13 +54,7 @@ env:
   - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=unix
-  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=cunix
-  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=tcp
-  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS RTPP_BRANCH=master RTPPC_TYPE=tcp6
 
   - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=unix
-  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=cunix
-  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=tcp
-  - MM_TYPE=opensips MM_BRANCH=pr_str_improve MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=tcp6
