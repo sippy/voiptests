@@ -72,10 +72,16 @@ class test_config(object):
 
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
-        acfg = load_cfg('alice')
-        tccfg.uac_creds = acfg.AUTH_CREDS()
-        bcfg = load_cfg('bob')
-        tccfg.uas_creds = bcfg.AUTH_CREDS()
+        try:
+            acfg = load_cfg('alice')
+            tccfg.uac_creds = acfg.AUTH_CREDS()
+        except ImportError:
+            pass
+        try:
+            bcfg = load_cfg('bob')
+            tccfg.uas_creds = bcfg.AUTH_CREDS()
+        except ImportError:
+            pass
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
