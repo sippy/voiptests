@@ -173,6 +173,7 @@ do
   sleep 1
   i=$((${i} + 1))
 done
+sleep 1
 start_mm
 python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
