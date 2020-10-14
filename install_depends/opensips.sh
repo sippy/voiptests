@@ -97,8 +97,8 @@ then
   do
     rm -rf "${MM_DIR}/modules/${m}"
   done
-  ${MAKE_CMD} -C "${MM_DIR}" CC_NAME=gcc CC="${CC}" Q="" \
-   all modules
+  ${MAKE_CMD} -C "${MM_DIR}" CC_EXTRA_OPTS=-Werror CC_NAME=gcc CC="${CC}" \
+   NICER=0 all modules
 fi
 if [ "${MM_TYPE}" = "kamailio" ]
 then
