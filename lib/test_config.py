@@ -24,6 +24,7 @@ class test_case_config(object):
     nh_address = None
 
     def checkhostport(self, sdp_body):
+        return (True, 'all good')
         for i in range(0, len(sdp_body.content.sections)):
             sect = sdp_body.content.sections[i]
             if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
