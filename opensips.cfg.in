@@ -98,7 +98,7 @@ route {
             $avp(username)="mightyuser";
             $avp(password)="s3cr3tpAssw0Rd";
             if (!pv_www_authorize("VoIPTests.NET")) {
-                www_challenge("VoIPTests.NET", "auth-int,auth", "md5-sess,sha-512-256");
+                www_challenge("VoIPTests.NET", "auth-int,auth", "md5-sess,sha-256-sess");
                 exit;
             }
             consume_credentials();
@@ -160,7 +160,7 @@ failure_route[invite]
     XLOG("OpenSIPS handling $rm failure in from $si in failure_route[invite]\n");
 #if MM_AUTH == UAC || MM_AUTH == UAS
     if (t_check_status("40[17]")) {
-        if (uac_auth("md5-sess,sha-512-256")) {
+        if (uac_auth("md5-sess,sha-256-sess")) {
             xlog("    uac_auth() SUCCESS\n");
             t_on_failure("uac_auth_fail");
             t_relay();
@@ -183,7 +183,7 @@ failure_route[re_invite]
     }
 
     if (t_check_status("40[17]")) {
-        if (uac_auth("md5-sess,sha-512-256")) {
+        if (uac_auth("md5-sess,sha-256-sess")) {
             xlog("    uac_auth() SUCCESS\n");
             t_on_failure("uac_auth_fail");
             t_relay();
