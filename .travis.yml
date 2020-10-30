@@ -35,32 +35,32 @@ env:
 #  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
 #  - MM_TYPE=opensips MM_BRANCH=master MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 3. Tests with OpenSIPS (RFC8760)
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 4. Tests with OpenSIPS (RFC8760+uac_auth)
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 5. Tests with OpenSIPS (master_instrumentation)
-#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
-#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp6
-#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=unix
+#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
+#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
+#  - MM_TYPE=opensips MM_BRANCH=master_instrumentation MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
 ## 6. Tests with OpenSIPS (RFC8760+auth/UAS)
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS/auth RTPP_BRANCH=master RTPPC_TYPE=udp
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS/auth RTPP_BRANCH=master RTPPC_TYPE=udp6
-  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS/auth RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
 jobs:
   include:
     - name: "Build RFC8760/passtr @ Ubuntu 16"
       dist: xenial
       env:
-        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=passtr RTPP_BRANCH=master RTPPC_TYPE=udp
+        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=passtr MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
     - name: "Build RFC8760/UAC @ Ubuntu 16"
       dist: xenial
       env:
-        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAC RTPP_BRANCH=master RTPPC_TYPE=udp6
+        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
     - name: "Build RFC8760/UAS @ Ubuntu 16"
       dist: xenial
       env:
-        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_REPO=git://github.com/sippy/opensips.git MM_AUTH=UAS/auth RTPP_BRANCH=master RTPPC_TYPE=unix
+        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
