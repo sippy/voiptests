@@ -63,7 +63,7 @@ start_mm() {
 
   opensips)
     MM_CFG="opensips.cfg"
-    pp_file "${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
+    pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
      -DOPENSIPS_VER_FULL=master -DMM_AUTH="${MM_AUTH}"
     for nret in 0 1 2
     do
