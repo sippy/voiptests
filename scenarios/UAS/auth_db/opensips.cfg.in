@@ -37,7 +37,7 @@ modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
 #mode push
 #mode standard HTML
-modparam("auth_db", "db_url", "text://<#MM_AUTH>/db_text")
+modparam("auth_db", "db_url", "text://<#exec echo -n `pwd`>/<#MM_AUTH>/db_text")
 <#mode pop>
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
