@@ -10,7 +10,6 @@ loadmodule "sipmsgops/sipmsgops.so"
 loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
 loadmodule "signaling/signaling.so"
-loadmodule "auth/auth.so"
 loadmodule "db_text/db_text.so"
 loadmodule "auth_db/auth_db.so"
 
@@ -32,9 +31,7 @@ loadmodule "textops/textops.so"
 #define STATUS       $rs
 
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
-modparam("auth", "username_spec", "$avp(username)")
-modparam("auth", "password_spec", "$avp(password)")
-modparam("auth", "calculate_ha1", 1)
+modparam("auth_db", "calculate_ha1", 1)
 #mode push
 #mode standard HTML
 modparam("auth_db", "db_url", "text://<#exec echo -n `pwd`>/scenarios/<#MM_AUTH>/db_text")
@@ -64,7 +61,7 @@ route {
         if (!has_totag()) {
             $avp(username)="mightyuser";
             $avp(password)="s3cr3tpAssw0Rd";
-            if (!pv_www_authorize("VoIPTests.NET")) {
+            if (!www_authorize("VoIPTests.NET", "subscriber")) {
 		$var(challenge_using) = "md5-sess,sha-256-sess";
                 www_challenge("VoIPTests.NET", "auth-int,auth", $var(challenge_using));
                 exit;
