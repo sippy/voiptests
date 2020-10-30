@@ -35,6 +35,10 @@ modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 modparam("auth", "username_spec", "$avp(username)")
 modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
+#mode push
+#mode standard HTML
+modparam("auth_db", "db_url", "text://<#MM_AUTH>/subscriber.tbl")
+<#mode pop>
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
