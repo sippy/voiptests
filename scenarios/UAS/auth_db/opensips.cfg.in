@@ -10,6 +10,7 @@ loadmodule "sipmsgops/sipmsgops.so"
 loadmodule "uac/uac.so"
 loadmodule "uac_auth/uac_auth.so"
 loadmodule "signaling/signaling.so"
+loadmodule "auth/auth.so"
 loadmodule "db_text/db_text.so"
 loadmodule "auth_db/auth_db.so"
 
@@ -59,8 +60,6 @@ route {
 
     if (IS_METHOD("INVITE")) {
         if (!has_totag()) {
-            $avp(username)="mightyuser";
-            $avp(password)="s3cr3tpAssw0Rd";
             if (!www_authorize("VoIPTests.NET", "subscriber")) {
 		$var(challenge_using) = "md5-sess,sha-256-sess";
                 www_challenge("VoIPTests.NET", "auth-int,auth", $var(challenge_using));
