@@ -189,7 +189,13 @@ wait ${ALICE_PID}
 ALICE_RC="${?}"
 wait ${BOB_PID}
 BOB_RC="${?}"
-kill -TERM ${MM_PID}
+if ! kill -TERM ${MM_PID}
+then
+  if [ -e ${BUILDDIR}/core ]
+  then
+    gdb --command=${BUILDDIR}/gdb.gettrace ${BUILDDIR}/dist/opensips/opensips ${BUILDDIR}/core >&2
+  fi
+fi
 echo "MM_PID: ${MM_PID}"
 wait ${MM_PID}
 MM_RC="${?}"
