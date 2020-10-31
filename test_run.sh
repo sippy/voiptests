@@ -4,6 +4,7 @@ set -e
 
 uname -a
 echo "/proc/sys/kernel/core_pattern: "`cat /proc/sys/kernel/core_pattern`
+ulimit -c
 
 . $(dirname $0)/functions
 
