@@ -3,6 +3,7 @@
 set -e
 
 uname -a
+echo "/proc/sys/kernel/core_pattern: "`cat /proc/sys/kernel/core_pattern`
 
 . $(dirname $0)/functions
 
