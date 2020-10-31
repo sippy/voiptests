@@ -1,3 +1,4 @@
+set pagination 0
 info threads
 where
 quit
