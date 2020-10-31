@@ -196,7 +196,7 @@ then
   for corefile in `sudo find /tmp/ -type f -name core\*`
   do
     gdb --command=${BUILDDIR}/gdb.gettrace ${BUILDDIR}/dist/opensips/opensips ${corefile} >&2
-  fi
+  done
 fi
 echo "MM_PID: ${MM_PID}"
 wait ${MM_PID}
