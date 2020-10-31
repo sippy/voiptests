@@ -193,9 +193,9 @@ wait ${BOB_PID}
 BOB_RC="${?}"
 if ! kill -TERM ${MM_PID}
 then
-  if [ -e ${BUILDDIR}/core ]
-  then
-    gdb --command=${BUILDDIR}/gdb.gettrace ${BUILDDIR}/dist/opensips/opensips ${BUILDDIR}/core >&2
+  for corefile in `sudo find /tmp/ -type f -name core\*`
+  do
+    gdb --command=${BUILDDIR}/gdb.gettrace ${BUILDDIR}/dist/opensips/opensips ${corefile} >&2
   fi
 fi
 echo "MM_PID: ${MM_PID}"
