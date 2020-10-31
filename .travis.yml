@@ -16,8 +16,9 @@ before_install:
   - echo "+++ hosts patched +++"
   - cat /etc/hosts
   - echo "--- hosts patched ---"
+  - sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'
   - sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
-  - sudo -H DEBIAN_FRONTEND=noninteractive apt-get install gpp
+  - sudo -H DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb
   - sudo pip install -r requirements.txt
   - sh -x ./install_depends/opensips.sh
 script:
