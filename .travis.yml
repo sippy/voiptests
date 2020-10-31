@@ -16,14 +16,15 @@ before_install:
   - echo "+++ hosts patched +++"
   - cat /etc/hosts
   - echo "--- hosts patched ---"
-  - sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'
-  - ulimit -c unlimited
+  - ulimit -c unlimited -S
+#  - sudo sh -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
   - sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
   - sudo -H DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb
   - sudo pip install -r requirements.txt
   - sh -x ./install_depends/opensips.sh
 script:
-    sh -x ./test_run.sh
+  - sh -x ./test_run.sh
+  - find ./ -name core\*
 env:
   - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
