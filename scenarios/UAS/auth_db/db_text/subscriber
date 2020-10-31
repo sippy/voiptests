@@ -1,2 +1,2 @@
-username(string) domain(string) ha1(string) ha1b(string,null)
-mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd:
+username(string) domain(string) ha1(string) ha1b(string,null) rpid(str,null)
+mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd::
