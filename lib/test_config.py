@@ -74,9 +74,9 @@ class test_config(object):
 
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
-        if self.acfg != None
+        if self.acfg != None:
             tccfg.uac_creds = self.acfg.AUTH_CREDS()
-        if self.bcfg != None
+        if self.bcfg != None:
             tccfg.uas_creds = self.bcfg.AUTH_CREDS()
         tccfg.global_config = self.global_config
         if self.body != None:
