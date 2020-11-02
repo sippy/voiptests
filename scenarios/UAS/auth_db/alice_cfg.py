@@ -1,1 +1,0 @@
-../alice_cfg.py
