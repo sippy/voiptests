@@ -69,19 +69,15 @@ class test_config(object):
     test_timeout = 60
     nh_address4 = ('127.0.0.1', 5060)
     nh_address6 = ('[::1]', 5060)
+    acfg = None
+    bcfg = None
 
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
-        try:
-            acfg = load_cfg('alice')
-            tccfg.uac_creds = acfg.AUTH_CREDS()
-        except ImportError:
-            pass
-        try:
-            bcfg = load_cfg('bob')
-            tccfg.uas_creds = bcfg.AUTH_CREDS()
-        except ImportError:
-            pass
+        if self.acfg != None
+            tccfg.uac_creds = self.acfg.AUTH_CREDS()
+        if self.bcfg != None
+            tccfg.uas_creds = self.bcfg.AUTH_CREDS()
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
@@ -98,3 +94,11 @@ class test_config(object):
 
     def __init__(self, global_config):
         self.global_config = global_config
+        try:
+            self.acfg = load_cfg('alice')
+        except ImportError:
+            pass
+        try:
+            self.bcfg = load_cfg('bob')
+        except ImportError:
+            pass
