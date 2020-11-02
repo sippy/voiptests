@@ -1,2 +1,2 @@
 username(string) domain(string) ha1(string) ha1_sha256(string,null) ha1_sha512t256(string,null) ha1b(string,null) rpid(str,null)
-mightyuser:VoIPTests.NET:9dc46976853170bed845e39f0b0d553d:SHA256:SHA512t256::
+mightyuser:VoIPTests.NET:9dc46976853170bed845e39f0b0d553d:090c84eb8cc94c183ef03bbe1affeec8ec54ae827f714df1477901835cca5bb9:915411acf92b1460f141750bf237d5518a03ce63a0d1758175f49ad075539acc::
