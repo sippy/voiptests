@@ -25,6 +25,12 @@ before_install:
 script:
   - sh -x ./test_run.sh
 env:
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
+  - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
   - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db/calculate_ha1 MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp
   - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db/calculate_ha1 MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=udp6
   - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db/calculate_ha1 MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
@@ -33,6 +39,14 @@ env:
   - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db/ha1 MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
 jobs:
   include:
+    - name: "Build RFC8760/UAC @ Ubuntu 16"
+      dist: xenial
+      env:
+        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAC MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
+    - name: "Build RFC8760/UAS/auth @ Ubuntu 16"
+      dist: xenial
+      env:
+        - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
     - name: "Build RFC8760/UAS/auth_db/calculate_ha1 @ Ubuntu 16"
       dist: xenial
       env:
