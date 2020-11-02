@@ -13,3 +13,4 @@ kamailio.cfg
 rtpproxy.log
 rtpproxy.opensips.output
 rtpproxy.kamailio.output
+__pycache__
