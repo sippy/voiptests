@@ -37,7 +37,6 @@ jobs:
       dist: xenial
       env:
         - MM_TYPE=opensips MM_BRANCH=RFC8760 MM_AUTH=UAS/auth_db/calculate_ha1 MM_REPO=git://github.com/sippy/opensips.git RTPP_BRANCH=master RTPPC_TYPE=unix
-  include:
     - name: "Build RFC8760/UAS/auth_db/ha1 @ Ubuntu 16"
       dist: xenial
       env:
