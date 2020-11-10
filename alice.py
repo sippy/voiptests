@@ -61,13 +61,14 @@ if __name__ == '__main__':
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:t:l:P:T:46n:N:w:')
+        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:')
     except getopt.GetoptError:
         usage(global_config)
 
     tcfg = test_config(global_config)
     ttype = []
     pre_wait = None
+    dry_run = False
     for o, a in opts:
         if o == '-p':
             tcfg.portrange = PortRange(a.strip())
@@ -109,6 +110,9 @@ if __name__ == '__main__':
         if o == '-w':
             pre_wait = float(a)
             continue
+        if o == '-D':
+            dry_run = True
+            continue
     if len(ttype) > 0:
         tcfg.ttype = tuple(ttype)
 
@@ -123,6 +127,7 @@ if __name__ == '__main__':
         sleep(pre_wait)
     acore = a_test(tcfg)
 
-    ED2.loop()
+    if not dry_run:
+        ED2.loop()
 
-    sys.exit(acore.rval)
+        sys.exit(acore.rval)
