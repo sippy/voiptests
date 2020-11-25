@@ -24,6 +24,7 @@ jobs:
       MM_BRANCH: ${{ matrix.mm-branch }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
+      PYTHON_CMD: "python${{ matrix.python-version }}"
 
     strategy:
       matrix:
@@ -42,8 +43,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: before_install
-        env:
-          PYTHON_CMD: "python${{ matrix.python-version }}"
         run: |
           echo "+++ hosts orig +++"
           cat /etc/hosts
