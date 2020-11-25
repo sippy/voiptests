@@ -18,7 +18,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     env:
       MM_TYPE: opensips
       MM_BRANCH: ${{ matrix.mm-branch }}
@@ -28,6 +28,7 @@ jobs:
 
     strategy:
       matrix:
+        os: [ubuntu-latest]
         python-version: ['3.8']
         mm-branch: ['master', '3.0', '2.4', '2.3', '2.2', '2.1', '1.11']
         rtppc-type: ['unix', 'udp', 'udp6']
