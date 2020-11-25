@@ -27,7 +27,12 @@ then
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
   if [ "${MM_BRANCH}" != "1.11" ]
   then
-    MM_PATCH_SET="mod.rtpproxy_retry.diff"
+    if [ "${MM_BRANCH}" = "master" ]
+    then
+      MM_PATCH_SET="mod.rtpproxy_retry.diff"
+    else
+      MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
+    fi
     if [ "${MM_BRANCH}" != "2.4" -a "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "3.0" ]
     then
       MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
@@ -54,7 +59,8 @@ cd libelperiodic
 ${MAKE_CMD} all
 sudo ${MAKE_CMD} install
 sudo ldconfig
-python setup.py build install
+${PYTHON_CMD} setup.py build
+sudo ${PYTHON_CMD} setup.py install
 cd ..
 
 if [ "${MM_TYPE}" = "b2bua" ]

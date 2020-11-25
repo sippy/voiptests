@@ -1,11 +1,11 @@
 diff --git a/modules/rtpproxy/rtpproxy.c b/modules/rtpproxy/rtpproxy.c
-index 6dd7d6b9bb..48446625f1 100644
+index a0049bb..6e4f655 100644
 --- a/modules/rtpproxy/rtpproxy.c
 +++ b/modules/rtpproxy/rtpproxy.c
-@@ -2031,8 +2031,9 @@ send_rtpp_command(struct rtpp_node *node, struct rtpproxy_vcmd *vcmd, int vcnt)
+@@ -2242,8 +2242,9 @@ send_rtpp_command(struct rtpp_node *node, struct iovec *v, int vcnt)
  	cp = buf;
  
- 	if (node->rn_umode == CM_UNIX) {
+ 	if (node->rn_umode == 0) {
 -		int s_errno;
 +		int s_errno, nretry;
  
@@ -13,7 +13,7 @@ index 6dd7d6b9bb..48446625f1 100644
  		memset(&addr, 0, sizeof(addr));
  		addr.sun_family = AF_LOCAL;
  		strncpy(addr.sun_path, node->rn_address,
-@@ -2040,7 +2041,7 @@ send_rtpp_command(struct rtpp_node *node, struct rtpproxy_vcmd *vcmd, int vcnt)
+@@ -2251,7 +2252,7 @@ send_rtpp_command(struct rtpp_node *node, struct iovec *v, int vcnt)
  #ifdef HAVE_SOCKADDR_SA_LEN
  		addr.sun_len = strlen(addr.sun_path);
  #endif
@@ -22,7 +22,7 @@ index 6dd7d6b9bb..48446625f1 100644
  		fd = socket(AF_LOCAL, SOCK_STREAM, 0);
  		if (fd < 0) {
  			LM_ERR("can't create socket\n");
-@@ -2066,6 +2067,11 @@ send_rtpp_command(struct rtpp_node *node, struct rtpproxy_vcmd *vcmd, int vcnt)
+@@ -2276,6 +2277,11 @@ send_rtpp_command(struct rtpp_node *node, struct iovec *v, int vcnt)
  		} while (len == -1 && errno == EINTR);
  		s_errno = (len < 0) ? errno : 0;
  		close(fd);

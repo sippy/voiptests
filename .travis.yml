@@ -1,3 +1,4 @@
+# Deprecated, see .github/workflows/* instead!
 # force run: 48
 dist: bionic
 language: python
