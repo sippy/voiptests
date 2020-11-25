@@ -33,7 +33,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-18.04, ubuntu-16.04]
         rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
-        mm-auth: ['UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
+        mm-auth: ['passtr', 'UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
