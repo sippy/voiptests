@@ -1,4 +1,4 @@
-[![CI](https://github.com/sippy/voiptests/workflows/CI/badge.svg)](https://github.com/sippy/voiptests/actions)
+[![CI](https://github.com/sippy/voiptests/workflows/CI/badge.svg)](https://github.com/sippy/voiptests/actions?query=branch%3ARFC8760++)
 
 [![No More Travis CI :(](https://github.com/sippy/voiptests/raw/master/no_travisci.png)](https://travis-ci.com/github/sippy/voiptests/builds "Travis CI #NOMORE")
 
