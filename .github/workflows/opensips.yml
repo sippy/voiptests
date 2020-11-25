@@ -30,7 +30,7 @@ jobs:
       matrix:
         python-version: ['3.8']
         mm-branch: ['master']
-        rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
+        rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
