@@ -15,7 +15,7 @@ sudo sh -c 'echo >> /etc/hosts; grep "^127.0.0.1" /etc/hosts | sed "s|^127.0.0.1
 echo "+++ hosts patched +++"
 cat /etc/hosts
 echo "--- hosts patched ---"
-ulimit -c unlimited -S
+ulimit -c unlimited
 sudo sh -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
 sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
 sudo -H DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb
