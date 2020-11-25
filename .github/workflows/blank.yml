@@ -23,7 +23,7 @@ jobs:
       MM_TYPE: b2bua
       MM_BRANCH: master
       RTPP_BRANCH: master
-      RTPPC_TYPE: ${{ matrix.rtppc-type }}"
+      RTPPC_TYPE: ${{ matrix.rtppc-type }}
 
     strategy:
       matrix:
