@@ -28,7 +28,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: ['ubuntu-latest']
         python-version: ['3.8']
         mm-branch: ['master', '3.0', '2.4', '2.3', '2.2', '2.1', '1.11']
         rtppc-type: ['unix', 'udp', 'udp6']
@@ -38,10 +38,10 @@ jobs:
           - mm-branch: 'master'
             rtppc-type: 'tcp6'
           - mm-branch: '1.11'
-            os: ubuntu-18.04
+            os: 'ubuntu-18.04'
         exclude:
           - mm-branch: '1.11'
-            os: ubuntu-latest
+            os: 'ubuntu-latest'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
