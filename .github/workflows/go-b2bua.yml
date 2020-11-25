@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Alice->Sippy B2B->Bob
+name: Alice->Sippy GO B2B->Bob
 
 # Controls when the action will run. 
 on:
@@ -25,6 +25,7 @@ jobs:
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
       python-version: '3.8'
+      PYTHON_CMD: "python3.8"
 
     strategy:
       matrix:
@@ -32,9 +33,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      env:
-        PYTHON_CMD: "python${{ env.python-version }}"
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
