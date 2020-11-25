@@ -40,13 +40,13 @@ jobs:
             os: ubuntu-latest
             rtppc-type: 'tcp6'
           - mm-branch: '1.11'
-            os: ubuntu-18.04
+            os: ubuntu-16.04
             rtppc-type: 'unix'
           - mm-branch: '1.11'
-            os: ubuntu-18.04
+            os: ubuntu-16.04
             rtppc-type: 'udp'
           - mm-branch: '1.11'
-            os: ubuntu-18.04
+            os: ubuntu-16.04
             rtppc-type: 'udp6'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
