@@ -35,7 +35,7 @@ jobs:
           - mm-branch: 'master'
             rtppc-type: 'tcp'
           - mm-branch: 'master'
-            rtppc-type: 'tcp4'
+            rtppc-type: 'tcp6'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
