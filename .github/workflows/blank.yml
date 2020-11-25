@@ -41,7 +41,7 @@ jobs:
 
       - name: before_install
         env:
-          PYTHON_CMD="python${{ matrix.python-version }}"
+          PYTHON_CMD: "python${{ matrix.python-version }}"
         run: |
           echo "+++ hosts orig +++"
           cat /etc/hosts
