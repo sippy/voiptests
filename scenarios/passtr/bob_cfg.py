@@ -8,7 +8,7 @@ class AUTH_CREDS(AUTH_CREDS_orig):
     realm = 'VoIPTests.NET'
 
     def __init__(self):
-        tlist = list(enalgs)
+        tlist = list(allalgs)
         shuffle(tlist)
         self.enalgs = tuple(tlist)
         AUTH_CREDS_orig.__init__(self, 'mightyuser', 's3cr3tpAssw0Rd')
