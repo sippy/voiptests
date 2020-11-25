@@ -25,12 +25,23 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: before_install
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo "+++ hosts orig +++"
+          cat /etc/hosts
+          echo "--- hosts orig ---"
+          sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
+          sudo sh -c 'echo >> /etc/hosts; grep "^127.0.0.1" /etc/hosts | sed "s|^127.0.0.1|::1|g" >> /etc/hosts'
+          echo "+++ hosts patched +++"
+          cat /etc/hosts
+          echo "--- hosts patched ---"
+          sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo -H DEBIAN_FRONTEND=noninteractive apt-get install gpp
+          export MM_TYPE=b2bua
+          export MM_BRANCH=master
+          export RTPP_BRANCH=master
+          export RTPPC_TYPE=udp
+          sh -x ./install_depends/opensips.sh
+
+      - name: script
+        run: sh -x ./test_run.sh
