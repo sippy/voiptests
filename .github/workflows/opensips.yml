@@ -6,9 +6,9 @@ name: Alice->OpenSIPS->Bob
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [ RFC8760 ]
   pull_request:
-    branches: [ master ]
+    branches: [ RFC8760 ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,10 +18,12 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     env:
       MM_TYPE: opensips
-      MM_BRANCH: ${{ matrix.mm-branch }}
+      MM_BRANCH: RFC8760
+      MM_REPO: git://github.com/sippy/opensips.git
+      MM_AUTH: ${{ matrix.mm-auth }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
       python-version: '3.8'
@@ -29,25 +31,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        mm-branch: ['master', '3.0', '2.4', '2.3', '2.2', '2.1']
-        rtppc-type: ['unix', 'udp', 'udp6']
-        include:
-          - mm-branch: 'master'
-            os: ubuntu-latest
-            rtppc-type: 'tcp'
-          - mm-branch: 'master'
-            os: ubuntu-latest
-            rtppc-type: 'tcp6'
-          - mm-branch: '1.11'
-            os: ubuntu-16.04
-            rtppc-type: 'unix'
-          - mm-branch: '1.11'
-            os: ubuntu-16.04
-            rtppc-type: 'udp'
-          - mm-branch: '1.11'
-            os: ubuntu-16.04
-            rtppc-type: 'udp6'
+        rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
+        mm-auth: ['UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
