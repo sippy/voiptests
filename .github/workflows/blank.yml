@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MM_TYPE: b2bua
-      MM_BRANCH: master
-      RTPP_BRANCH: ${{ matrix.mm-branch }}
+      MM_BRANCH: ${{ matrix.mm-branch }}
+      RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
 
     strategy:
