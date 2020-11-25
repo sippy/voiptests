@@ -1,4 +1,5 @@
 ![CI](https://github.com/sippy/voiptests/workflows/CI/badge.svg)
+
 [![No More Travis CI :(](https://github.com/sippy/voiptests/raw/master/no_travisci.png)](https://travis-ci.com/sippy/voiptests)
 
 # VoIP Integrated Tests Suite
