@@ -59,8 +59,8 @@ cd libelperiodic
 ${MAKE_CMD} all
 sudo ${MAKE_CMD} install
 sudo ldconfig
-python setup.py build
-sudo python setup.py install
+${PYTHON_CMD} setup.py build
+sudo ${PYTHON_CMD} setup.py install
 cd ..
 
 if [ "${MM_TYPE}" = "b2bua" ]
