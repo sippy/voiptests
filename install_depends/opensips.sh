@@ -53,16 +53,6 @@ then
   fi
 fi
 
-git clone git://github.com/sobomax/libelperiodic.git
-cd libelperiodic
-./configure
-${MAKE_CMD} all
-sudo ${MAKE_CMD} install
-sudo ldconfig
-${PYTHON_CMD} setup.py build
-sudo ${PYTHON_CMD} setup.py install
-cd ..
-
 if [ "${MM_TYPE}" = "b2bua" ]
 then
   MM_REPO=${MM_REPO:-"git://github.com/sippy/b2bua.git"}
