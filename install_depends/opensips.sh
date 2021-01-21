@@ -27,9 +27,7 @@ then
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
   if [ "${MM_BRANCH}" != "1.11" ]
   then
-    if [ "${MM_BRANCH}" = "master" ]
-    then
-      MM_PATCH_SET="mod.rtpproxy_retry.diff"
+    if [ "${MM_BRANCH}" != "master" ]
     else
       MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
     fi
