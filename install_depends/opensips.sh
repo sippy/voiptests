@@ -28,7 +28,7 @@ then
   if [ "${MM_BRANCH}" != "1.11" ]
   then
     if [ "${MM_BRANCH}" != "master" ]
-    else
+    then
       MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
     fi
     if [ "${MM_BRANCH}" != "2.4" -a "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "3.0" ]
