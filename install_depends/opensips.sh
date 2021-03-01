@@ -44,7 +44,7 @@ then
 #      git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
 #    done
   fi
-  if [ "${MM_BRANCH}" = "master" ]
+  if [ "${MM_BRANCH}" = "RFC8760" ]
   then
   #  git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
     MM_KILL_MODULES="rabbitmq_consumer event_kafka"
