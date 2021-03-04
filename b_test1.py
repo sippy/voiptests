@@ -63,18 +63,43 @@ ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
   b_test_reinv_fail, b_test_reinv_brkn1, b_test_reinv_brkn2, \
   b_test_reinv_onhold, b_test_reinv_frombob, b_test_reinv_bad_ack)
 
+class STMHooks(object):
+    lossemul = 0
+    dupemul = None
+
+from time import sleep
+
+class BobSTM(SipTransactionManager):
+    def spuriousDup(self, *args):
+        SipTransactionManager.transmitData(self, *args)
+
+    def transmitData(self, userv, data, address, cachesum = None, \
+      lossemul = 0):
+        if not isinstance(lossemul, STMHooks):
+            return SipTransactionManager.transmitData(self, userv, data, address, \
+              cachesum, lossemul)
+        tdargs = (userv, data, address, cachesum, lossemul.lossemul)
+        rval = SipTransactionManager.transmitData(self, *tdargs)
+        if lossemul.dupemul is not None:
+            if lossemul.dupemul < 0.01:
+                sleep(lossemul.dupemul)
+                SipTransactionManager.transmitData(self, *tdargs)
+            else:
+                Timeout(self.spuriousDup, lossemul.dupemul, 1, *tdargs)
+        return rval
+
 class b_test(object):
     rval = 1
     nsubtests_running = 0
     tcfg = None
 
     def __init__(self, tcfg):
-        tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
+        tcfg.global_config['_sip_tm'] = BobSTM(tcfg.global_config, self.recvRequest)
         Timeout(self.timeout, tcfg.test_timeout, 1)
         self.tcfg = tcfg
 
     def recvRequest(self, req, sip_t):
-        if req.getHFBody('to').getTag() != None:
+        if req.getHFBody('to').getTag() is not None:
             # Request within dialog, but no such dialog
             return (req.genResponse(481, 'Call Leg/Transaction Does Not Exist'), None, None)
         if req.getMethod() == 'INVITE':
@@ -106,7 +131,8 @@ class b_test(object):
                 resp.appendHeaders(ce.challenges)
                 self.nsubtests_running -= 1
                 self.rval -= 1
-                Timeout(self.spurious401, 0.001, 1, resp)
+                resp.lossemul = STMHooks()
+                resp.lossemul.dupemul = 0.001
                 return (resp, None, None)
             except AuthFailed:
                 resp = req.genResponse(403, 'Auth Failed')
@@ -115,9 +141,6 @@ class b_test(object):
 
     def timeout(self):
         ED2.breakLoop()
-
-    def spurious401(self, resp):
-        self.tcfg.global_config['_sip_tm'].sendResponse(resp, retrans = True)
 
     def subtest_done(self, subtest):
         self.nsubtests_running -= 1
