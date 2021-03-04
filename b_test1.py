@@ -106,6 +106,7 @@ class b_test(object):
                 resp.appendHeaders(ce.challenges)
                 self.nsubtests_running -= 1
                 self.rval -= 1
+                Timeout(self.spurious401, 0.001, 1, resp)
                 return (resp, None, None)
             except AuthFailed:
                 resp = req.genResponse(403, 'Auth Failed')
@@ -114,6 +115,9 @@ class b_test(object):
 
     def timeout(self):
         ED2.breakLoop()
+
+    def spurious401(self, resp):
+        self.tcfg.global_config['_sip_tm'].sendResponse(resp, retrans = True)
 
     def subtest_done(self, subtest):
         self.nsubtests_running -= 1
