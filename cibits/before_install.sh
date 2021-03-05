@@ -18,7 +18,7 @@ echo "--- hosts patched ---"
 ulimit -c unlimited
 sudo sh -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
 sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
-sudo -H DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb
+sudo -H DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb tcpdump
 if [ -e requirements.txt ]
 then
   sudo ${PYTHON_CMD} -m pip install -r requirements.txt
