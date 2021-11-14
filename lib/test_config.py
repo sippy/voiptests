@@ -1,6 +1,9 @@
 ##import sys
 ##sys.path.insert(0, 'dist/b2bua')
 
+from imp import find_module, load_module
+import os
+
 from sippy.SdpOrigin import SdpOrigin
 
 from lib.GenIPs import genIP
@@ -15,6 +18,22 @@ def fillhostport(sdp_body, portrange, atype = None):
         sect.m_header.port = portrange.gennotinrange()
         sect.c_header.atype, sect.c_header.addr = genIP(atype)
 
+class AUTH_CREDS(object):
+    username = None
+    password = None
+    realm = None
+    enalgs = ('SHA-512-256-sess', 'SHA-256-sess', 'MD5-sess', None)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+def load_cfg(side):
+    scn  = os.environ['MM_AUTH']
+    mf = find_module(side + '_cfg', ['scenarios/' + scn,])
+    m = load_module(side + '_cfg', *mf)
+    return m
+
 class test_case_config(object):
     global_config = None
     atype = None
@@ -22,6 +41,8 @@ class test_case_config(object):
     done_cb = None
     portrange = None
     nh_address = None
+    uas_creds = None
+    uac_creds = None
 
     def checkhostport(self, sdp_body):
         for i in range(0, len(sdp_body.content.sections)):
@@ -48,9 +69,15 @@ class test_config(object):
     test_timeout = 60
     nh_address4 = ('127.0.0.1', 5060)
     nh_address6 = ('[::1]', 5060)
+    acfg = None
+    bcfg = None
 
     def gen_tccfg(self, atype, done_cb, cli = None):
         tccfg = test_case_config()
+        if self.acfg != None:
+            tccfg.uac_creds = self.acfg.AUTH_CREDS()
+        if self.bcfg != None:
+            tccfg.uas_creds = self.bcfg.AUTH_CREDS()
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
@@ -67,3 +94,11 @@ class test_config(object):
 
     def __init__(self, global_config):
         self.global_config = global_config
+        try:
+            self.acfg = load_cfg('alice')
+        except ImportError:
+            pass
+        try:
+            self.bcfg = load_cfg('bob')
+        except ImportError:
+            pass

@@ -23,9 +23,10 @@ rtpproxy_cmds_gen() {
 
 pp_file() {
   file="${1}"
+  fname="`basename ${file}`"
   shift
-  ${PP_CMD} "${@}" "${file}" -o "${file%.in}.pp"
-  grep -v '^#' "${file%.in}.pp" | cat -s > "${file%.in}${PP_SUF}"
+  ${PP_CMD} "${@}" "${file}" -o "${fname%.in}.pp"
+  grep -v '^#' "${fname%.in}.pp" | cat -s > "${fname%.in}${PP_SUF}"
 }
 
 start_mm() {
@@ -64,11 +65,11 @@ start_mm() {
 
   opensips)
     MM_CFG="opensips.cfg"
-    pp_file "${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-     -DOPENSIPS_VER_FULL=${MM_VER_FULL}
+    pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
+     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}"
     for nret in 0 1 2
     do
-      PP_SUF=".nr${nret}" pp_file rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
+      PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     set +e
@@ -96,7 +97,7 @@ start_mm() {
      -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DKAM_MPATH=\"${KAM_MPATH}\"
     for nret in 0 1 2
     do
-      PP_SUF=".nr${nret}" pp_file rtpproxy.kamailio.output.in -DKAMAILIO_VER=${MM_VER} \
+      PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.kamailio.output.in -DKAMAILIO_VER=${MM_VER} \
        -DKAMAILIO_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     #sed "s|%%RTPP_SOCK_TEST%%|${RTPP_SOCK_TEST}|" < kamailio.cfg.in > kamailio.cfg
@@ -174,12 +175,13 @@ do
   sleep 1
   i=$((${i} + 1))
 done
+sleep 1
 start_mm
-python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
+MM_AUTH="${MM_AUTH}" python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
-python bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
+MM_AUTH="${MM_AUTH}" python bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 
@@ -228,9 +230,9 @@ else
   done
 fi
 
-report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log" "Checking if Alice is happy"
-report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log" "Checking if Bob is happy"
-report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log" "Checking RTPproxy exit code"
+report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log ${MM_LOG}" "Checking if Alice is happy"
+report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "Checking if Bob is happy"
+report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy exit code"
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"

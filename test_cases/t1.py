@@ -30,8 +30,20 @@ from sippy.SipCallId import SipCallId, gen_test_cid
 from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
+from sippy.SipHeader import SipHeader
+from sippy.SipWWWAuthenticate import SipWWWAuthenticate
 
 from random import random
+
+class AuthRequired(Exception):
+    challenges = None
+
+    def __init__(self, challenges):
+        self.challenges = challenges
+        Exception.__init__(self)
+
+class AuthFailed(Exception):
+    pass
 
 class test(object):
     rval = 1
@@ -116,6 +128,11 @@ class a_test1(test):
         uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,), ltag = gen_test_tag())
+        if tccfg.uac_creds != None:
+            uaO.username = tccfg.uac_creds.username
+            uaO.password = tccfg.uac_creds.password
+            uaO.auth_enalgs = tccfg.uac_creds.enalgs
+
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
         self.call_id = SipCallId(body = gen_test_cid())
@@ -153,6 +170,25 @@ class b_test1(test):
             self.nerrs += 1
             raise ValueError('%s: class %s: hostport validation has failed (%s): %s:\n%s' % \
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
+        if self.tccfg.uas_creds != None:
+            if self.tccfg.uas_creds.realm != None:
+                realm = self.tccfg.uas_creds.realm
+            else:
+                realm = req.getRURI().host
+            if req.countHFs('authorization') == 0:
+                challenges = []
+                for alg in self.tccfg.uas_creds.enalgs:
+                    cbody = SipWWWAuthenticate(algorithm = alg, realm = realm)
+                    challenges.append(SipHeader(body = cbody))
+                raise AuthRequired(challenges)
+            sip_auth = req.getHFBody('authorization')
+            if sip_auth.username != self.tccfg.uas_creds.username:
+                raise AuthFailed()
+            try:
+                if not sip_auth.verify(self.tccfg.uas_creds.password, req.method):
+                    raise AuthFailed()
+            except ValueError:
+                raise AuthFailed()
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))

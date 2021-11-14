@@ -16,6 +16,7 @@ PYTHON_CMD="`which ${PYTHON_CMD:-"python"}`"
 MM_TYPE="${MM_TYPE:-b2bua}"
 MM_BRANCH="${MM_BRANCH:-master}"
 MM_REV="${MM_REV:-${MM_BRANCH}}"
+MM_AUTH="${MM_AUTH:-"simple"}"
 
 MM_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
 MM_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`

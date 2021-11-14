@@ -33,7 +33,7 @@ from random import random
 
 from lib.test_config import fillhostport
 
-from test_cases.t1 import b_test1
+from test_cases.t1 import b_test1, AuthRequired, AuthFailed
 from test_cases.t2 import b_test2
 from test_cases.t3 import b_test3
 from test_cases.t4 import b_test4
@@ -63,18 +63,43 @@ ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
   b_test_reinv_fail, b_test_reinv_brkn1, b_test_reinv_brkn2, \
   b_test_reinv_onhold, b_test_reinv_frombob, b_test_reinv_bad_ack)
 
+class STMHooks(object):
+    lossemul = 0
+    dupemul = None
+
+from time import sleep
+
+class BobSTM(SipTransactionManager):
+    def spuriousDup(self, *args):
+        SipTransactionManager.transmitData(self, *args)
+
+    def transmitData(self, userv, data, address, cachesum = None, \
+      lossemul = 0):
+        if not isinstance(lossemul, STMHooks):
+            return SipTransactionManager.transmitData(self, userv, data, address, \
+              cachesum, lossemul)
+        tdargs = (userv, data, address, cachesum, lossemul.lossemul)
+        rval = SipTransactionManager.transmitData(self, *tdargs)
+        if lossemul.dupemul is not None:
+            if lossemul.dupemul < 0.01:
+                sleep(lossemul.dupemul)
+                SipTransactionManager.transmitData(self, *tdargs)
+            else:
+                Timeout(self.spuriousDup, lossemul.dupemul, 1, *tdargs)
+        return rval
+
 class b_test(object):
     rval = 1
     nsubtests_running = 0
     tcfg = None
 
     def __init__(self, tcfg):
-        tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
+        tcfg.global_config['_sip_tm'] = BobSTM(tcfg.global_config, self.recvRequest)
         Timeout(self.timeout, tcfg.test_timeout, 1)
         self.tcfg = tcfg
 
     def recvRequest(self, req, sip_t):
-        if req.getHFBody('to').getTag() != None:
+        if req.getHFBody('to').getTag() is not None:
             # Request within dialog, but no such dialog
             return (req.genResponse(481, 'Call Leg/Transaction Does Not Exist'), None, None)
         if req.getMethod() == 'INVITE':
@@ -99,7 +124,19 @@ class b_test(object):
             self.rval += 1
             sdp_body = self.tcfg.bodys[0 if random() < 0.5 else 1].getCopy()
             fillhostport(sdp_body, self.tcfg.portrange, tccfg.atype)
-            return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
+            try:
+                return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
+            except AuthRequired as ce:
+                resp = req.genResponse(401, 'Unauthorized')
+                resp.appendHeaders(ce.challenges)
+                self.nsubtests_running -= 1
+                self.rval -= 1
+                resp.lossemul = STMHooks()
+                resp.lossemul.dupemul = 0.001
+                return (resp, None, None)
+            except AuthFailed:
+                resp = req.genResponse(403, 'Auth Failed')
+                return (resp, None, None)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):

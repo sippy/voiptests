@@ -46,5 +46,15 @@ class a_test_early_cancel(test_early_cancel, a_test1):
     compact_sip = False
     cancel_ival = 0.01
 
+    def __init__(self, tccfg):
+        tccfg.uac_creds = None
+        test_early_cancel.__init__(self)
+        a_test1.__init__(self, tccfg)
+
 class b_test_early_cancel(test_early_cancel, b_test1):
     cli = 'bob_early_cancel'
+
+    def __init__(self, tccfg):
+        tccfg.uas_creds = None
+        test_early_cancel.__init__(self)
+        b_test1.__init__(self, tccfg)

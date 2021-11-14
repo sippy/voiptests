@@ -1,0 +1,206 @@
+#if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
+#mode quote "`"
+#define INT(x) `"x`"
+#else
+#define INT(x) x
+#endif
+
+mpath="dist/opensips/modules/"
+
+#if (OPENSIPS_VER >= 21) || (OPENSIPS_VER_FULL == master)
+loadmodule "proto_udp.so"
+## dialog is now required by the rtpproxy, not sure why, but OK
+loadmodule "dialog/dialog.so"
+#endif
+
+#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
+loadmodule "sipmsgops/sipmsgops.so"
+#if MM_AUTH == UAC || MM_AUTH == UAS
+loadmodule "uac/uac.so"
+loadmodule "uac_auth/uac_auth.so"
+#endif
+#if MM_AUTH == UAS
+loadmodule "signaling/signaling.so"
+loadmodule "auth/auth.so"
+#endif
+#endif
+
+#define RTPP_UNFORCE() rtpproxy_unforce()
+
+loadmodule "sl/sl.so"
+loadmodule "tm/tm.so"
+loadmodule "rr/rr.so"
+loadmodule "maxfwd/maxfwd.so"
+loadmodule "rtpproxy/rtpproxy.so"
+loadmodule "textops/textops.so"
+#if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
+loadmodule "uri/uri.so"
+
+# define REWRITEPORT(value) rewriteport(INT(value))
+#else
+# define REWRITEPORT(value) $rp = value
+#endif
+
+#if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master)
+# define XLOG xlog
+#else
+# define XLOG(a)
+#endif
+
+#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
+#define IS_METHOD    is_method
+#define SRC_PORT     $sp
+#define STATUS       $rs
+#if MM_AUTH == UAC || MM_AUTH == UAS
+modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
+#endif
+#if MM_AUTH == UAS
+modparam("auth", "username_spec", "$avp(username)")
+modparam("auth", "password_spec", "$avp(password)")
+modparam("auth", "calculate_ha1", 1)
+#endif
+#else
+#define IS_METHOD(m) method == m
+#define SRC_PORT     src_port
+#define STATUS       status
+#endif
+
+modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
+
+listen=udp:127.0.0.1:5060
+listen=udp:[::1]:5060
+
+route {
+    XLOG("OpenSIPS received a request $rm from $si\n");
+    ## initial sanity checks -- messages with
+    ## max_forwards==0, or excessively long requests
+    if (!mf_process_maxfwd_header(INT(10))) {
+        sl_send_reply(INT(483), "Too Many Hops");
+        exit;
+    };
+
+#if (OPENSIPS_VER < 24) && (OPENSIPS_VER_FULL != master)
+    if (msg:len >= max_len) {
+        sl_send_reply(INT(513), "Message too big");
+        exit;
+    };
+#endif
+
+    ## shield us against retransmits
+    if (!t_newtran()) {
+        sl_reply_error();
+        exit;
+    };
+
+    if (IS_METHOD("INVITE")) {
+#if MM_AUTH == UAS
+        if (!has_totag()) {
+            $avp(username)="mightyuser";
+            $avp(password)="s3cr3tpAssw0Rd";
+            if (!pv_www_authorize("VoIPTests.NET")) {
+		$var(challenge_using) = "md5-sess,sha-256-sess";
+                www_challenge("VoIPTests.NET", "auth-int,auth", $var(challenge_using));
+                exit;
+            }
+            consume_credentials();
+        }
+#endif
+        t_reply(INT(100), "Trying");
+        if (rtpproxy_offer("r")) {
+            t_on_reply("1");
+            if (!has_totag()) {
+                /* Get rid of session when INVITE fails unless it's re-INVITE */
+                t_on_failure("invite");
+#if MM_AUTH == UAC || MM_AUTH == UAS
+                create_dialog();
+            } else {
+                t_on_failure("re_invite");
+#endif
+            }
+        };
+    };
+
+    if (IS_METHOD("BYE")) {
+        XLOG("    calling rtpproxy_unforce()\n");
+        RTPP_UNFORCE();
+    };
+
+    record_route();
+
+    if (loose_route()) {
+        t_relay();
+        exit;
+    };
+
+
+    if (SRC_PORT == 5061) {
+        REWRITEPORT(5062);
+    } else {
+        REWRITEPORT(5061);
+    };
+    t_relay();
+    ##rtpproxy_stream2uac("ringback", "10");
+    exit;
+}
+
+onreply_route[1]
+{
+    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
+    if (STATUS =~ "(183)|2[0-9][0-9]") {
+        XLOG("  calling search()\n");
+        if(!search("^Content-Length:[ ]*0")) {
+            XLOG("    calling rtpproxy_answer()\n");
+            rtpproxy_answer("r");
+            ##rtpproxy_stream2uas("ringback", "10");
+        };
+    };
+}
+
+failure_route[invite]
+{
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[invite]\n");
+#if MM_AUTH == UAC || MM_AUTH == UAS
+    if (t_check_status("40[17]")) {
+	$var(accept_algs) = "md5-sess,sha-256-sess";
+        if (uac_auth($var(accept_algs))) {
+            xlog("    uac_auth() SUCCESS\n");
+            t_on_failure("uac_auth_fail");
+            t_relay();
+            exit;
+        } else {
+            xlog("    uac_auth() FAILURE\n");
+        }
+    }
+#endif
+    XLOG("    calling rtpproxy_unforce()\n");
+    RTPP_UNFORCE();
+}
+
+#if MM_AUTH == UAC || MM_AUTH == UAS
+failure_route[re_invite]
+{
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[re_invite]\n");
+    if (t_was_cancelled()) {
+        exit;
+    }
+
+    if (t_check_status("40[17]")) {
+	$var(accept_algs) = "md5-sess,sha-256-sess";
+        if (uac_auth($var(accept_algs))) {
+            xlog("    uac_auth() SUCCESS\n");
+            t_on_failure("uac_auth_fail");
+            t_relay();
+            exit;
+        } else {
+            xlog("    uac_auth() FAILURE\n");
+        }
+    }
+}
+
+failure_route[uac_auth_fail]
+{
+    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[uac_auth_fail]\n");
+    XLOG("    calling rtpproxy_unforce()\n");
+    RTPP_UNFORCE();
+}
+#endif
