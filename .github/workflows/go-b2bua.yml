@@ -49,3 +49,13 @@ jobs:
 
       - name: script
         run: sh -x ./test_run.sh
+
+      - name: Test logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-logs
+          path: |
+            b2bua.log
+            bob.log
+            alice.log
+            rtpproxy.log
