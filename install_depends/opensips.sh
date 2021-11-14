@@ -31,7 +31,7 @@ then
     then
       MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
     fi
-    if [ "${MM_BRANCH}" != "2.4" -a "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "3.0" ]
+    if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.2" -o "${MM_BRANCH}" = "2.3" ]
     then
       MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
     fi
