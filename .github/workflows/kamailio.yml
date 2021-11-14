@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        mm-branch: ['master', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4', '4.3', '4.2', '4.1']
+        mm-branch: ['master', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4', '4.3', '4.2', '4.1']
         rtppc-type: ['unix', 'udp', 'udp6']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
