@@ -102,7 +102,7 @@ failure_route[invite]
 {
     XLOG("OpenSIPS handling $rm failure in from $si in failure_route[invite]\n");
     if (t_check_status("40[17]")) {
-	$var(accept_algs) = "md5-sess,sha-256-sess";
+	$var(accept_algs) = "md5-sess,sha-256-sess,sha-512-256-sess";
         if (uac_auth($var(accept_algs))) {
             xlog("    uac_auth() SUCCESS\n");
             t_on_failure("uac_auth_fail");
@@ -124,7 +124,7 @@ failure_route[re_invite]
     }
 
     if (t_check_status("40[17]")) {
-	$var(accept_algs) = "md5-sess,sha-256-sess";
+	$var(accept_algs) = "md5-sess,sha-256-sess,sha-512-256-sess";
         if (uac_auth($var(accept_algs))) {
             xlog("    uac_auth() SUCCESS\n");
             t_on_failure("uac_auth_fail");
