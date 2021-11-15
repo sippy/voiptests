@@ -1,7 +1,8 @@
 from lib.test_config import AUTH_CREDS as AUTH_CREDS_orig
 
 allargs = [(None, 'MD5',), ('MD5-sess',), ('SHA-256',),  ('SHA-256-sess',),
-  ('SHA-256', 'SHA-256-sess', 'MD5-sess', None)]
+  ('SHA-512-256',), ('SHA-512-256-sess',),
+  ('SHA-512-256', 'SHA-512-256-sess', 'SHA-256', 'SHA-256-sess', 'MD5-sess', None)]
 
 class AUTH_CREDS(AUTH_CREDS_orig):
     def __init__(self):
