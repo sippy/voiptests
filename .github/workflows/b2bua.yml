@@ -55,7 +55,7 @@ jobs:
       - name: Test logs
         uses: actions/upload-artifact@v2
         with:
-          name: test-logs
+          name: test-logs ${{ matrix.python-version }} ${{ matrix.mm-branch }} ${{ matrix.rtppc-type }}
           path: |
             b2bua.log
             bob.log
