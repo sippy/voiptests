@@ -27,7 +27,6 @@ from sippy.Time.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
   CCEventPreConnect, CCEventRing, CCEventFail
 from sippy.SipCallId import SipCallId, gen_test_cid
-from sippy.SipCiscoGUID import SipCiscoGUID
 from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
 from sippy.SipHeader import SipHeader
@@ -136,7 +135,7 @@ class a_test1(test):
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
         self.call_id = SipCallId(body = gen_test_cid())
-        event = CCEventTry((self.call_id, SipCiscoGUID(), self.cli, self.cld, tccfg.body, \
+        event = CCEventTry((self.call_id, self.cli, self.cld, tccfg.body, \
           None, 'Alice Smith'))
         self.run(uaO, event)
 
