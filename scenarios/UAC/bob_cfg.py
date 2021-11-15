@@ -1,6 +1,7 @@
+from random import shuffle
 from lib.test_config import AUTH_CREDS as AUTH_CREDS_orig
 
-allargs = (('SHA-512-256', 'SHA-256', 'MD5', 'MD5-sess'), \
+allalgs = (('SHA-512-256', 'SHA-256', 'MD5', 'MD5-sess'), \
   ('SHA-512-256', 'SHA-256', 'SHA-256-sess', 'MD5'), \
   ('SHA-512-256', 'SHA-512-256-sess', 'SHA-256', 'MD5')) \
 
