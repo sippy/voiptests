@@ -54,7 +54,7 @@ jobs:
       - name: Test logs
         uses: actions/upload-artifact@v2
         with:
-          name: test-logs ${{ matrix.mm-branch }} ${{ matrix.rtppc-type }}
+          name: test-logs_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
           path: |
             kamailio.cfg
             bob.log
