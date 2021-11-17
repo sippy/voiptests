@@ -38,9 +38,8 @@ start_mm() {
   case "${MM_TYPE}" in
   go-b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
-    MM_SIPLOG="${BUILDDIR}/sip.log"
-    test -e ${MM_SIPLOG} && rm ${MM_SIPLOG}
-    ${BUILDDIR}/dist/go-b2bua/b2bua_radius/b2bua_radius -L ${MM_SIPLOG} \
+    test -e ${MM_LOG} && rm ${MM_LOG}
+    ${BUILDDIR}/dist/go-b2bua/b2bua_radius/b2bua_radius -L ${MM_LOG} \
         -static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
         -rtp_proxy_clients="${RTPP_SOCK_TEST}" -b2bua_socket="${MM_SOCK}" -rtpp_hrtb_ival=120 \
         -rtpp_hrtb_retr_ival=120 >${MM_LOG} 2>&1 &
