@@ -76,6 +76,9 @@ start_mm() {
     MM_DRUN_RC="${?}"
     report_rc_log "${MM_DRUN_RC}" "${MM_CFG}" "Checking ${MM_TYPE} config"
     set -e
+    echo "--- Config Begins ---"
+    cat -n "${MM_CFG}"
+    echo "--- Config Ends ---"
     ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" ${MM_ARGS} -F -E -n 1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
