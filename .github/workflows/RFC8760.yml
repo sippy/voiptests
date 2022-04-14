@@ -25,7 +25,7 @@ jobs:
     env:
       MM_TYPE: opensips
       MM_BRANCH: master
-      MM_REPO: git://github.com/OpenSIPS/opensips.git
+      MM_REPO: https://github.com/OpenSIPS/opensips.git
       MM_AUTH: ${{ matrix.mm-auth }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
