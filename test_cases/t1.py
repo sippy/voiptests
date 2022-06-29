@@ -23,6 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from .TExceptions import SDPValidationFailure
+
 from sippy.Time.Timeout import Timeout
 from sippy.CCEvents import CCEventTry, CCEventDisconnect, CCEventConnect, \
   CCEventPreConnect, CCEventRing, CCEventFail
@@ -89,7 +91,7 @@ class a_test1(test):
                 cres, why = self.tccfg.checkhostport(sdp_body)
                 if not cres:
                     self.nerrs += 1
-                    raise ValueError('%s: SDP body has failed validation: %s:\n%s' %
+                    raise SDPValidationFailure('%s: SDP body has failed validation: %s:\n%s' %
                       (self.my_name(), why, str(sdp_body)))
         if self.debug_lvl > 0:
             print('%s: Incoming event: %s' % (self.my_name(), event))
@@ -167,7 +169,7 @@ class b_test1(test):
         cres, why = self.tccfg.checkhostport(in_body)
         if not cres:
             self.nerrs += 1
-            raise ValueError('%s: class %s: hostport validation has failed (%s): %s:\n%s' % \
+            raise SDPValidationFailure('%s: class %s: hostport validation has failed (%s): %s:\n%s' % \
               (self.my_name(), str(self.__class__), self.atype, why, in_body))
         if self.tccfg.uas_creds != None:
             if self.tccfg.uas_creds.realm != None:
