@@ -5,6 +5,7 @@ from importlib.util import spec_from_file_location, module_from_spec
 import os
 
 from sippy.SdpOrigin import SdpOrigin
+from sippy.Time.MonoTime import MonoTime
 
 from .GenIPs import genIP
 from .PortRange import PortRange
@@ -93,8 +94,12 @@ class test_config(object):
     nh_address6 = ('[::1]', 5060)
     acfg = None
     bcfg = None
+    continuous = False
+    cps = None
+    ntime = None
 
     def gen_tccfg(self, atype, done_cb, cli = None):
+        self.ntime = MonoTime()
         if atype == 'IP4':
             nh_address = self.nh_address4
         else:

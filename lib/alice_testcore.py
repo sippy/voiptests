@@ -23,13 +23,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-##import sys
+import sys
+from signal import SIGINT
 ##sys.path.insert(0, 'dist/b2bua')
 
 from sippy.SipTransactionManager import SipTransactionManager
-from sippy.Time.Timeout import Timeout
+from sippy.Signal import Signal
+from sippy.Time.Timeout import Timeout, TimeoutAbsMono
+from sippy.Time.MonoTime import MonoTime
 from sippy.Core.EventDispatcher import ED2
-from random import shuffle
+from sippy.Math.recfilter import recfilter
+from random import shuffle, choice
+
+from .spinor import spinor
 
 from ..test_cases.t1 import a_test1
 from ..test_cases.t2 import a_test2
@@ -72,9 +78,15 @@ class a_cfg(object):
     def __init__(self, test_class):
         self.test_class = test_class
 
+    def init_test(self):
+        return self.test_class(self.tcfg)
+
 class a_test(object):
     nsubtests_running = 0
     rval = 1
+    tcfg = None
+    last_ulen = 0
+    nextr = None
 
     def __init__(self, tcfg):
         tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
@@ -98,16 +110,74 @@ class a_test(object):
                 atype = ttype[0]
             cli += '_ipv%s' % atype[-1]
             subtest_cfg.tcfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
-            print(f'Scheduling test: {subtest_class.name} [{atype}, {cli=}]')
+            if tcfg.continuous:
+                subtest_class.debug_lvl = -1
+                subtest_class.godead_timeout = 1.0
+            else:
+                print(f'Scheduling test: {subtest_class.name} [{atype}, {cli=}]')
             i += 1
+        atests = [x for x in atests if not x.disabled]
+        self.tcfg = tcfg
+        if tcfg.continuous:
+            self.atests = atests
+            self.ntime = tcfg.ntime.getCopy()
+            #Timeout(self.runnext, 0.1, -1)
+            self.spinor = spinor()
+            self.rcf = recfilter(0.999, 1.0)
+            self.update_stats()
+            Timeout(self.idle_update, 1.0, -1)
+            self.runnext()
+            Signal(SIGINT, self.deorbit)
+            return
         shuffle(atests)
         for subtest_cfg in atests:
-            if subtest_cfg.disabled:
-                continue
-            subtest = subtest_cfg.test_class(subtest_cfg.tcfg)
+            subtest = subtest_cfg.init_test()
             self.nsubtests_running += 1
         self.rval = self.nsubtests_running
         Timeout(self.timeout, tcfg.test_timeout, 1)
+
+    def deorbit(self, signum = None):
+        self.nextr.cancel()
+        Timeout(self.slowexit, 0.1, -1)
+        Timeout(self.timeout, 140.0)
+
+    def slowexit(self):
+        self.update_stats()
+        if self.nsubtests_running > 0:
+            return
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+        ED2.breakLoop()
+
+    def update_stats(self):
+        if self.nsubtests_running == 0:
+            self.spinor.idle = True
+        else:
+            self.spinor.idle = False
+        omsg = '\rAlice: %d tests running %s, %f' % (self.nsubtests_running, \
+          self.spinor.tick(), self.rcf.lastval)
+        sys.stdout.write(omsg)
+        if len(omsg) < self.last_ulen:
+            pad = ' ' * (self.last_ulen - len(omsg))
+            sys.stdout.write(pad)
+        sys.stdout.flush()
+        self.last_ulen = len(omsg)
+
+    def idle_update(self):
+        if self.spinor.idle:
+            self.update_stats()
+
+    def runnext(self):
+        subtest_cfg = choice(self.atests)
+        subtest = subtest_cfg.init_test()
+        self.nsubtests_running += 1
+        if self.tcfg.cps != None:
+            self.ntime.offset(1.0 / self.tcfg.cps)
+            self.nextr = TimeoutAbsMono(self.runnext, self.ntime)
+        else:
+            self.runnext()
+        if self.tcfg.continuous:
+            self.update_stats()
 
     def recvRequest(self, req, sip_t):
         return (req.genResponse(501, 'Not Implemented'), None, None)
@@ -116,7 +186,13 @@ class a_test(object):
         self.nsubtests_running -= 1
         if subtest.rval == 0:
             self.rval -= 1
-        if self.nsubtests_running == 0:
+        if self.tcfg.continuous:
+            if subtest.rval == 0:
+                self.rcf.apply(1.0)
+            else:
+                self.rcf.apply(0.0)
+            self.update_stats()
+        elif self.nsubtests_running == 0:
             ED2.breakLoop()
 
     def timeout(self):
