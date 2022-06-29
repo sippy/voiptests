@@ -68,7 +68,7 @@ def main_func():
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:n:N:w:m:')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:n:N:w:m:c')
     except getopt.GetoptError:
         usage(global_config)
     tcfg = test_config(global_config)
@@ -104,6 +104,9 @@ def main_func():
             continue
         if o == '-m':
             tcfg.tests_mightfail = tuple('bob_' + x for x in a.split(','))
+            continue
+        if o == '-c':
+            tcfg.continuous = True
             continue
 
     bodys = [MsgBody(x) for x in BODIES_ALL]

@@ -25,8 +25,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys, getopt
-from time import sleep
+import sys
+
+from .contrib.objgraph import show_most_common_types
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
@@ -60,7 +61,7 @@ def main_func():
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:')
+        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:cC:')
     except getopt.GetoptError:
         usage(global_config)
 
@@ -111,6 +112,11 @@ def main_func():
             continue
         if o == '-D':
             dry_run = True
+        if o == '-c':
+            tcfg.continuous = True
+            continue
+        if o == '-C':
+            tcfg.cps = float(a)
             continue
     if len(ttype) > 0:
         tcfg.ttype = tuple(ttype)
@@ -128,5 +134,7 @@ def main_func():
 
     if not dry_run:
         ED2.loop()
+
+        show_most_common_types(50)
 
         sys.exit(acore.rval)
