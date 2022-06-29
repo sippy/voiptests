@@ -33,6 +33,7 @@ class a_test_reinv_brkn1(a_test_reinv_fail):
 
 class b_test_reinv_brkn1(b_test_reinv_fail):
     cli = 'bob_reinv_brkn1'
+    p_incr = -10
 
     def recvEvent(self, event, ua):
         if not isinstance(event, CCEventUpdate):
@@ -42,7 +43,10 @@ class b_test_reinv_brkn1(b_test_reinv_fail):
             if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
                 continue
             sect.c_header = None
-            sect.m_header.port -= 10
+            if sect.m_header.port + self.p_incr <= 0:
+                self.p_incr = -self.p_incr
+            sect.m_header.port += self.p_incr
+            self.p_incr = -self.p_incr
         sdp_body.content.o_header.version += 1
         event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
         ua.recvEvent(event)
