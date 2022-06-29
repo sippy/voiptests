@@ -48,7 +48,8 @@ body_audio = 'v=0\r\n' + \
     'a=rtpmap:4 G723/8000/1\r\n' + \
     'a=rtpmap:8 PCMA/8000/1\r\n' + \
     'a=rtpmap:101 telephone-event/8000\r\n' + \
-    'a=fmtp:101 0-15\r\n'
+    'a=fmtp:101 0-15\r\n' + \
+    '\r\n'
 body_fax = 'v=0\r\n' + \
     'o=BOBSDP 187392 187393 IN IP4 192.168.174.156\r\n' + \
     's=BOBSDP Session\r\n' + \
@@ -60,7 +61,8 @@ body_fax = 'v=0\r\n' + \
     'a=T38FaxRateManagement:transferredTCF\r\n' + \
     'a=T38FaxMaxBuffer:262\r\n' + \
     'a=T38FaxMaxDatagram:176\r\n' + \
-    'a=T38FaxUdpEC:t38UDPRedundancy\r\n'
+    'a=T38FaxUdpEC:t38UDPRedundancy\r\n' + \
+    '\r\n'
 
 BODIES_ALL = (body_audio, body_fax)
 

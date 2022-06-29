@@ -55,7 +55,8 @@ body_txt = 'v=0\r\n' + \
   'a=rtpmap:101 telephone-event/8000\r\n' + \
   'a=fmtp:101 0-15\r\n' + \
   'a=ptime:30\r\n' + \
-  'a=sendrecv\r\n'
+  'a=sendrecv\r\n' + \
+  '\r\n'
 
 if __name__ == '__main__':
     global_config = {}
