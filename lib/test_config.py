@@ -43,6 +43,17 @@ class test_case_config(object):
     nh_address = None
     uas_creds = None
     uac_creds = None
+    check_media_ips = None
+
+    def __init__(self, nh_address):
+        self.nh_address = nh_address
+        ename = 'NH_MEDIA_IPS'
+        if ename in os.environ:
+            #print(os.environ)
+            self.check_media_ips = os.environ[ename].split(',')
+            #sys.exit(1)
+        else:
+            self.check_media_ips = (self.nh_address[0],)
 
     def checkhostport(self, sdp_body):
         for i in range(0, len(sdp_body.content.sections)):
@@ -52,8 +63,8 @@ class test_case_config(object):
             if not self.portrange.isinrange(sect.m_header.port):
                 return (False, 'not self.portrange.isinrange(%d)' % (sect.m_header.port,))
             if self.atype == 'IP4' and (sect.c_header.atype != 'IP4' or \
-              sect.c_header.addr != self.nh_address[0]):
-                 return (False, 'expected IPv4 address (%s)' % (self.nh_address[0],))
+              sect.c_header.addr not in self.check_media_ips) and '*' not in self.check_media_ips:
+                 return (False, 'expected IPv4 address (%s)' % (self.check_media_ips,))
             if self.atype == 'IP6' and (sect.c_header.atype != 'IP6' or not \
               sect.c_header.addr in ('::1', '0:0:0:0:0:0:0:1')):
                 return (False, 'expected IPv6 address %s or %s' % ('::1', '0:0:0:0:0:0:0:1',))
@@ -73,7 +84,11 @@ class test_config(object):
     bcfg = None
 
     def gen_tccfg(self, atype, done_cb, cli = None):
-        tccfg = test_case_config()
+        if atype == 'IP4':
+            nh_address = self.nh_address4
+        else:
+            nh_address = self.nh_address6
+        tccfg = test_case_config(nh_address)
         if self.acfg != None:
             tccfg.uac_creds = self.acfg.AUTH_CREDS()
         if self.bcfg != None:
@@ -85,10 +100,6 @@ class test_config(object):
         tccfg.done_cb = done_cb
         tccfg.cli = cli
         tccfg.atype = atype
-        if atype == 'IP4':
-            tccfg.nh_address = self.nh_address4
-        else:
-            tccfg.nh_address = self.nh_address6
         tccfg.portrange = self.portrange
         return tccfg
 
