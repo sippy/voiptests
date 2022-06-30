@@ -94,7 +94,7 @@ class test_case_config(object):
         return (True, 'all good')
 
 class test_config(object):
-    getopts = 'p:l:P:T:n:N:w:m:c'
+    getopts = 'p:l:P:T:n:N:w:m:c:'
     global_config = None
     ttype = ('IP4', 'IP6')
     body = None

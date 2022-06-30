@@ -155,7 +155,7 @@ class a_test(testcore_base):
         subtest = subtest_cfg.init_test()
         self.nsubtests_running += 1
         if self.tcfg.cps != None:
-            self.ntime.offset(1.0 / self.tcfg.cps)
+            self.ntime.offset(1.0 / self.tcfg.cps(self.ntime - self.tcfg.ntime))
             self.nextr = TimeoutAbsMono(self.runnext, self.ntime)
         else:
             self.runnext()

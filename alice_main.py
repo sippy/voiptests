@@ -26,6 +26,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys, getopt
+import math
 
 from .contrib.objgraph import show_most_common_types
 
@@ -88,7 +89,12 @@ def main_func():
             tcfg.signalling_only = True
             continue
         if o == '-C':
-            tcfg.cps = float(a)
+            if not a.startswith('='):
+                cpsval = float(a)
+                tcfg.cps = lambda now: cpsval
+            else:
+                cpsfunc = eval(F'lambda now: {a[1:]}')
+                tcfg.cps = cpsfunc
             continue
     if len(ttype) > 0:
         tcfg.ttype = tuple(ttype)
