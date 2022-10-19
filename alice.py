@@ -58,7 +58,7 @@ body_txt = 'v=0\r\n' + \
   'a=sendrecv\r\n' + \
   '\r\n'
 
-if __name__ == '__main__':
+def main_func():
     global_config = {}
 
     try:
@@ -132,3 +132,6 @@ if __name__ == '__main__':
         ED2.loop()
 
         sys.exit(acore.rval)
+
+if __name__ == '__main__':
+    sys.exit(main_func())

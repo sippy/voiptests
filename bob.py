@@ -66,7 +66,7 @@ body_fax = 'v=0\r\n' + \
 
 BODIES_ALL = (body_audio, body_fax)
 
-if __name__ == '__main__':
+def main_func():
     global_config = {}
 
     try:
@@ -120,3 +120,6 @@ if __name__ == '__main__':
 
     ED2.loop()
     sys.exit(bcore.rval)
+
+if __name__ == '__main__':
+    sys.exit(main_func())
