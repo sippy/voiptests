@@ -60,6 +60,10 @@ then
     git -C b2bua checkout "${MM_REV}"
   fi
   git -C b2bua rev-parse HEAD
+  ( cat ${BASEDIR}/install_depends/b2bua_radius.py.fix; \
+  grep -v '^from sippy.Rtp_proxy_client import Rtp_proxy_client' b2bua/sippy/b2bua_radius.py ) | \
+   sed "s|%%SIPPY_ROOT%%|${BASEDIR}/dist/b2bua|" > b2bua/sippy/b2bua_test.py
+  chmod 755 b2bua/sippy/b2bua_test.py
 fi
 git clone -b "${RTPP_BRANCH}" --recursive https://github.com/sippy/rtpproxy.git
 git -C rtpproxy rev-parse HEAD
@@ -113,7 +117,3 @@ fi
 cd rtpproxy
 ./configure
 ${MAKE_CMD} all
-( cat ${BASEDIR}/install_depends/b2bua_radius.py.fix; \
-  grep -v '^from sippy.Rtp_proxy_client import Rtp_proxy_client' ${BASEDIR}/dist/b2bua/sippy/b2bua_radius.py ) | \
-  sed "s|%%SIPPY_ROOT%%|${BASEDIR}/dist/b2bua|" > ${BASEDIR}/dist/b2bua/sippy/b2bua_test.py
-chmod 755 ${BASEDIR}/dist/b2bua/sippy/b2bua_test.py
