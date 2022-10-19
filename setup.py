@@ -12,9 +12,7 @@ setup(
     packages = find_packages(),
 
     install_requires = requirements,
-    package_data = {
-        '': ['requirements.txt', '*.md']
-        },
+
     test_suite = 'tests',
 
     entry_points = {
