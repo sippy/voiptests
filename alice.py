@@ -123,7 +123,7 @@ def main_func():
     sl = SipLogger('alice_ua')
     global_config['_sip_logger'] = sl
 
-    from a_test1 import a_test
+    from lib.alice_testcore import a_test
     if pre_wait != None:
         sleep(pre_wait)
     acore = a_test(tcfg)

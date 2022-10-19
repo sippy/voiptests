@@ -113,7 +113,7 @@ def main_func():
     sl = SipLogger('bob_ua')
     global_config['_sip_logger'] = sl
 
-    from b_test1 import b_test
+    from lib.bob_testcore import b_test
     if pre_wait != None:
         sleep(pre_wait)
     bcore = b_test(tcfg)
