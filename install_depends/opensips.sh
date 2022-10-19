@@ -59,10 +59,8 @@ then
   then
     git -C b2bua checkout "${MM_REV}"
   fi
-else
-  git clone -b master https://github.com/sippy/b2bua.git
+  git -C b2bua rev-parse HEAD
 fi
-git -C b2bua rev-parse HEAD
 git clone -b "${RTPP_BRANCH}" --recursive https://github.com/sippy/rtpproxy.git
 git -C rtpproxy rev-parse HEAD
 #git -C rtpproxy submodule update --init --recursive
