@@ -31,30 +31,30 @@ from sippy.Time.Timeout import Timeout
 from sippy.Core.EventDispatcher import ED2
 from random import shuffle
 
-from test_cases.t1 import a_test1
-from test_cases.t2 import a_test2
-from test_cases.t3 import a_test3
-from test_cases.t4 import a_test4
-from test_cases.t5 import a_test5
-from test_cases.t6 import a_test6
-from test_cases.t7 import a_test7
-from test_cases.t8 import a_test8
-from test_cases.t9 import a_test9
-from test_cases.t10 import a_test10
-from test_cases.t11 import a_test11
-from test_cases.t12 import a_test12
-from test_cases.t13 import a_test13
-from test_cases.t14 import a_test14
-from test_cases.early_cancel import a_test_early_cancel
-from test_cases.early_cancel_lost100 import a_test_early_cancel_lost100
-from test_cases.reinvite import a_test_reinvite
-from test_cases.reinv_fail import a_test_reinv_fail
-from test_cases.reinv_brkn1 import a_test_reinv_brkn1
-from test_cases.reinv_brkn2 import a_test_reinv_brkn2
-from test_cases.reinv_onhold import a_test_reinv_onhold
-from test_cases.reinv_adelay import a_test_reinv_adelay
-from test_cases.reinv_frombob import a_test_reinv_frombob
-from test_cases.reinv_bad_ack import a_test_reinv_bad_ack
+from ..test_cases.t1 import a_test1
+from ..test_cases.t2 import a_test2
+from ..test_cases.t3 import a_test3
+from ..test_cases.t4 import a_test4
+from ..test_cases.t5 import a_test5
+from ..test_cases.t6 import a_test6
+from ..test_cases.t7 import a_test7
+from ..test_cases.t8 import a_test8
+from ..test_cases.t9 import a_test9
+from ..test_cases.t10 import a_test10
+from ..test_cases.t11 import a_test11
+from ..test_cases.t12 import a_test12
+from ..test_cases.t13 import a_test13
+from ..test_cases.t14 import a_test14
+from ..test_cases.early_cancel import a_test_early_cancel
+from ..test_cases.early_cancel_lost100 import a_test_early_cancel_lost100
+from ..test_cases.reinvite import a_test_reinvite
+from ..test_cases.reinv_fail import a_test_reinv_fail
+from ..test_cases.reinv_brkn1 import a_test_reinv_brkn1
+from ..test_cases.reinv_brkn2 import a_test_reinv_brkn2
+from ..test_cases.reinv_onhold import a_test_reinv_onhold
+from ..test_cases.reinv_adelay import a_test_reinv_adelay
+from ..test_cases.reinv_frombob import a_test_reinv_frombob
+from ..test_cases.reinv_bad_ack import a_test_reinv_bad_ack
 
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \

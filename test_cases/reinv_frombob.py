@@ -23,8 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from test_cases.reinvite import test_reinvite
-from test_cases.t1 import a_test1, b_test1
+from .reinvite import test_reinvite
+from .t1 import a_test1, b_test1
 
 class a_test_reinv_frombob(test_reinvite, a_test1):
     cld = 'bob_reinv_frombob'

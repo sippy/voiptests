@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from test_cases.early_cancel import a_test_early_cancel, b_test_early_cancel
+from .early_cancel import a_test_early_cancel, b_test_early_cancel
 
 class a_test_early_cancel_lost100(a_test_early_cancel):
     cld = 'bob_early_cancel_lost100'

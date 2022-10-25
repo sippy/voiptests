@@ -33,8 +33,8 @@ from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
 from sippy.Core.EventDispatcher import ED2
 
-from lib.PortRange import PortRange
-from lib.test_config import test_config
+from .lib.PortRange import PortRange
+from .lib.test_config import test_config
 
 body_txt = 'v=0\r\n' + \
   'o=- 380960 380960 IN IP4 192.168.22.95\r\n' + \
@@ -121,7 +121,7 @@ def main_func():
     sl = SipLogger('alice_ua')
     global_config['_sip_logger'] = sl
 
-    from lib.alice_testcore import a_test
+    from .lib.alice_testcore import a_test
     if pre_wait != None:
         sleep(pre_wait)
     acore = a_test(tcfg)

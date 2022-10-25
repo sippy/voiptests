@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from test_cases.t3 import a_test3, b_test3
+from .t3 import a_test3, b_test3
 
 class a_test8(a_test3):
     cld = 'bob_8'

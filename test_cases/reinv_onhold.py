@@ -28,7 +28,7 @@ from random import random
 from sippy.CCEvents import CCEventUpdate
 from sippy.Time.Timeout import Timeout
 
-from test_cases.reinvite import a_test_reinvite, b_test_reinvite
+from .reinvite import a_test_reinvite, b_test_reinvite
 
 class a_test_reinv_onhold(a_test_reinvite):
     cld = 'bob_reinv_onhold'

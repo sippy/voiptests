@@ -23,8 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from test_cases.t3 import a_test3
-from test_cases.t2 import b_test2
+from .t3 import a_test3
+from .t2 import b_test2
 
 from sippy.CCEvents import CCEventFail
 

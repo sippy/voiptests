@@ -23,8 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from test_cases.t11 import a_test11
-from test_cases.t12 import b_test12
+from .t11 import a_test11
+from .t12 import b_test12
 
 # This tests verifies that settion fully-setup no-media timeout (which is set
 # to 60 seconds by default in the rtpproxy) is correctly executed and that

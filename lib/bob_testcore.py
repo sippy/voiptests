@@ -31,32 +31,32 @@ from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Core.EventDispatcher import ED2
 from random import random
 
-from lib.test_config import fillhostport
+from .test_config import fillhostport
 
-from test_cases.t1 import b_test1, AuthRequired, AuthFailed
-from test_cases.t2 import b_test2
-from test_cases.t3 import b_test3
-from test_cases.t4 import b_test4
-from test_cases.t5 import b_test5
-from test_cases.t6 import b_test6
-from test_cases.t7 import b_test7
-from test_cases.t8 import b_test8
-from test_cases.t9 import b_test9
-from test_cases.t10 import b_test10
-from test_cases.t11 import b_test11
-from test_cases.t12 import b_test12
-from test_cases.t13 import b_test13
-from test_cases.t14 import b_test14
-from test_cases.early_cancel import b_test_early_cancel
-from test_cases.early_cancel_lost100 import b_test_early_cancel_lost100
-from test_cases.reinvite import b_test_reinvite
-from test_cases.reinv_fail import b_test_reinv_fail
-from test_cases.reinv_brkn1 import b_test_reinv_brkn1
-from test_cases.reinv_brkn2 import b_test_reinv_brkn2
-from test_cases.reinv_onhold import b_test_reinv_onhold
-from test_cases.reinv_adelay import b_test_reinv_adelay
-from test_cases.reinv_frombob import b_test_reinv_frombob
-from test_cases.reinv_bad_ack import b_test_reinv_bad_ack
+from ..test_cases.t1 import b_test1, AuthRequired, AuthFailed
+from ..test_cases.t2 import b_test2
+from ..test_cases.t3 import b_test3
+from ..test_cases.t4 import b_test4
+from ..test_cases.t5 import b_test5
+from ..test_cases.t6 import b_test6
+from ..test_cases.t7 import b_test7
+from ..test_cases.t8 import b_test8
+from ..test_cases.t9 import b_test9
+from ..test_cases.t10 import b_test10
+from ..test_cases.t11 import b_test11
+from ..test_cases.t12 import b_test12
+from ..test_cases.t13 import b_test13
+from ..test_cases.t14 import b_test14
+from ..test_cases.early_cancel import b_test_early_cancel
+from ..test_cases.early_cancel_lost100 import b_test_early_cancel_lost100
+from ..test_cases.reinvite import b_test_reinvite
+from ..test_cases.reinv_fail import b_test_reinv_fail
+from ..test_cases.reinv_brkn1 import b_test_reinv_brkn1
+from ..test_cases.reinv_brkn2 import b_test_reinv_brkn2
+from ..test_cases.reinv_onhold import b_test_reinv_onhold
+from ..test_cases.reinv_adelay import b_test_reinv_adelay
+from ..test_cases.reinv_frombob import b_test_reinv_frombob
+from ..test_cases.reinv_bad_ack import b_test_reinv_bad_ack
 
 ALL_TESTS = (b_test1, b_test2, b_test3, b_test4, b_test5, b_test6, b_test7, \
   b_test8, b_test9, b_test10, b_test11, b_test12, b_test13, b_test14, \

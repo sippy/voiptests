@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from test_cases.reinvite import a_test_reinvite, b_test_reinvite
+from .reinvite import a_test_reinvite, b_test_reinvite
 
 from sippy.CCEvents import CCEventRing, CCEventDisconnect, CCEventFail, \
   CCEventUpdate
