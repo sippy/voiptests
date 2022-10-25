@@ -8,8 +8,9 @@ with open("README.md", "r") as fh:
 
 setup(
     name = "voiptests",
-    version = "1.0.0",
-    packages = find_packages(),
+    version = "1.0.1",
+    packages = ['voiptests', 'voiptests.lib', 'voiptests.test_cases'],
+    package_dir = {'voiptests': '.'},
 
     install_requires = requirements,
 
@@ -17,8 +18,8 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'alice_ua = alice:main_func',
-            'bob_ua = bob:main_func',
+            'alice_ua = voiptests.alice:main_func',
+            'bob_ua = voiptests.bob:main_func',
             ],
         },
 
