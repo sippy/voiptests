@@ -10,6 +10,8 @@ ulimit -c
 
 ${CC} --version
 
+PYTHON_CMD="${PYTHON_CMD:-"python"}"
+
 rtpproxy_cmds_gen() {
   if [ x"${RTPP_PRE_STAT_TIMEOUT}" != x"" ]
   then
@@ -53,7 +55,7 @@ start_mm() {
       rm ${MM_LOG}
     fi
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
-     python ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address='*' \
+     ${PYTHON_CMD} ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address='*' \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \
      --static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
@@ -152,7 +154,7 @@ then
   rm "${RTPP_SOCK_BARE}"
 fi
 
-MR_TIME="`python ${RTPPROXY_DIST}/python/sippy_lite/sippy/tools/getmonotime.py -S ${RTPPROXY_DIST}/python/sippy_lite -r`"
+MR_TIME="`${PYTHON_CMD} ${RTPPROXY_DIST}/python/sippy_lite/sippy/tools/getmonotime.py -S ${RTPPROXY_DIST}/python/sippy_lite -r`"
 SIPLOG_TSTART="`echo ${MR_TIME} | awk '{print $2}'`"
 export SIPLOG_TSTART
 SIPLOG_TFORM="rel"
@@ -179,11 +181,11 @@ do
 done
 sleep 1
 start_mm
-MM_AUTH="${MM_AUTH}" python alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
+MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"
-MM_AUTH="${MM_AUTH}" python bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
+MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 
@@ -207,7 +209,7 @@ if [ ${ALICE_RC} -eq 0 -a ${BOB_RC} -eq 0 -a ${MM_RC} -eq 0 ]
 then
   # Always give the RTPproxy enough time to execute final stats command,
   # before we SIGHUP it
-  python -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${RTPP_STAT_TIMEOUT} + 5 - time(); sleep(tleft) if tleft > 0 else False;"
+  ${PYTHON_CMD} -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${RTPP_STAT_TIMEOUT} + 5 - time(); sleep(tleft) if tleft > 0 else False;"
 fi
 kill -HUP ${RTPP_PID}
 echo "RTPP_PID: ${RTPP_PID}"
