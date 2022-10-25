@@ -6,8 +6,8 @@ import os
 
 from sippy.SdpOrigin import SdpOrigin
 
-from lib.GenIPs import genIP
-from lib.PortRange import PortRange
+from .GenIPs import genIP
+from .PortRange import PortRange
 
 def fillhostport(sdp_body, portrange, atype = None):
     sdp_body.content.o_header = SdpOrigin()
@@ -29,7 +29,10 @@ class AUTH_CREDS(object):
         self.password = password
 
 def load_cfg(side):
-    scn  = os.environ['MM_AUTH']
+    try:
+        scn  = os.environ['MM_AUTH']
+    except KeyError as ex:
+        raise ImportError()
     mf = find_module(side + '_cfg', ['scenarios/' + scn,])
     m = load_module(side + '_cfg', *mf)
     return m
