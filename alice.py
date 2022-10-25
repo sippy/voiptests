@@ -28,8 +28,6 @@
 import sys, getopt
 from time import sleep
 
-sys.path.insert(0, 'dist/b2bua')
-
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
