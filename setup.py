@@ -18,8 +18,8 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'alice_ua = voiptests.alice:main_func',
-            'bob_ua = voiptests.bob:main_func',
+            'alice_ua = voiptests.alice_main:main_func',
+            'bob_ua = voiptests.bob_main:main_func',
             ],
         },
 

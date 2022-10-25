@@ -33,11 +33,8 @@ from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
 from sippy.Core.EventDispatcher import ED2
 
-if __name__ == '__main__' and not __package__:
-    __package__ = 'voiptests'
-
-from lib.PortRange import PortRange
-from lib.test_config import test_config
+from .lib.PortRange import PortRange
+from .lib.test_config import test_config
 
 body_audio = 'v=0\r\n' + \
     'o=987654382 4650 4650 IN IP4 192.168.0.90\r\n' + \
@@ -114,13 +111,10 @@ def main_func():
     sl = SipLogger('bob_ua')
     global_config['_sip_logger'] = sl
 
-    from lib.bob_testcore import b_test
+    from .lib.bob_testcore import b_test
     if pre_wait != None:
         sleep(pre_wait)
     bcore = b_test(tcfg)
 
     ED2.loop()
     sys.exit(bcore.rval)
-
-if __name__ == '__main__':
-    sys.exit(main_func())

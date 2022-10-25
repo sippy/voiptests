@@ -33,9 +33,6 @@ from sippy.SipLogger import SipLogger
 from sippy.SipConf import SipConf
 from sippy.Core.EventDispatcher import ED2
 
-if __name__ == '__main__' and not __package__:
-    __package__ = 'voiptests'
-
 from .lib.PortRange import PortRange
 from .lib.test_config import test_config
 
@@ -133,6 +130,3 @@ def main_func():
         ED2.loop()
 
         sys.exit(acore.rval)
-
-if __name__ == '__main__':
-    sys.exit(main_func())
