@@ -17,7 +17,7 @@ cat /etc/hosts
 echo "--- hosts patched ---"
 ulimit -c unlimited
 sudo sh -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
-${BASEDIR}/cibits/ppa_clean.sh
+#${BASEDIR}/cibits/ppa_clean.sh
 sudo -H DEBIAN_FRONTEND=noninteractive apt-get update
 sudo -H DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb tcpdump
 if [ -e requirements.txt ]
