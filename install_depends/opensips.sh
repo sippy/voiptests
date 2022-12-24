@@ -103,7 +103,8 @@ fi
 if [ "${MM_TYPE}" = "kamailio" ]
 then
   ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="${CC}" \
-   include_modules="sl tm rr maxfwd rtpproxy textops" skip_modules="erlang" all modules
+   include_modules="sl tm rr maxfwd rtpproxy textops" \
+   skip_modules="erlang corex" all modules
 fi
 if [ "${MM_TYPE}" = "go-b2bua" ]
 then
