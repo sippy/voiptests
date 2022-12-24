@@ -25,25 +25,22 @@ then
   fi
   git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
-  if [ "${MM_BRANCH}" != "1.11" ]
+  if [ "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "3.2" -a "${MM_BRANCH}" != "3.3" ]
   then
-    if [ "${MM_BRANCH}" != "master" ]
-    then
-      MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
-    fi
-    if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.2" -o "${MM_BRANCH}" = "2.3" ]
-    then
-      MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
-    fi
-    if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.1.5" ]
-    then
-      MM_PATCH_SET="2.1_xenial.patch ${MM_PATCH_SET}"
-    fi
-    for p in ${MM_PATCH_SET}
-    do
-      git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
-    done
+    MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
   fi
+  if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.2" -o "${MM_BRANCH}" = "2.3" ]
+  then
+    MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
+  fi
+  if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.1.5" ]
+  then
+    MM_PATCH_SET="2.1_xenial.patch ${MM_PATCH_SET}"
+  fi
+  for p in ${MM_PATCH_SET}
+  do
+    git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
+  done
   if [ "${MM_BRANCH}" = "master" ]
   then
   #  git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
