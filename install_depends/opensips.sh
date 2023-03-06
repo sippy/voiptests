@@ -105,9 +105,6 @@ then
 fi
 if [ "${MM_TYPE}" = "go-b2bua" ]
 then
-    curl -sL -o gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
-    chmod +x gimme
-    eval "$(./gimme 1.9.1)"
     go version
     which go
     ${MAKE_CMD} -C "${BUILDDIR}/dist/go-b2bua" all
