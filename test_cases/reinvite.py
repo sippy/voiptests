@@ -81,16 +81,21 @@ class test_reinvite(object):
         elif (isinstance(event, CCEventDisconnect) or \
           isinstance(event, CCEventFail)):
             self.nerrs += 1
-            raise ScenarioFailure('%s: re-INVITE has failed' % (self.failed_msg(),))
         rval = super(test_reinvite, self).recvEvent(event, ua)
         if isinstance(event, CCEventConnect):
             self.reinvite_done = True
             self.on_reinvite_connected(ua)
             #print('self.reinvite_done = True')
+        elif isinstance(event, CCEventDisconnect) or \
+          isinstance(event, CCEventFail):
+            self.on_reinvite_failed(ua, event)
         return rval
 
     def on_reinvite_connected(self, ua):
         pass
+
+    def on_reinvite_failed(self, ua, event):
+        raise ScenarioFailure('%s: re-INVITE has failed' % (self.failed_msg(),))
 
     def process_reinvite(self, ua):
         if self.reinv_answ_delay > 0:
