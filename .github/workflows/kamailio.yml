@@ -27,8 +27,8 @@ jobs:
       MM_BRANCH: ${{ matrix.mm-branch }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.8'
-      PYTHON_CMD: "python3.8"
+      python-version: '3.10'
+      PYTHON_CMD: "python3.10"
 
     strategy:
       matrix:
