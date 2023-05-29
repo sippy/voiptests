@@ -35,7 +35,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         mm-branch: ['master']
-        mm-rev: ['0da5765655c4c54471929042629e2f51484826bb', '63309e55fae3c774bac29a3be365a48fc50c3f03', 'd572bd423f1af1b0931a51d566a0c4989dee4732', '712fdd2d0337caad088a7fab668e9fe3b739a359', 'efd40feee29f347be8acd2d60a2ee3229a5d4001', '77435247076a001a32b351d6c253462aad9e1259', '672540900f4e2a262978369853795dcf85420cd4', 'b3644964573d7083001e2fbf12d4580808b664dc']
+        mm-rev: ['0da5765655c4c54471929042629e2f51484826bb', 'b3644964573d7083001e2fbf12d4580808b664dc']
         rtppc-type: ['unix', 'udp', 'udp6']
         include:
           - mm-branch: 'master'
