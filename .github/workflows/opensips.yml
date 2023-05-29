@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        mm-branch: ['master', '3.3', '3.2', '3.1', '3.0', '2.4']
+        mm-branch: ['master', '7eb2c1c21069942d06e7e7674548ef2372563fa4']
         rtppc-type: ['unix', 'udp', 'udp6']
         include:
           - mm-branch: 'master'
