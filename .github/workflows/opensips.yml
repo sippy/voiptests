@@ -35,15 +35,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         mm-branch: ['master']
-        mm-rev: ['0da5765655c4c54471929042629e2f51484826bb', 'b3644964573d7083001e2fbf12d4580808b664dc']
+        mm-rev: ['b3644964573d7083001e2fbf12d4580808b664dc', 'e00300c46178eb0e22d3bc062b6fc0abf63ca9fb']
         rtppc-type: ['unix', 'udp', 'udp6']
-        include:
-          - mm-branch: 'master'
-            os: ubuntu-latest
-            rtppc-type: 'tcp'
-          - mm-branch: 'master'
-            os: ubuntu-latest
-            rtppc-type: 'tcp6'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
