@@ -81,7 +81,12 @@ start_mm() {
     echo "--- Config Begins ---"
     cat -n "${MM_CFG}"
     echo "--- Config Ends ---"
-    ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" ${MM_ARGS} -F -E -n 1 &
+    _MM_ARGS="-f ${MM_CFG} ${MM_ARGS} -F -n 1"
+    if [ "${MM_BRANCH}" != "master" ]
+    then
+      _MM_ARGS="${_MM_ARGS} -E"
+    fi
+    ${BUILDDIR}/dist/opensips/opensips ${_MM_ARGS} &
     MM_PID=${!}
     ALICE_ARGS="-46"
     ;;
