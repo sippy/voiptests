@@ -25,7 +25,7 @@ then
   fi
   git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
-  if [ "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "3.2" -a "${MM_BRANCH}" != "3.3" ]
+  if [ "${MM_BRANCH}" != "master_2021" -a "${MM_BRANCH}" != "3.2" -a "${MM_BRANCH}" != "3.3" ]
   then
     MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
   fi
@@ -41,7 +41,7 @@ then
   do
     git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
   done
-  if [ "${MM_BRANCH}" = "master" ]
+  if [ "${MM_BRANCH}" = "master_2021" ]
   then
   #  git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
     MM_KILL_MODULES="rabbitmq_consumer event_kafka"
@@ -90,7 +90,7 @@ then
   do
     rm -rf "${MM_DIR}/modules/${m}"
   done
-  if [ "${MM_BRANCH}" = "master" ]
+  if [ "${MM_BRANCH}" = "master_2021" ]
   then
     _EXTRA_OPTS="CC_EXTRA_OPTS=-Werror"
   fi

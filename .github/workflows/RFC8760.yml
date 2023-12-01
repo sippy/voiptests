@@ -24,8 +24,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       MM_TYPE: opensips
-      MM_BRANCH: master
-      MM_REPO: https://github.com/OpenSIPS/opensips.git
+      MM_BRANCH: master_2021
+      MM_REPO: https://github.com/sippy/opensips.git
       MM_AUTH: ${{ matrix.mm-auth }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
@@ -42,8 +42,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-        with:
-          ref: master
 
       - name: Set up Python ${{ env.python-version }}
         uses: actions/setup-python@v3

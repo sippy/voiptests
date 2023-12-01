@@ -1,4 +1,4 @@
-#if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
+#if !(OPENSIPS_VER_FULL == master_2021 || OPENSIPS_VER >= 30)
 #mode quote "`"
 #define INT(x) `"x`"
 #else
@@ -7,13 +7,13 @@
 
 mpath="dist/opensips/modules/"
 
-#if (OPENSIPS_VER >= 21) || (OPENSIPS_VER_FULL == master)
+#if (OPENSIPS_VER >= 21) || (OPENSIPS_VER_FULL == master_2021)
 loadmodule "proto_udp.so"
 ## dialog is now required by the rtpproxy, not sure why, but OK
 loadmodule "dialog/dialog.so"
 #endif
 
-#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
+#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master_2021)
 loadmodule "sipmsgops/sipmsgops.so"
 #if MM_AUTH == UAC || MM_AUTH == UAS
 loadmodule "uac/uac.so"
@@ -33,7 +33,7 @@ loadmodule "rr/rr.so"
 loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
-#if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
+#if !(OPENSIPS_VER_FULL == master_2021 || OPENSIPS_VER >= 30)
 loadmodule "uri/uri.so"
 
 # define REWRITEPORT(value) rewriteport(INT(value))
@@ -41,13 +41,13 @@ loadmodule "uri/uri.so"
 # define REWRITEPORT(value) $rp = value
 #endif
 
-#if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master)
+#if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master_2021)
 # define XLOG xlog
 #else
 # define XLOG(a)
 #endif
 
-#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
+#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master_2021)
 #define IS_METHOD    is_method
 #define SRC_PORT     $sp
 #define STATUS       $rs
@@ -70,7 +70,7 @@ modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
 
-#if OPENSIPS_VER_FULL == master
+#if OPENSIPS_VER_FULL == master_2021
 stderror_enabled=yes
 syslog_enabled=no
 #endif
@@ -84,7 +84,7 @@ route {
         exit;
     };
 
-#if (OPENSIPS_VER < 24) && (OPENSIPS_VER_FULL != master)
+#if (OPENSIPS_VER < 24) && (OPENSIPS_VER_FULL != master_2021)
     if (msg:len >= max_len) {
         sl_send_reply(INT(513), "Message too big");
         exit;

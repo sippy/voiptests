@@ -39,7 +39,7 @@ modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
 
-#if OPENSIPS_VER_FULL == master
+#if OPENSIPS_VER_FULL == master_2021
 stderror_enabled=yes
 syslog_enabled=no
 #endif
