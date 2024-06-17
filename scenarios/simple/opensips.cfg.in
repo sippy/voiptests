@@ -7,18 +7,10 @@
 
 mpath="dist/opensips/modules/"
 
-#if (OPENSIPS_VER >= 21) || (OPENSIPS_VER_FULL == master)
 loadmodule "proto_udp.so"
 ## dialog is now required by the rtpproxy, not sure why, but OK
 loadmodule "dialog/dialog.so"
-#endif
-
-#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
 loadmodule "sipmsgops/sipmsgops.so"
-#endif
-
-#define RTPP_UNFORCE() rtpproxy_unforce()
-
 loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
 loadmodule "rr/rr.so"
@@ -33,21 +25,8 @@ loadmodule "uri/uri.so"
 # define REWRITEPORT(value) $rp = value
 #endif
 
-#if (OPENSIPS_VER >= 23) || (OPENSIPS_VER_FULL == master)
-# define XLOG xlog
-#else
-# define XLOG(a)
-#endif
-
-#if (OPENSIPS_VER >= 24) || (OPENSIPS_VER_FULL == master)
-#define IS_METHOD    is_method
 #define SRC_PORT     $sp
 #define STATUS       $rs
-#else
-#define IS_METHOD(m) method == m
-#define SRC_PORT     src_port
-#define STATUS       status
-#endif
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
@@ -60,7 +39,7 @@ syslog_enabled=no
 #endif
 
 route {
-    XLOG("OpenSIPS received a request $rm from $si\n");
+    xlog("OpenSIPS received a request $rm from $si\n");
     ## initial sanity checks -- messages with
     ## max_forwards==0, or excessively long requests
     if (!mf_process_maxfwd_header(INT(10))) {
@@ -81,7 +60,7 @@ route {
         exit;
     };
 
-    if (IS_METHOD("INVITE")) {
+    if (is_method("INVITE")) {
         t_reply(INT(100), "Trying");
         if (rtpproxy_offer("r")) {
             t_on_reply("1");
@@ -92,9 +71,9 @@ route {
         };
     };
 
-    if (IS_METHOD("BYE")) {
-        XLOG("    calling rtpproxy_unforce()\n");
-        RTPP_UNFORCE();
+    if (is_method("BYE")) {
+        xlog("    calling rtpproxy_unforce()\n");
+        rtpproxy_unforce();
     };
 
     record_route();
@@ -117,11 +96,11 @@ route {
 
 onreply_route[1]
 {
-    XLOG("OpenSIPS received a reply $rs/$rm from $si\n");
+    xlog("OpenSIPS received a reply $rs/$rm from $si\n");
     if (STATUS =~ "(183)|2[0-9][0-9]") {
-        XLOG("  calling search()\n");
+        xlog("  calling search()\n");
         if(!search("^Content-Length:[ ]*0")) {
-            XLOG("    calling rtpproxy_answer()\n");
+            xlog("    calling rtpproxy_answer()\n");
             rtpproxy_answer("r");
             ##rtpproxy_stream2uas("ringback", "10");
         };
@@ -130,7 +109,7 @@ onreply_route[1]
 
 failure_route[1]
 {
-    XLOG("OpenSIPS handling $rm failure in from $si in failure_route[1]\n");
-    XLOG("    calling rtpproxy_unforce()\n");
-    RTPP_UNFORCE();
+    xlog("OpenSIPS handling $rm failure in from $si in failure_route[1]\n");
+    xlog("    calling rtpproxy_unforce()\n");
+    rtpproxy_unforce();
 }
