@@ -1,6 +1,4 @@
-[![CI](https://github.com/sippy/voiptests/workflows/CI/badge.svg)](https://github.com/sippy/voiptests/actions?query=branch%3Amaster++)
-
-[![No More Travis CI :(](https://github.com/sippy/voiptests/raw/master/no_travisci.png)](https://travis-ci.com/github/sippy/voiptests/builds "Travis CI #NOMORE")
+[![Pipeline](https://github.com/sippy/voiptests/actions/workflows/main.yml/badge.svg?branch=wip)](https://github.com/sippy/voiptests/actions/workflows/main.yml?query=branch%3Awip++)
 
 # VoIP Integrated Tests Suite
 
