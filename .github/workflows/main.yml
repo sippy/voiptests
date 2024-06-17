@@ -1,0 +1,284 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Alice->SSUT->Bob
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+#    branches: [ master ]
+  pull_request:
+#    branches: [ master ]
+
+  release:
+    types: [created]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  schedule:
+    - cron: "30 0 * * *"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Alice->OpenSIPS->Bob
+  opensips:
+    runs-on: ${{ matrix.os }}
+    env:
+      MM_TYPE: opensips
+      MM_BRANCH: ${{ matrix.mm-branch }}
+      RTPP_BRANCH: master
+      RTPPC_TYPE: ${{ matrix.rtppc-type }}
+      python-version: '3.10'
+      PYTHON_CMD: "python3.10"
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        mm-branch: ['master', '3.3', '3.2', '3.1', '3.0', '2.4']
+        rtppc-type: ['unix', 'udp', 'udp6']
+        include:
+          - mm-branch: 'master'
+            os: ubuntu-latest
+            rtppc-type: 'tcp'
+          - mm-branch: 'master'
+            os: ubuntu-latest
+            rtppc-type: 'tcp6'
+          - mm-branch: '2.3'
+            os: ubuntu-20.04
+            rtppc-type: 'unix'
+          - mm-branch: '2.3'
+            os: ubuntu-20.04
+            rtppc-type: 'udp'
+          - mm-branch: '2.3'
+            os: ubuntu-20.04
+            rtppc-type: 'udp6'
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python-version }}
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
+
+      - name: script
+        run: sh -x ./test_run.sh
+
+      - name: Test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
+          path: |
+            opensips.cfg
+            bob.log
+            alice.log
+            rtpproxy.log
+
+  # Alice->OpenSIPS(RFC8760)->Bob
+  opensips_rfc8760:
+    runs-on: ${{ matrix.os }}
+    env:
+      MM_TYPE: opensips
+      MM_BRANCH: master
+      MM_REPO: https://github.com/OpenSIPS/opensips.git
+      MM_AUTH: ${{ matrix.mm-auth }}
+      RTPP_BRANCH: master
+      RTPPC_TYPE: ${{ matrix.rtppc-type }}
+      python-version: '3.10'
+      PYTHON_CMD: "python3.10"
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
+        mm-auth: ['passtr', 'UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Set up Python ${{ env.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python-version }}
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
+
+      - name: script
+        run: sh -x ./test_run.sh
+
+      - name: transform_var
+        id: transform_var
+        run: echo "::set-output name=mm_auth::`echo ${{ matrix.mm-auth }} | sed 's|/|.|g'`"
+
+      - name: Test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs_${{ matrix.rtppc-type }}_${{ steps.transform_var.outputs.mm_auth }}
+          path: |
+            opensips.cfg
+            bob.log
+            alice.log
+            rtpproxy.log
+
+  # Alice->Sippy Python B2B->Bob
+  sippy_py_b2bua:
+    runs-on: ubuntu-latest
+    env:
+      MM_TYPE: b2bua
+      MM_BRANCH: ${{ matrix.mm-branch }}
+      RTPP_BRANCH: master
+      RTPPC_TYPE: ${{ matrix.rtppc-type }}
+      PYTHON_CMD: "python${{ matrix.python-version }}"
+
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        mm-branch: ['master', 'PRACK']
+        rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
+
+      - name: script
+        run: sh -x ./test_run.sh
+
+
+      - name: Test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs_${{ matrix.python-version }}_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
+          path: |
+            b2bua.log
+            bob.log
+            alice.log
+            rtpproxy.log
+
+  # Alice->Sippy GO B2B->Bob
+  sippy_go_b2bua:
+    runs-on: ubuntu-latest
+    env:
+      MM_TYPE: go-b2bua
+      MM_BRANCH: master
+      RTPP_BRANCH: master
+      RTPPC_TYPE: ${{ matrix.rtppc-type }}
+      python-version: '3.10'
+      PYTHON_CMD: "python3.10"
+
+    strategy:
+      matrix:
+        rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python-version }}
+
+      - name: Install Golang
+        run: sudo apt-get update && sudo apt-get -y install golang-go
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
+
+      - name: script
+        run: sh -x ./test_run.sh
+
+      - name: Test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs_${{ matrix.rtppc-type }}
+          path: |
+            b2bua.log
+            bob.log
+            alice.log
+            rtpproxy.log
+
+  # Alice->Kamailio->Bob
+  kamailio:
+    runs-on: ubuntu-latest
+    env:
+      MM_TYPE: kamailio
+      MM_BRANCH: ${{ matrix.mm-branch }}
+      RTPP_BRANCH: master
+      RTPPC_TYPE: ${{ matrix.rtppc-type }}
+      python-version: '3.10'
+      PYTHON_CMD: "python3.10"
+
+    strategy:
+      matrix:
+        mm-branch: ['master', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4']
+        rtppc-type: ['unix', 'udp', 'udp6']
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python-version }}
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
+
+      - name: script
+        run: sh -x ./test_run.sh
+
+      - name: Test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
+          path: |
+            kamailio.cfg
+            bob.log
+            alice.log
+            rtpproxy.log
+
+  publish:
+    needs: [opensips, opensips_rfc8760, sippy_py_b2bua, sippy_go_b2bua, kamailio]
+    if: github.event_name == 'release' && github.event.action == 'created'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist
+        twine upload dist/*
