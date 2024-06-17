@@ -21,7 +21,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       MM_TYPE: kamailio
       MM_BRANCH: ${{ matrix.mm-branch }}
@@ -32,16 +32,16 @@ jobs:
 
     strategy:
       matrix:
-        mm-branch: ['master', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4', '4.3', '4.2']
+        mm-branch: ['master', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4']
         rtppc-type: ['unix', 'udp', 'udp6']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.python-version }}
 
@@ -52,7 +52,7 @@ jobs:
         run: sh -x ./test_run.sh
 
       - name: Test logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-logs_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
           path: |

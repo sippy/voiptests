@@ -1,0 +1,13 @@
+diff --git a/modules/siputils/contact_ops.h b/modules/siputils/contact_ops.h
+index 4385fb68f8..1ed8b92428 100644
+--- a/modules/siputils/contact_ops.h
++++ b/modules/siputils/contact_ops.h
+@@ -48,7 +48,7 @@
+ #define DEFAULT_SEPARATOR "*"
+ 
+ 
+-char *contact_flds_separator;
++extern char *contact_flds_separator;
+ 
+ 
+ struct uri_format

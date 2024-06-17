@@ -72,9 +72,13 @@ then
   git -C kamailio rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
-  if [ "${MM_BRANCH}" = "4.1" ]
+  if [ "${MM_BRANCH}" = "4.4" ]
   then
-    patch -p1 -s -d kamailio < ${BUILDDIR}/install_depends/kamailio/rtpproxy_ip6.patch
+    git -C kamailio apply "${BUILDDIR}/install_depends/kamailio/contact_flds_separator.4.x.patch"
+  fi
+  if [ "${MM_BRANCH}" = "5.0" -o "${MM_BRANCH}" = "5.1" ]
+  then
+    git -C kamailio apply "${BUILDDIR}/install_depends/kamailio/contact_flds_separator.patch"
   fi
 fi
 if [ "${MM_TYPE}" = "go-b2bua" ]

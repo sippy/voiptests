@@ -41,12 +41,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
 
       - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ env.python-version }}
 
@@ -61,7 +61,7 @@ jobs:
         run: echo "::set-output name=mm_auth::`echo ${{ matrix.mm-auth }} | sed 's|/|.|g'`"
 
       - name: Test logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-logs_${{ matrix.rtppc-type }}_${{ steps.transform_var.outputs.mm_auth }}
           path: |
