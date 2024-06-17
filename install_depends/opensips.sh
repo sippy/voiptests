@@ -14,80 +14,93 @@ fi
 mkdir "${BUILDDIR}/dist"
 cd "${BUILDDIR}/dist"
 
+MM_PATCH_SET=""
+
+mm_patch_set_append() {
+  if [ -z "${MM_PATCH_SET}" ]
+  then
+    MM_PATCH_SET="${1}"
+  else
+    MM_PATCH_SET="${MM_PATCH_SET} ${1}"
+  fi
+}
+
+case "${MM_TYPE}" in
+opensips)
+  MM_REPO=${MM_REPO:-"https://github.com/OpenSIPS/opensips.git"}
+  ;;
+b2bua)
+  MM_REPO=${MM_REPO:-"https://github.com/sippy/b2bua.git"}
+  ;;
+kamailio)
+  MM_REPO=${MM_REPO:-"https://github.com/kamailio/kamailio.git"}
+  ;;
+go-b2bua)
+  MM_REPO=${MM_REPO:-"https://github.com/sippy/go-b2bua.git"}
+  ;;
+*)
+  echo "Bogus MM_TYPE=\"${MM_TYPE}\"" 2>&1
+  exit 1
+  ;;
+esac
+
+git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
+MM_GIT="git -C ${MM_TYPE}"
+if [ "${MM_REV}" != "${MM_BRANCH}" ]
+then
+  ${MM_GIT} checkout "${MM_REV}"
+fi
+${MM_GIT} rev-parse HEAD
+
 if [ "${MM_TYPE}" = "opensips" ]
 then
-  MM_REPO=${MM_REPO:-"https://github.com/OpenSIPS/opensips.git"}
   MM_DIR="${BUILDDIR}/dist/opensips"
-  git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
-  if [ "${MM_REV}" != "${MM_BRANCH}" ]
-  then
-    git -C opensips checkout "${MM_REV}"
-  fi
-  git -C opensips rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
-  if [ "${MM_BRANCH}" != "master" -a "${MM_BRANCH}" != "3.2" -a "${MM_BRANCH}" != "3.3" ]
+  if [ "${MM_BRANCH}" = "2.3" ]
   then
-    MM_PATCH_SET="old/mod.rtpproxy_retry.diff"
+    mm_patch_set_append mod.rtpproxy_iodebug.diff
   fi
-  if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.2" -o "${MM_BRANCH}" = "2.3" ]
+  if [ "${MM_BRANCH}" = "2.4" ]
   then
-    MM_PATCH_SET="mod.rtpproxy_iodebug.diff ${MM_PATCH_SET}"
+    mm_patch_set_append old/mod.rtpproxy_retry.diff
   fi
-  if [ "${MM_BRANCH}" = "2.1" -o "${MM_BRANCH}" = "2.1.5" ]
-  then
-    MM_PATCH_SET="2.1_xenial.patch ${MM_PATCH_SET}"
-  fi
-  for p in ${MM_PATCH_SET}
-  do
-    git -C opensips apply ${BUILDDIR}/install_depends/opensips/${p}
-  done
   if [ "${MM_BRANCH}" = "master" ]
   then
-  #  git -C opensips revert -n 1eb4ec0f78f43f6ff546de49bc72e513876fb86b
     MM_KILL_MODULES="rabbitmq_consumer event_kafka"
   fi
 fi
 
 if [ "${MM_TYPE}" = "b2bua" ]
 then
-  MM_REPO=${MM_REPO:-"https://github.com/sippy/b2bua.git"}
-  git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
-  if [ "${MM_REV}" != "${MM_BRANCH}" ]
-  then
-    git -C b2bua checkout "${MM_REV}"
-  fi
-  git -C b2bua rev-parse HEAD
   ( cat ${BASEDIR}/install_depends/b2bua_radius.py.fix; \
   grep -v '^from sippy.Rtp_proxy_client import Rtp_proxy_client' b2bua/sippy/b2bua_radius.py ) | \
    sed "s|%%SIPPY_ROOT%%|${BASEDIR}/dist/b2bua|" > b2bua/sippy/b2bua_test.py
   chmod 755 b2bua/sippy/b2bua_test.py
 fi
-git clone -b "${RTPP_BRANCH}" --recursive https://github.com/sippy/rtpproxy.git
-git -C rtpproxy rev-parse HEAD
-#git -C rtpproxy submodule update --init --recursive
+
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  MM_REPO=${MM_REPO:-"https://github.com/kamailio/kamailio.git"}
-  git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
-  git -C kamailio rev-parse HEAD
   perl -pi -e 's|-O[3-9]|-O0 -g3| ; s|^run_target = .[(]run_prefix[)]/.[(]run_dir[)]|run_target = /tmp/kamailio|' \
    ${BUILDDIR}/dist/kamailio/Makefile.defs
   if [ "${MM_BRANCH}" = "4.4" ]
   then
-    git -C kamailio apply "${BUILDDIR}/install_depends/kamailio/contact_flds_separator.4.x.patch"
+    mm_patch_set_append contact_flds_separator.4.x.patch
   fi
   if [ "${MM_BRANCH}" = "5.0" -o "${MM_BRANCH}" = "5.1" ]
   then
-    git -C kamailio apply "${BUILDDIR}/install_depends/kamailio/contact_flds_separator.patch"
+    mm_patch_set_append contact_flds_separator.patch
   fi
 fi
-if [ "${MM_TYPE}" = "go-b2bua" ]
-then
-  MM_REPO=${MM_REPO:-"https://github.com/sippy/go-b2bua.git"}
-  git clone -b "${MM_BRANCH}" --recursive "${MM_REPO}" "${MM_TYPE}"
-fi
 
-##bash
+for p in ${MM_PATCH_SET}
+do
+  ${MM_GIT} apply "${BUILDDIR}/install_depends/${MM_TYPE}/${p}"
+done
+
+git clone -b "${RTPP_BRANCH}" --recursive https://github.com/sippy/rtpproxy.git
+RTP_GIT="git -C rtpproxy"
+${RTP_GIT} rev-parse HEAD
+
 if [ "${MM_TYPE}" = "opensips" ]
 then
   for m in ${MM_KILL_MODULES}
@@ -101,18 +114,21 @@ then
   ${MAKE_CMD} -C "${MM_DIR}" ${_EXTRA_OPTS} CC_NAME=gcc CC="${CC}" \
    NICER=0 all modules
 fi
+
 if [ "${MM_TYPE}" = "kamailio" ]
 then
   ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="${CC}" \
    include_modules="sl tm rr maxfwd rtpproxy textops" \
    skip_modules="erlang corex sipcapture sms" all modules
 fi
+
 if [ "${MM_TYPE}" = "go-b2bua" ]
 then
     go version
     which go
     ${MAKE_CMD} -C "${BUILDDIR}/dist/go-b2bua" all
 fi
+
 cd rtpproxy
 ./configure
 ${MAKE_CMD} all
