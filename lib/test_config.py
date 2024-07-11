@@ -1,7 +1,7 @@
 ##import sys
 ##sys.path.insert(0, 'dist/b2bua')
 
-from imp import find_module, load_module
+from importlib.util import spec_from_file_location, module_from_spec
 import os
 
 from sippy.SdpOrigin import SdpOrigin
@@ -32,9 +32,17 @@ def load_cfg(side):
     try:
         scn  = os.environ['MM_AUTH']
     except KeyError as ex:
-        raise ImportError()
-    mf = find_module(side + '_cfg', ['scenarios/' + scn,])
-    m = load_module(side + '_cfg', *mf)
+        raise ImportError('MM_AUTH is not set') from ex
+    module_name = side + '_cfg'
+    module_path = 'scenarios/' + scn + '/' + module_name + '.py'
+    spec = spec_from_file_location(module_name, module_path)
+    emsg = f'Could not find module {module_name} in {module_path}'
+    if spec is None: raise ImportError(emsg)
+    m = module_from_spec(spec)
+    try:
+        spec.loader.exec_module(m)
+    except FileNotFoundError as ex:
+        raise ImportError(emsg) from ex
     return m
 
 class test_case_config(object):
