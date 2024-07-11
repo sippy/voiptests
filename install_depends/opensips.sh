@@ -76,6 +76,7 @@ then
   grep -v '^from sippy.Rtp_proxy_client import Rtp_proxy_client' b2bua/sippy/b2bua_radius.py ) | \
    sed "s|%%SIPPY_ROOT%%|${BASEDIR}/dist/b2bua|" > b2bua/sippy/b2bua_test.py
   chmod 755 b2bua/sippy/b2bua_test.py
+  ${PYTHON_CMD} -m pip install -U -r b2bua/requirements.txt
 fi
 
 if [ "${MM_TYPE}" = "kamailio" ]
