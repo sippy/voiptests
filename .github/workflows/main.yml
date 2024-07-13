@@ -79,6 +79,7 @@ jobs:
             bob.log
             alice.log
             rtpproxy.log
+        continue-on-error: true
 
   # Alice->OpenSIPS(RFC8760)->Bob
   opensips_rfc8760:
