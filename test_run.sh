@@ -245,7 +245,8 @@ report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
+  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG}" "Checking RTPproxy stdout"
 else
   report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
+  report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
 fi
-report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
