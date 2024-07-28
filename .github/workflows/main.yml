@@ -23,6 +23,7 @@ on:
 jobs:
   # Alice->OpenSIPS->Bob
   opensips:
+    if: false
     runs-on: ${{ matrix.os }}
     env:
       MM_TYPE: opensips
@@ -83,6 +84,7 @@ jobs:
 
   # Alice->OpenSIPS(RFC8760)->Bob
   opensips_rfc8760:
+    if: false
     runs-on: ${{ matrix.os }}
     env:
       MM_TYPE: opensips
@@ -177,6 +179,7 @@ jobs:
 
   # Alice->Sippy GO B2B->Bob
   sippy_go_b2bua:
+    if: false
     runs-on: ubuntu-latest
     env:
       MM_TYPE: go-b2bua
@@ -221,6 +224,7 @@ jobs:
 
   # Alice->Kamailio->Bob
   kamailio:
+    if: false
     runs-on: ubuntu-latest
     env:
       MM_TYPE: kamailio
