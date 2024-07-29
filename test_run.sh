@@ -44,6 +44,7 @@ start_mm() {
     ${BUILDDIR}/dist/go-b2bua/b2bua_radius -L ${MM_LOG} \
         -static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
         -rtp_proxy_clients="${RTPP_SOCK_TEST}" -b2bua_socket="${MM_SOCK}" -rtpp_hrtb_ival=120 \
+        --allowed_pts="18,0,2,4,8,96,98,98,101" \
         -rtpp_hrtb_retr_ival=120 -u -acct_enable=0 -f >${MM_LOG} 2>&1 &
     MM_PID=${!}
     ALICE_ARGS="-46"
@@ -59,6 +60,7 @@ start_mm() {
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \
      --static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
+     --allowed_pts="18,0,2,4,8,[G726-40/8000],[G726-24/8000],[G726-16/8000],[telephone-event/8000]" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
     ALICE_ARGS="-46"
