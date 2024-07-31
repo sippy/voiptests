@@ -133,6 +133,7 @@ jobs:
             bob.log
             alice.log
             rtpproxy.log
+        continue-on-error: true
 
   # Alice->Sippy Python B2B->Bob
   sippy_py_b2bua:
@@ -180,6 +181,7 @@ jobs:
             bob.log
             alice.log
             rtpproxy.log
+        continue-on-error: true
 
   # Alice->Sippy GO B2B->Bob
   sippy_go_b2bua:
@@ -225,6 +227,7 @@ jobs:
             bob.log
             alice.log
             rtpproxy.log
+        continue-on-error: true
 
   # Alice->Kamailio->Bob
   kamailio:
@@ -268,6 +271,7 @@ jobs:
             bob.log
             alice.log
             rtpproxy.log
+        continue-on-error: true
 
   publish:
     needs: [opensips, opensips_rfc8760, sippy_py_b2bua, sippy_go_b2bua, kamailio]
