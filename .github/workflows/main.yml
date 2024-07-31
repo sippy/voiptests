@@ -23,12 +23,14 @@ on:
 jobs:
   # Alice->OpenSIPS->Bob
   opensips:
-    if: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    container:
+      image: sippylabs/rtpproxy:latest-ubuntu_latest
+      options: --privileged
     env:
       MM_TYPE: opensips
       MM_BRANCH: ${{ matrix.mm-branch }}
-      RTPP_BRANCH: master
+      RTPP_BRANCH: DOCKER
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
       python-version: '3.12'
       PYTHON_CMD: "python3.12"
@@ -37,22 +39,16 @@ jobs:
       matrix:
         mm-branch: ['master', '3.3', '3.2', '3.1', '3.0', '2.4']
         rtppc-type: ['unix', 'udp', 'udp6']
-        os: [ubuntu-latest]
         include:
           - mm-branch: 'master'
-            os: ubuntu-latest
             rtppc-type: 'tcp'
           - mm-branch: 'master'
-            os: ubuntu-latest
             rtppc-type: 'tcp6'
           - mm-branch: '2.3'
-            os: ubuntu-20.04
             rtppc-type: 'unix'
           - mm-branch: '2.3'
-            os: ubuntu-20.04
             rtppc-type: 'udp'
           - mm-branch: '2.3'
-            os: ubuntu-20.04
             rtppc-type: 'udp6'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -84,14 +80,16 @@ jobs:
 
   # Alice->OpenSIPS(RFC8760)->Bob
   opensips_rfc8760:
-    if: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    container:
+      image: sippylabs/rtpproxy:latest-ubuntu_latest
+      options: --privileged
     env:
       MM_TYPE: opensips
       MM_BRANCH: master
       MM_REPO: https://github.com/OpenSIPS/opensips.git
       MM_AUTH: ${{ matrix.mm-auth }}
-      RTPP_BRANCH: master
+      RTPP_BRANCH: DOCKER
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
       python-version: '3.12'
       PYTHON_CMD: "python3.12"
@@ -100,7 +98,6 @@ jobs:
       matrix:
         rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
         mm-auth: ['passtr', 'UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
-        os: [ubuntu-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -138,10 +135,13 @@ jobs:
   # Alice->Sippy Python B2B->Bob
   sippy_py_b2bua:
     runs-on: ubuntu-latest
+    container:
+      image: sippylabs/rtpproxy:latest-ubuntu_latest
+      options: --privileged
     env:
       MM_TYPE: b2bua
       MM_BRANCH: ${{ matrix.mm-branch }}
-      RTPP_BRANCH: master
+      RTPP_BRANCH: DOCKER
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
 
     strategy:
@@ -185,12 +185,14 @@ jobs:
 
   # Alice->Sippy GO B2B->Bob
   sippy_go_b2bua:
-    if: false
     runs-on: ubuntu-latest
+    container:
+      image: sippylabs/rtpproxy:latest-ubuntu_latest
+      options: --privileged
     env:
       MM_TYPE: go-b2bua
       MM_BRANCH: master
-      RTPP_BRANCH: master
+      RTPP_BRANCH: DOCKER
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
       python-version: '3.12'
       PYTHON_CMD: "python3.12"
@@ -208,9 +210,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.python-version }}
-
-      - name: Install Golang
-        run: sudo apt-get update && sudo apt-get -y install golang-go
 
       - name: before_install
         run: sh -x cibits/before_install.sh
@@ -231,12 +230,14 @@ jobs:
 
   # Alice->Kamailio->Bob
   kamailio:
-    if: false
     runs-on: ubuntu-latest
+    container:
+      image: sippylabs/rtpproxy:latest-ubuntu_latest
+      options: --privileged
     env:
       MM_TYPE: kamailio
       MM_BRANCH: ${{ matrix.mm-branch }}
-      RTPP_BRANCH: master
+      RTPP_BRANCH: DOCKER
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
       python-version: '3.12'
       PYTHON_CMD: "python3.12"

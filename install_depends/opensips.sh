@@ -98,7 +98,12 @@ do
   ${MM_GIT} apply "${BUILDDIR}/install_depends/${MM_TYPE}/${p}"
 done
 
-git clone -b "${RTPP_BRANCH}" --recursive https://github.com/sippy/rtpproxy.git
+if [ "${RTPP_BRANCH}" != "DOCKER" ]
+then
+  git clone -b "${RTPP_BRANCH}" --recursive https://github.com/sippy/rtpproxy.git
+else
+  git clone --recursive https://github.com/sippy/rtpproxy.git
+fi
 RTP_GIT="git -C rtpproxy"
 ${RTP_GIT} rev-parse HEAD
 
@@ -120,7 +125,7 @@ if [ "${MM_TYPE}" = "kamailio" ]
 then
   ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="${CC}" \
    include_modules="sl tm rr maxfwd rtpproxy textops" \
-   skip_modules="erlang corex sipcapture sms" all modules
+   skip_modules="erlang corex sipcapture sms app_sqlang" all modules
 fi
 
 if [ "${MM_TYPE}" = "go-b2bua" ]
@@ -132,4 +137,8 @@ fi
 
 cd rtpproxy
 ./configure
-${MAKE_CMD} all
+
+if [ "${RTPP_BRANCH}" != "DOCKER" ]
+then
+  ${MAKE_CMD} all install
+fi

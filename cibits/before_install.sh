@@ -23,7 +23,13 @@ ulimit -c unlimited
 ${SUDO} sh -c "echo '/tmp/core.%p.%E' > /proc/sys/kernel/core_pattern"
 #${BASEDIR}/cibits/ppa_clean.sh
 ${SUDO} env DEBIAN_FRONTEND=noninteractive apt-get update
-${SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y gpp gdb tcpdump
+APT_INSTALL="${SUDO} env DEBIAN_FRONTEND=noninteractive apt-get install -y"
+${APT_INSTALL} gpp gdb tcpdump \
+ gcc libc6-dev git make ca-certificates libssl-dev flex bison
+if [ "${MM_TYPE}" = "go-b2bua" ]
+then
+  ${APT_INSTALL} golang-go
+fi
 if [ -e requirements.txt ]
 then
   ${SUDO} ${PYTHON_CMD} -m pip install -r requirements.txt
