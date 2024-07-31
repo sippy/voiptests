@@ -10,7 +10,11 @@ BASEDIR="$(readlink -f -- ${BASEDIR})"
 echo "+++ hosts orig +++"
 cat /etc/hosts
 echo "--- hosts orig ---"
-${SUDO} sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
+IPV6_DIS="`cat /proc/sys/net/ipv6/conf/all/disable_ipv6`"
+if [ ! "${IPV6_DIS}" -eq 0 ]
+then
+  ${SUDO} sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
+fi
 ${SUDO} sh -c 'echo >> /etc/hosts; grep "^127.0.0.1" /etc/hosts | sed "s|^127.0.0.1|::1|g" >> /etc/hosts'
 echo "+++ hosts patched +++"
 cat /etc/hosts
