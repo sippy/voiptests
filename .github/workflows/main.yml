@@ -78,7 +78,7 @@ jobs:
       artifact-files: 'b2bua.log'
     strategy:
       matrix:
-        mm-branch: ['master', 'PRACK']
+        mm-branch: ['wip', 'PRACK']
         rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13-dev']
 
