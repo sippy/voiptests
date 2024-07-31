@@ -10,6 +10,13 @@ else
   CC=gcc
   MAKE_CMD=make
 fi
+MYUID=`id -u`
+if [ ! ${MYUID} -eq 0 ]
+then
+  SUDO="sudo"
+else
+  SUDO=""
+fi
 PP_CMD="gpp -C -x"
 PYTHON_CMD="`which ${PYTHON_CMD:-"python"}`"
 
