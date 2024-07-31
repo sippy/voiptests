@@ -30,8 +30,8 @@ jobs:
       MM_BRANCH: ${{ matrix.mm-branch }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.10'
-      PYTHON_CMD: "python3.10"
+      python-version: '3.12'
+      PYTHON_CMD: "python3.12"
 
     strategy:
       matrix:
@@ -93,8 +93,8 @@ jobs:
       MM_AUTH: ${{ matrix.mm-auth }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.10'
-      PYTHON_CMD: "python3.10"
+      python-version: '3.12'
+      PYTHON_CMD: "python3.12"
 
     strategy:
       matrix:
@@ -142,13 +142,12 @@ jobs:
       MM_BRANCH: ${{ matrix.mm-branch }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      PYTHON_CMD: "python${{ matrix.python-version }}"
 
     strategy:
       matrix:
         mm-branch: ['master', 'PRACK']
         rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13-dev']
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -159,6 +158,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Define PYTHON_CMD
+        run: |
+          PYTHON_VER="`echo ${{ matrix.python-version }} | sed 's|-dev$||'`"
+          echo "PYTHON_CMD=python${PYTHON_VER}" >> $GITHUB_ENV
 
       - name: before_install
         run: sh -x cibits/before_install.sh
@@ -186,8 +190,8 @@ jobs:
       MM_BRANCH: master
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.10'
-      PYTHON_CMD: "python3.10"
+      python-version: '3.12'
+      PYTHON_CMD: "python3.12"
 
     strategy:
       matrix:
@@ -231,8 +235,8 @@ jobs:
       MM_BRANCH: ${{ matrix.mm-branch }}
       RTPP_BRANCH: master
       RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.10'
-      PYTHON_CMD: "python3.10"
+      python-version: '3.12'
+      PYTHON_CMD: "python3.12"
 
     strategy:
       matrix:
