@@ -37,18 +37,26 @@ jobs:
 
     strategy:
       matrix:
-        mm-branch: ['master', '3.3', '3.2', '3.1', '3.0', '2.4']
-        rtppc-type: ['unix', 'udp', 'udp6']
+        mm-branch: ['master', '3.5', '3.4', '3.3', '3.2']
+        rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
         include:
-          - mm-branch: 'master'
-            rtppc-type: 'tcp'
-          - mm-branch: 'master'
-            rtppc-type: 'tcp6'
-          - mm-branch: '2.3'
+          - mm-branch: '2.4'
             rtppc-type: 'unix'
-          - mm-branch: '2.3'
+          - mm-branch: '2.4'
             rtppc-type: 'udp'
-          - mm-branch: '2.3'
+          - mm-branch: '2.4'
+            rtppc-type: 'udp6'
+          - mm-branch: '3.0'
+            rtppc-type: 'unix'
+          - mm-branch: '3.0'
+            rtppc-type: 'udp'
+          - mm-branch: '3.0'
+            rtppc-type: 'udp6'
+          - mm-branch: '3.1'
+            rtppc-type: 'unix'
+          - mm-branch: '3.1'
+            rtppc-type: 'udp'
+          - mm-branch: '3.1'
             rtppc-type: 'udp6'
 
     # Steps represent a sequence of tasks that will be executed as part of the job

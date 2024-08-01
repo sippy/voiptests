@@ -84,7 +84,7 @@ start_mm() {
     cat -n "${MM_CFG}"
     echo "--- Config Ends ---"
     _MM_ARGS="-f ${MM_CFG} ${MM_ARGS} -F -n 1"
-    if [ "${MM_BRANCH}" != "master" ]
+    if [ "${MM_BRANCH}" != "master" -a "${OPENSIPS_VER}" -lt 30 ]
     then
       _MM_ARGS="${_MM_ARGS} -E"
     fi
