@@ -80,6 +80,9 @@ route {
             } else {
                 t_on_failure("re_invite");
             }
+        } else {
+            t_reply(INT(502), "Very Bad Gateway");
+            exit;
         };
     };
 

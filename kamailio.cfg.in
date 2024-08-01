@@ -39,6 +39,8 @@ route {
             if (!has_totag()) {
                 t_on_failure("1");
             };
+        } else {
+            sl_send_reply("502", "Very Bad Gateway");
         };
     };
 
