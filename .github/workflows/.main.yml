@@ -1,0 +1,88 @@
+name: Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: false
+        type: string
+        default: '3.12'
+      mm-type:
+        required: true
+        type: string
+      mm-branch:
+        required: false
+        type: string
+        default: 'master'
+      mm-auth:
+        required: false
+        type: string
+        default: ''
+      rtppc-type:
+        required: true
+        type: string
+      rtpp-image:
+        required: false
+        type: string
+        default: 'sippylabs/rtpproxy:latest-ubuntu_latest'
+      artifact-files:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.rtpp-image }}
+      options: --privileged
+    env:
+      MM_TYPE: ${{ inputs.mm-type }}
+      MM_BRANCH: ${{ inputs.mm-branch }}
+      RTPP_BRANCH: DOCKER
+      RTPPC_TYPE: ${{ inputs.rtppc-type }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Define PYTHON_CMD
+        run: |
+          PYTHON_VER="`echo ${{ matrix.python-version }} | sed 's|-dev$||'`"
+          echo "PYTHON_CMD=python${PYTHON_VER}" >> $GITHUB_ENV
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
+
+      - name: transform_var
+        id: transform_var
+        run: |
+          ARTNAME="test-logs_${{ inputs.mm-type }}_${{ inputs.mm-branch }}_${{ inputs.rtppc-type }}"
+          MM_AUTH="`echo "${{ inputs.mm-auth }}" | sed 's|/|.|g'`"
+          if [ "${MM_AUTH}" != "" ]
+          then
+            ARTNAME="${ARTNAME}_${MM_AUTH}"
+            echo "MM_AUTH=${{ inputs.mm-auth }}" >> $GITHUB_ENV
+          fi
+          if [ "${{ inputs.mm-type }}" = "b2bua" ]
+          then
+            ARTNAME="${ARTNAME}_${{ inputs.python-version }}"
+          fi
+          echo "ARTNAME=${ARTNAME}" >> $GITHUB_OUTPUT
+
+      - name: script
+        run: sh -x ./test_run.sh
+
+      - name: Test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.transform_var.outputs.ARTNAME }}
+          path: |
+            bob.log
+            alice.log
+            rtpproxy.log
+            ${{ inputs.artifact-files }}
+        continue-on-error: true

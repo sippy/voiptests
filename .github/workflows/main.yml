@@ -23,18 +23,12 @@ on:
 jobs:
   # Alice->OpenSIPS->Bob
   opensips:
-    runs-on: ubuntu-latest
-    container:
-      image: sippylabs/rtpproxy:latest-ubuntu_latest
-      options: --privileged
-    env:
-      MM_TYPE: opensips
-      MM_BRANCH: ${{ matrix.mm-branch }}
-      RTPP_BRANCH: DOCKER
-      RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.12'
-      PYTHON_CMD: "python3.12"
-
+    uses: ./.github/workflows/.main.yml
+    with:
+      mm-type: 'opensips'
+      mm-branch: ${{ matrix.mm-branch }}
+      rtppc-type: ${{ matrix.rtppc-type }}
+      artifact-files: 'opensips.cfg'
     strategy:
       matrix:
         mm-branch: ['master', '3.5', '3.4', '3.3', '3.2']
@@ -59,226 +53,58 @@ jobs:
           - mm-branch: '3.1'
             rtppc-type: 'udp6'
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.python-version }}
-
-      - name: before_install
-        run: sh -x cibits/before_install.sh
-
-      - name: script
-        run: sh -x ./test_run.sh
-
-      - name: Test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs_opensips_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
-          path: |
-            opensips.cfg
-            bob.log
-            alice.log
-            rtpproxy.log
-        continue-on-error: true
-
   # Alice->OpenSIPS(RFC8760)->Bob
   opensips_rfc8760:
-    runs-on: ubuntu-latest
-    container:
-      image: sippylabs/rtpproxy:latest-ubuntu_latest
-      options: --privileged
-    env:
-      MM_TYPE: opensips
-      MM_BRANCH: master
-      MM_REPO: https://github.com/OpenSIPS/opensips.git
-      MM_AUTH: ${{ matrix.mm-auth }}
-      RTPP_BRANCH: DOCKER
-      RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.12'
-      PYTHON_CMD: "python3.12"
+    uses: ./.github/workflows/.main.yml
+    with:
+      mm-type: 'opensips'
+      mm-auth: ${{ matrix.mm-auth }}
+      rtppc-type: ${{ matrix.rtppc-type }}
+      artifact-files: 'opensips.cfg'
 
     strategy:
       matrix:
         rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
         mm-auth: ['passtr', 'UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.python-version }}
-
-      - name: before_install
-        run: sh -x cibits/before_install.sh
-
-      - name: script
-        run: sh -x ./test_run.sh
-
-      - name: transform_var
-        id: transform_var
-        run: echo "mm_auth=`echo ${{ matrix.mm-auth }} | sed 's|/|.|g'`" >> $GITHUB_OUTPUT
-
-      - name: Test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs_opensips_rfc8760_${{ matrix.rtppc-type }}_${{ steps.transform_var.outputs.mm_auth }}
-          path: |
-            opensips.cfg
-            bob.log
-            alice.log
-            rtpproxy.log
-        continue-on-error: true
-
   # Alice->Sippy Python B2B->Bob
   sippy_py_b2bua:
-    runs-on: ubuntu-latest
-    container:
-      image: sippylabs/rtpproxy:latest-ubuntu_latest
-      options: --privileged
-    env:
-      MM_TYPE: b2bua
-      MM_BRANCH: ${{ matrix.mm-branch }}
-      RTPP_BRANCH: DOCKER
-      RTPPC_TYPE: ${{ matrix.rtppc-type }}
-
+    uses: ./.github/workflows/.main.yml
+    with:
+      mm-type: 'b2bua'
+      mm-branch: ${{ matrix.mm-branch }}
+      rtppc-type: ${{ matrix.rtppc-type }}
+      python-version: ${{ matrix.python-version }}
+      artifact-files: 'b2bua.log'
     strategy:
       matrix:
         mm-branch: ['master', 'PRACK']
         rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13-dev']
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Define PYTHON_CMD
-        run: |
-          PYTHON_VER="`echo ${{ matrix.python-version }} | sed 's|-dev$||'`"
-          echo "PYTHON_CMD=python${PYTHON_VER}" >> $GITHUB_ENV
-
-      - name: before_install
-        run: sh -x cibits/before_install.sh
-
-      - name: script
-        run: sh -x ./test_run.sh
-
-
-      - name: Test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs_sippy_py_b2bua_${{ matrix.python-version }}_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
-          path: |
-            b2bua.log
-            bob.log
-            alice.log
-            rtpproxy.log
-        continue-on-error: true
-
   # Alice->Sippy GO B2B->Bob
   sippy_go_b2bua:
-    runs-on: ubuntu-latest
-    container:
-      image: sippylabs/rtpproxy:latest-ubuntu_latest
-      options: --privileged
-    env:
-      MM_TYPE: go-b2bua
-      MM_BRANCH: master
-      RTPP_BRANCH: DOCKER
-      RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.12'
-      PYTHON_CMD: "python3.12"
-
+    uses: ./.github/workflows/.main.yml
+    with:
+      mm-type: 'go-b2bua'
+      rtppc-type: ${{ matrix.rtppc-type }}
+      artifact-files: 'b2bua.log'
     strategy:
       matrix:
         rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.python-version }}
-
-      - name: before_install
-        run: sh -x cibits/before_install.sh
-
-      - name: script
-        run: sh -x ./test_run.sh
-
-      - name: Test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs_sippy_go_b2bua_${{ matrix.rtppc-type }}
-          path: |
-            b2bua.log
-            bob.log
-            alice.log
-            rtpproxy.log
-        continue-on-error: true
-
   # Alice->Kamailio->Bob
   kamailio:
-    runs-on: ubuntu-latest
-    container:
-      image: sippylabs/rtpproxy:latest-ubuntu_latest
-      options: --privileged
-    env:
-      MM_TYPE: kamailio
-      MM_BRANCH: ${{ matrix.mm-branch }}
-      RTPP_BRANCH: DOCKER
-      RTPPC_TYPE: ${{ matrix.rtppc-type }}
-      python-version: '3.12'
-      PYTHON_CMD: "python3.12"
-
+    uses: ./.github/workflows/.main.yml
+    with:
+      mm-type: 'kamailio'
+      mm-branch: ${{ matrix.mm-branch }}
+      rtppc-type: ${{ matrix.rtppc-type }}
+      artifact-files: 'kamailio.cfg'
     strategy:
       matrix:
         mm-branch: ['master', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4']
         rtppc-type: ['unix', 'udp', 'udp6']
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ env.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.python-version }}
-
-      - name: before_install
-        run: sh -x cibits/before_install.sh
-
-      - name: script
-        run: sh -x ./test_run.sh
-
-      - name: Test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs_kamailio_${{ matrix.mm-branch }}_${{ matrix.rtppc-type }}
-          path: |
-            kamailio.cfg
-            bob.log
-            alice.log
-            rtpproxy.log
-        continue-on-error: true
 
   publish:
     needs: [opensips, opensips_rfc8760, sippy_py_b2bua, sippy_go_b2bua, kamailio]
