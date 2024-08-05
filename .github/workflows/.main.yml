@@ -24,7 +24,11 @@ on:
       rtpp-image:
         required: false
         type: string
-        default: 'sippylabs/rtpproxy:latest-ubuntu_latest'
+        default: 'ghcr.io/sippy/rtpproxy'
+      rtpp-image-tag:
+        required: false
+        type: string
+        default: 'latest-ubuntu_latest'
       artifact-files:
         required: false
         type: string
@@ -34,7 +38,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: ${{ inputs.rtpp-image }}
+      image: ${{ inputs.rtpp-image }}:${{ inputs.rtpp-image-tag }}
       options: --privileged
     env:
       MM_TYPE: ${{ inputs.mm-type }}
