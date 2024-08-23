@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ inputs.rtpp-image }}:${{ inputs.rtpp-image-tag }}
-      options: --privileged
+      options: --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0
     env:
       MM_TYPE: ${{ inputs.mm-type }}
       MM_BRANCH: ${{ inputs.mm-branch }}
