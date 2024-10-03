@@ -41,7 +41,7 @@ start_mm() {
   go-b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
     test -e ${MM_LOG} && rm ${MM_LOG}
-    ${BUILDDIR}/dist/go-b2bua/b2bua_radius -L ${MM_LOG} \
+    ${MM_ROOT}/b2bua_radius -L ${MM_LOG} \
         -static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
         -rtp_proxy_clients="${RTPP_SOCK_TEST}" -b2bua_socket="${MM_SOCK}" -rtpp_hrtb_ival=120 \
         --allowed_pts="18,0,2,4,8,96,98,98,101" \
@@ -56,7 +56,7 @@ start_mm() {
       rm ${MM_LOG}
     fi
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
-     ${PYTHON_CMD} ${BUILDDIR}/dist/b2bua/sippy/b2bua_test.py --sip_address='*' \
+     ${PYTHON_CMD} ${MM_ROOT}/sippy/b2bua_test.py --sip_address='*' \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \
      --static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
      --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
@@ -68,15 +68,16 @@ start_mm() {
 
   opensips)
     MM_CFG="opensips.cfg"
+    MM_BIN="${MM_ROOT}/opensips"
     pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}"
+     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}"
     for nret in 0 1 2
     do
       PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     set +e
-    ${BUILDDIR}/dist/opensips/opensips -f "${MM_CFG}" -C
+    ${MM_BIN} -f "${MM_CFG}" -C
     MM_DRUN_RC="${?}"
     report_rc_log "${MM_DRUN_RC}" "${MM_CFG}" "Checking ${MM_TYPE} config"
     set -e
@@ -88,7 +89,7 @@ start_mm() {
     then
       _MM_ARGS="${_MM_ARGS} -E"
     fi
-    ${BUILDDIR}/dist/opensips/opensips ${_MM_ARGS} &
+    ${MM_BIN} ${_MM_ARGS} &
     MM_PID=${!}
     ALICE_ARGS="-46"
     ;;
@@ -97,9 +98,9 @@ start_mm() {
     MM_CFG="kamailio.cfg"
     if [ "${MM_BRANCH}" != "master" -a ${MM_VER_FULL} -lt 50 ]
     then
-      KROOT="${BUILDDIR}/dist/kamailio"
+      KROOT="${MM_ROOT}"
     else
-      KROOT="${BUILDDIR}/dist/kamailio/src"
+      KROOT="${MM_ROOT}/src"
       KOPTS="-Y /tmp"
     fi
     KBIN="${KROOT}/kamailio"
@@ -206,7 +207,7 @@ if ! kill -TERM ${MM_PID}
 then
   for corefile in `sudo find /tmp/ -type f -name core\*`
   do
-    gdb -batch --command=${BUILDDIR}/gdb.gettrace ${BUILDDIR}/dist/opensips/opensips ${corefile} >&2
+    gdb -batch --command=${BUILDDIR}/gdb.gettrace ${MM_BIN} ${corefile} >&2
   done
 fi
 echo "MM_PID: ${MM_PID}"

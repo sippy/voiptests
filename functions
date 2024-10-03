@@ -4,10 +4,10 @@ OS=`uname`
 
 if [ "${OS}" = "FreeBSD" ]
 then
-  CC=cc
+  CC=${CC:-"cc"}
   MAKE_CMD=gmake
 else
-  CC=gcc
+  CC=${CC:-"gcc"}
   MAKE_CMD=make
 fi
 MYUID=`id -u`
@@ -35,7 +35,7 @@ BASEDIR="$(readlink -f -- $BASEDIR)"
 
 BUILDDIR="${BUILDDIR:-${BASEDIR}}"
 
-RTPPROXY_DIST="${BUILDDIR}/dist/rtpproxy"
+RTPPROXY_DIST="${RTPPROXY_DIST:-"${BUILDDIR}/dist/rtpproxy"}"
 LOCALBASE="/usr/local"
 RTPPROXY="${LOCALBASE}/bin/rtpproxy_debug --dso ${LOCALBASE}/lib/rtpproxy/rtpp_acct_csv_debug.so"
 RTPP_SOCK_BARE="${BASEDIR}/rtpproxy.sock"
@@ -92,6 +92,9 @@ then
   BOB_TIMEOUT=90
   TEST_SET="${TEST_SET},11,12,13,14,reinv_brkn1,reinv_brkn2,reinv_bad_ack"
 fi
+
+MM_ROOT="${MM_ROOT:-"${BUILDDIR}/dist/${MM_TYPE}"}"
+
 if [ "${MM_TYPE}" = "b2bua" ]
 then
   TEST_SET="${TEST_SET},inv_brkn1"

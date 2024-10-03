@@ -1,6 +1,7 @@
 #define INT(x) x
 
-mpath="dist/opensips/modules/"
+#mode string QQQ "$$" "$$"
+mpath=$$"MM_ROOT/modules/"$$
 
 loadmodule "proto_udp.so"
 ## dialog is now required by the rtpproxy, not sure why, but OK
