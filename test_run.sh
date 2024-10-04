@@ -70,7 +70,7 @@ start_mm() {
     MM_CFG="opensips.cfg"
     MM_BIN="${MM_ROOT}/opensips"
     pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}"
+     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}" -DRTPPC_TYPE="${RTPPC_TYPE}"
     for nret in 0 1 2
     do
       PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
@@ -172,22 +172,26 @@ export RTPP_LOG_TSTART
 RTPP_LOG_TFORM="rel"
 export RTPP_LOG_TFORM
 
-rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -F -f -s stdio: -s "${RTPP_SOCK_UDP}" \
-  -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
-  -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 -6 '/::' -l '0.0.0.0' ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
-RTPP_PID=${!}
-sleep 1
-i=0
-while [ ! -e "${RTPP_SOCK_BARE}" ]
-do
-  if [ ${i} -gt 4 ]
-  then
-    report_rc_log 1 "rtpproxy.rout rtpproxy.log" "Waiting for the RTPproxy to become ready"
-  fi
+if [ "${RTPPC_TYPE}" != "rtp.io" ]
+then
+  rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -F -f -s stdio: -s "${RTPP_SOCK_UDP}" \
+    -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
+    -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 -6 '/::' -l '0.0.0.0' ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
+  RTPP_PID=${!}
   sleep 1
-  i=$((${i} + 1))
-done
-sleep 1
+  i=0
+  while [ ! -e "${RTPP_SOCK_BARE}" ]
+  do
+    if [ ${i} -gt 4 ]
+    then
+      report_rc_log 1 "rtpproxy.rout rtpproxy.log" "Waiting for the RTPproxy to become ready"
+    fi
+    sleep 1
+    i=$((${i} + 1))
+  done
+  sleep 1
+fi
+
 start_mm
 MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
@@ -219,37 +223,53 @@ then
   # before we SIGHUP it
   ${PYTHON_CMD} -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${RTPP_STAT_TIMEOUT} + 5 - time(); sleep(tleft) if tleft > 0 else False;"
 fi
-kill -HUP ${RTPP_PID}
-echo "RTPP_PID: ${RTPP_PID}"
-wait ${RTPP_PID}
-RTPP_RC="${?}"
+if [ "${RTPPC_TYPE}" != "rtp.io" ]
+then
+  kill -HUP ${RTPP_PID}
+  echo "RTPP_PID: ${RTPP_PID}"
+  wait ${RTPP_PID}
+  RTPP_RC="${?}"
+else
+  RTPP_RC=0
+fi
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
-if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
+if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
-  diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
-  RTPP_CHECK_RC="${?}"
-else
-  for nret in 0 1 2
-  do
-    diff -uB rtpproxy.${MM_TYPE}.output.nr${nret} rtpproxy.rout
+  if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
+  then
+    diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
     RTPP_CHECK_RC="${?}"
-    if [ ${RTPP_CHECK_RC} -eq 0 ]
-    then
-      break
-    fi
-  done
+  else
+    for nret in 0 1 2
+    do
+      diff -uB rtpproxy.${MM_TYPE}.output.nr${nret} rtpproxy.rout
+      RTPP_CHECK_RC="${?}"
+      if [ ${RTPP_CHECK_RC} -eq 0 ]
+      then
+        break
+      fi
+    done
+  fi
 fi
 
 report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log ${MM_LOG}" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "Checking if Bob is happy"
-report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy exit code"
+
+if [ "${RTPPC_TYPE}" != "rtp.io" ]
+then
+  report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy exit code"
+  if [ x"${MM_LOG}" != x"" ]
+  then
+    report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG}" "Checking RTPproxy stdout"
+  else
+    report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
+  fi
+fi
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
-  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG}" "Checking RTPproxy stdout"
 else
   report_rc "${MM_RC}" "Checking ${MM_TYPE} exit code"
-  report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
 fi

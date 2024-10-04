@@ -64,13 +64,14 @@ fail_rc() {
 }
 
 case "${RTPPC_TYPE}" in
-  "udp")   RTPP_SOCK_TEST="${RTPP_SOCK_UDP}";;
-  "udp6")  RTPP_SOCK_TEST="${RTPP_SOCK_UDP6}";;
-  "unix")  RTPP_SOCK_TEST="${RTPP_SOCK_UNIX}";;
-  "cunix") RTPP_SOCK_TEST="${RTPP_SOCK_CUNIX}";;
-  "tcp")   RTPP_SOCK_TEST="${RTPP_SOCK_TCP}";;
-  "tcp6")  RTPP_SOCK_TEST="${RTPP_SOCK_TCP6}";;
-  *)       fail_rc 1 "Unknown socket type RTPPC_TYPE=${RTPPC_TYPE}";;
+  "udp")    RTPP_SOCK_TEST="${RTPP_SOCK_UDP}";;
+  "udp6")   RTPP_SOCK_TEST="${RTPP_SOCK_UDP6}";;
+  "unix")   RTPP_SOCK_TEST="${RTPP_SOCK_UNIX}";;
+  "cunix")  RTPP_SOCK_TEST="${RTPP_SOCK_CUNIX}";;
+  "tcp")    RTPP_SOCK_TEST="${RTPP_SOCK_TCP}";;
+  "tcp6")   RTPP_SOCK_TEST="${RTPP_SOCK_TCP6}";;
+  "rtp.io") RTPP_SOCK_TEST="${RTPP_SOCK_TCP}";;
+  *)        fail_rc 1 "Unknown socket type RTPPC_TYPE=${RTPPC_TYPE}";;
 esac
 
 MM_INIT_DELAY=1
