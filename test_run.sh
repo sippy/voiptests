@@ -47,7 +47,6 @@ start_mm() {
         --allowed_pts="18,0,2,4,8,96,98,98,101" \
         -rtpp_hrtb_retr_ival=120 -u -acct_enable=0 -f >${MM_LOG} 2>&1 &
     MM_PID=${!}
-    ALICE_ARGS="-46"
     ;;
   b2bua)
     MM_LOG="${BUILDDIR}/b2bua.log"
@@ -63,7 +62,6 @@ start_mm() {
      --allowed_pts="18,0,2,4,8,[G726-40/8000],[G726-24/8000],[G726-16/8000],[telephone-event/8000]" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
-    ALICE_ARGS="-46"
     ;;
 
   opensips)
@@ -85,13 +83,12 @@ start_mm() {
     cat -n "${MM_CFG}"
     echo "--- Config Ends ---"
     _MM_ARGS="-f ${MM_CFG} ${MM_ARGS} -F -n 1"
-    if [ "${MM_BRANCH}" != "master" -a "${OPENSIPS_VER}" -lt 30 ]
+    if [ "${MM_BRANCH}" != "master" -a "${MM_VER}" -lt 30 ]
     then
       _MM_ARGS="${_MM_ARGS} -E"
     fi
     ${MM_BIN} ${_MM_ARGS} &
     MM_PID=${!}
-    ALICE_ARGS="-46"
     ;;
 
   kamailio)
@@ -120,7 +117,6 @@ start_mm() {
     set -e
     "${KBIN}" ${KOPTS} -f "${MM_CFG}" -DD -E -n 1 &
     MM_PID=${!}
-    ALICE_ARGS="-46"
     ;;
 
   *)
@@ -128,6 +124,7 @@ start_mm() {
     return 1
   esac
 
+  ALICE_ARGS="${ALICE_ARGS:-"-46"}"
   echo ${MM_PID} > "${MM_PIDF}"
   sleep ${MM_INIT_DELAY}
   return 0
