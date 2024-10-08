@@ -68,7 +68,8 @@ start_mm() {
     MM_CFG="opensips.cfg"
     MM_BIN="${MM_ROOT}/opensips"
     pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
-     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}" -DRTPPC_TYPE="${RTPPC_TYPE}"
+     -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}" \
+     -DRTPPC_TYPE="${RTPPC_TYPE}" -DRTPP_LISTEN="${RTPP_LISTEN}"
     for nret in 0 1 2
     do
       PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
@@ -169,11 +170,17 @@ export RTPP_LOG_TSTART
 RTPP_LOG_TFORM="rel"
 export RTPP_LOG_TFORM
 
+RTPP_LISTEN="-l 0.0.0.0"
+if [ "${ALICE_ARGS}" != "-4" ]
+then
+  RTPP_LISTEN="${RTPP_LISTEN} -6 /::"
+fi
+
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
   rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -F -f -s stdio: -s "${RTPP_SOCK_UDP}" \
     -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
-    -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 -6 '/::' -l '0.0.0.0' ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
+    -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
   RTPP_PID=${!}
   sleep 1
   i=0
