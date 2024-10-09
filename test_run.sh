@@ -76,17 +76,13 @@ start_mm() {
        -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DNRET=${nret}
     done
     set +e
-    if ! ${MM_BIN} -f "${MM_CFG}" -C
-    then
-      status=${?}
-      if [ ${status} -gt 127 ]
-      then
-        apt install -y gdb
-        gdb --batch -ex "run" -ex "bt" --args ${MM_BIN} -f "${MM_CFG}" -C
-      fi
-      exit ${status}
-    fi
+    ${MM_BIN} -f "${MM_CFG}" -C
     MM_DRUN_RC="${?}"
+    if [ ${MM_DRUN_RC} -gt 127 ]
+    then
+      apt install -y gdb
+      gdb --batch -ex "run" -ex "bt" --args ${MM_BIN} -f "${MM_CFG}" -C
+    fi
     report_rc_log "${MM_DRUN_RC}" "${MM_CFG}" "Checking ${MM_TYPE} config"
     set -e
     echo "--- Config Begins ---"
