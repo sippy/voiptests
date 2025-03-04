@@ -103,7 +103,7 @@ jobs:
       artifact-files: 'kamailio.cfg'
     strategy:
       matrix:
-        mm-branch: ['master', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0', '4.4']
+        mm-branch: ['master', '6.0', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '4.4']
         rtppc-type: ['unix', 'udp', 'udp6']
 
   publish:
