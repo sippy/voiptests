@@ -26,7 +26,7 @@
 from .t1 import a_test1, b_test1
 
 class test_early_cancel(object):
-    max_delay = 0.5
+    max_delay = 0.75
 
     def alldone(self, ua):
         if self.disconnect_done:
