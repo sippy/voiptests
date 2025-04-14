@@ -64,6 +64,9 @@ body_fax = 'v=0\r\n' + \
 
 BODIES_ALL = (body_audio, body_fax)
 
+def usage(args):
+    printf("bob.py -p xx -l yy -P zz -T tt -n aa -N bb -w cc")
+
 def main_func():
     global_config = {}
 
