@@ -30,6 +30,7 @@ jobs:
       rtppc-type: ${{ matrix.rtppc-type }}
       artifact-files: 'opensips.cfg'
     strategy:
+      fail-fast: false
       matrix:
         mm-branch: ['master', '3.5', '3.4', '3.3', '3.2']
         rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
@@ -63,6 +64,7 @@ jobs:
       artifact-files: 'opensips.cfg'
 
     strategy:
+      fail-fast: false
       matrix:
         rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
         mm-auth: ['passtr', 'UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
@@ -77,6 +79,7 @@ jobs:
       python-version: ${{ matrix.python-version }}
       artifact-files: 'b2bua.log'
     strategy:
+      fail-fast: false
       matrix:
         mm-branch: ['master', 'PRACK']
         rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
@@ -90,6 +93,7 @@ jobs:
       rtppc-type: ${{ matrix.rtppc-type }}
       artifact-files: 'b2bua.log'
     strategy:
+      fail-fast: false
       matrix:
         rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
 
@@ -102,6 +106,7 @@ jobs:
       rtppc-type: ${{ matrix.rtppc-type }}
       artifact-files: 'kamailio.cfg'
     strategy:
+      fail-fast: false
       matrix:
         mm-branch: ['master', '6.0', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '4.4']
         rtppc-type: ['unix', 'udp', 'udp6']
