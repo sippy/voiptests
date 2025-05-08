@@ -5,6 +5,11 @@ set -e
 uname -a
 echo "/proc/sys/kernel/core_pattern: "`cat /proc/sys/kernel/core_pattern`
 ulimit -c
+getent --version | head -n 1
+if ! getent ahosts ::
+then
+  echo "WARNING: IPv6 is broken!" >&2
+fi
 
 . $(dirname $0)/functions
 
