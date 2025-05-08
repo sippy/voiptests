@@ -135,10 +135,9 @@ then
     ${MAKE_CMD} -C "${BUILDDIR}/dist/go-b2bua" all
 fi
 
-cd rtpproxy
-./configure
-
 if [ "${RTPP_BRANCH}" != "DOCKER" ]
 then
+  cd rtpproxy
+  ./configure
   ${MAKE_CMD} all install
 fi

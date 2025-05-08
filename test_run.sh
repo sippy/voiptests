@@ -165,7 +165,15 @@ then
   rm "${RTPP_SOCK_BARE}"
 fi
 
-MR_TIME="`${PYTHON_CMD} ${RTPPROXY_DIST}/python/sippy_lite/sippy/tools/getmonotime.py -S ${RTPPROXY_DIST}/python/sippy_lite -r`"
+GMTM="${RTPPROXY_DIST}/python/sippy_lite/sippy/tools/getmonotime.py"
+if [ ! -e "${GMTM}" ]
+then
+  GMTM="${RTPPROXY_DIST}/python/tools/getmonotime.py"
+else
+  GMTM="${GMTM} -S ${RTPPROXY_DIST}/python/sippy_lite"
+fi
+
+MR_TIME="`${PYTHON_CMD} ${GMTM} -r`"
 SIPLOG_TSTART="`echo ${MR_TIME} | awk '{print $2}'`"
 export SIPLOG_TSTART
 SIPLOG_TFORM="rel"
@@ -183,9 +191,18 @@ fi
 
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
-  rtpproxy_cmds_gen | ${RTPPROXY} -p "${RTPP_PIDF}" -d dbug -F -f -s stdio: -s "${RTPP_SOCK_UDP}" \
-    -s "${RTPP_SOCK_CUNIX}" -s "${RTPP_SOCK_UNIX}" -s "${RTPP_SOCK_UDP6}" -s "${RTPP_SOCK_TCP}" \
-    -s "${RTPP_SOCK_TCP6}" -m 12000 -M 15000 ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG} > rtpproxy.rout 2>rtpproxy.log &
+  RTPP_ARGS="-p ${RTPP_PIDF} -d dbug -F -f -s stdio: -s ${RTPP_SOCK_UDP} \
+    -s ${RTPP_SOCK_CUNIX} -s ${RTPP_SOCK_UNIX} -s ${RTPP_SOCK_TCP} \
+    -m 12000 -M 15000 ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG}"
+  if [ "${RTPPC_TYPE}" = "udp6" ]
+  then
+    RTPP_ARGS="${RTPP_ARGS} -s ${RTPP_SOCK_UDP6}"
+  fi
+  if [ "${RTPPC_TYPE}" = "tcp6" ]
+  then
+    RTPP_ARGS="${RTPP_ARGS} -s ${RTPP_SOCK_TCP6}"
+  fi
+  rtpproxy_cmds_gen | ${RTPPROXY} ${RTPP_ARGS} > rtpproxy.rout 2>rtpproxy.log &
   RTPP_PID=${!}
   sleep 1
   i=0
