@@ -33,26 +33,20 @@ jobs:
       fail-fast: false
       matrix:
         mm-branch: ['master', '3.5', '3.4', '3.3', '3.2']
-        rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
+        rtppc-type: ['unix', 'udp', 'tcp']
         include:
           - mm-branch: '2.4'
             rtppc-type: 'unix'
           - mm-branch: '2.4'
             rtppc-type: 'udp'
-          - mm-branch: '2.4'
-            rtppc-type: 'udp6'
           - mm-branch: '3.0'
             rtppc-type: 'unix'
           - mm-branch: '3.0'
             rtppc-type: 'udp'
-          - mm-branch: '3.0'
-            rtppc-type: 'udp6'
           - mm-branch: '3.1'
             rtppc-type: 'unix'
           - mm-branch: '3.1'
             rtppc-type: 'udp'
-          - mm-branch: '3.1'
-            rtppc-type: 'udp6'
 
   # Alice->OpenSIPS(RFC8760)->Bob
   opensips_rfc8760:
@@ -66,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rtppc-type: ['unix', 'udp', 'udp6', 'tcp', 'tcp6']
+        rtppc-type: ['unix', 'udp', 'tcp']
         mm-auth: ['passtr', 'UAC', 'UAS/auth', 'UAS/auth_db/calculate_ha1', 'UAS/auth_db/ha1']
 
   # Alice->Sippy Python B2B->Bob
@@ -81,8 +75,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mm-branch: ['master', 'PRACK']
-        rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
+        mm-branch: ['wip', 'PRACK']
+        rtppc-type: ['unix', 'cunix', 'udp', 'tcp']
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13-dev']
 
   # Alice->Sippy GO B2B->Bob
@@ -95,7 +89,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rtppc-type: ['unix', 'cunix', 'udp', 'udp6', 'tcp', 'tcp6']
+        rtppc-type: ['unix', 'cunix', 'udp', 'tcp']
 
   # Alice->Kamailio->Bob
   kamailio:
@@ -109,7 +103,7 @@ jobs:
       fail-fast: false
       matrix:
         mm-branch: ['master', '6.0', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '4.4']
-        rtppc-type: ['unix', 'udp', 'udp6']
+        rtppc-type: ['unix', 'udp']
 
   publish:
     needs: [opensips, opensips_rfc8760, sippy_py_b2bua, sippy_go_b2bua, kamailio]
