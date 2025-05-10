@@ -13,7 +13,10 @@ fi
 
 . $(dirname $0)/functions
 
-${CC} --version
+if [ ! -z "`which ${CC}`" ]
+then
+  ${CC} --version
+fi
 
 PYTHON_CMD="${PYTHON_CMD:-"python"}"
 
