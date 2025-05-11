@@ -62,6 +62,9 @@ start_mm() {
     then
       rm ${MM_LOG}
     fi
+    sed "s|%%SIPPY_ROOT%%|${MM_ROOT}|g" ${BUILDDIR}/install_depends/b2bua_radius.py.fix > \
+      ${MM_ROOT}/sippy/b2bua_test.py
+    chmod 755 ${MM_ROOT}/sippy/b2bua_test.py
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
      ${PYTHON_CMD} ${MM_ROOT}/sippy/b2bua_test.py --sip_address='*' \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \

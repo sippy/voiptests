@@ -10,3 +10,8 @@ except ModuleNotFoundError:
 
 Rtp_proxy_client.hrtb_ival = 120.0
 Rtp_proxy_client.hrtb_retr_ival = 120.0
+
+from b2bua_radius import main_func
+
+if __name__ == '__main__':
+    main_func()
