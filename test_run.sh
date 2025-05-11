@@ -150,7 +150,7 @@ start_mm() {
 #"${BUILDDIR}/install_depends/opensips.sh"
 
 RTPP_PIDF="${BUILDDIR}/rtpproxy.pid"
-MM_PIDF="${BUILDDIR}/opensips.pid"
+MM_PIDF="${BUILDDIR}/sstua.pid"
 ALICE_PIDF="${BUILDDIR}/alice.pid"
 BOB_PIDF="${BUILDDIR}/bob.pid"
 
@@ -246,7 +246,7 @@ wait ${BOB_PID}
 BOB_RC="${?}"
 if ! kill -TERM ${MM_PID}
 then
-  for corefile in `sudo find /tmp/ -type f -name core\*`
+  for corefile in `${SUDO} find /tmp/ -type f -name core\*`
   do
     gdb -batch --command=${BUILDDIR}/gdb.gettrace ${MM_BIN} ${corefile} >&2
   done
