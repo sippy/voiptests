@@ -24,6 +24,7 @@ MM_TYPE="${MM_TYPE:-b2bua}"
 MM_BRANCH="${MM_BRANCH:-master}"
 MM_REV="${MM_REV:-${MM_BRANCH}}"
 MM_AUTH="${MM_AUTH:-"simple"}"
+RTPP_VERSION="${RTPP_VERSION:-"debug"}"
 
 MM_VER_FULL=`echo ${MM_BRANCH} | sed 's|[.]||g'`
 MM_VER=`echo ${MM_BRANCH} | sed 's|[.]|| ; s|[.].*|| ; s/^\(.\{2\}\).*$/\1/'`
@@ -37,7 +38,11 @@ BUILDDIR="${BUILDDIR:-${BASEDIR}}"
 
 RTPPROXY_DIST="${RTPPROXY_DIST:-"${BUILDDIR}/dist/rtpproxy"}"
 LOCALBASE="/usr/local"
-RTPPROXY="${LOCALBASE}/bin/rtpproxy_debug --dso ${LOCALBASE}/lib/rtpproxy/rtpp_acct_csv_debug.so"
+if [ "${RTPP_VERSION}" = "debug" ]
+then
+  RTPP_SUFF="_debug"
+fi
+RTPPROXY="${LOCALBASE}/bin/rtpproxy${RTPP_SUFF} --dso ${LOCALBASE}/lib/rtpproxy/rtpp_acct_csv${RTPP_SUFF}.so"
 RTPP_SOCK_BARE="${BASEDIR}/rtpproxy.sock"
 RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
