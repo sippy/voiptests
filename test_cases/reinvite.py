@@ -37,6 +37,7 @@ class test_reinvite(object):
     reinvite_done = False
     nupdates = 0
     reinv_answ_delay = 0.0
+    name = 'Re-INVITE Scenario'
 
     def connected(self, ua, *args):
         #print('test_reinvite.connected')
@@ -123,6 +124,7 @@ class test_reinvite(object):
 class a_test_reinvite(test_reinvite, a_test1):
     cld = 'bob_reinvite'
     cli = 'alice_reinvite'
+    name = f'{test_reinvite.name}: Alice sends re-INVITE'
     compact_sip = False
 
     def __init__(self, *args):
@@ -131,6 +133,7 @@ class a_test_reinvite(test_reinvite, a_test1):
 
 class b_test_reinvite(test_reinvite, b_test1):
     cli = a_test_reinvite.cld
+    name = a_test_reinvite.name
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 5.0

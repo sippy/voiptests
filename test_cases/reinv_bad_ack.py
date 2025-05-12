@@ -31,6 +31,7 @@ from sippy.CCEvents import CCEventFail
 class a_test_reinv_bad_ack(test_reinvite, a_test1):
     cld = 'bob_reinv_bad_ack'
     cli = 'alice_reinv_bad_ack'
+    name = f'{test_reinvite.name}: Alice\'s ACK is malformed'
     compact_sip = False
     disconnect_ival = 50
 
@@ -63,6 +64,7 @@ class a_test_reinv_bad_ack(test_reinvite, a_test1):
 
 class b_test_reinv_bad_ack(test_reinvite, b_test1):
     cli = a_test_reinv_bad_ack.cld
+    name = a_test_reinv_bad_ack.name
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 5.0

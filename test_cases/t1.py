@@ -77,6 +77,7 @@ class test(object):
 class a_test1(test):
     cld = 'bob_1'
     cli = 'alice_1'
+    name = 'Basic test #1'
     disconnect_ival = 9.0
     cancel_ival = None
 
@@ -152,7 +153,8 @@ class b_test1(test):
     ring_ival = 5.0
     answer_ival = None
     disconnect_ival = None
-    cli = 'bob_1'
+    cli = a_test1.cld
+    name = a_test1.name
 
     def __init__(self, tccfg):
         self.tccfg = tccfg

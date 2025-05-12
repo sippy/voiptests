@@ -31,9 +31,11 @@ from sippy.Time.Timeout import Timeout
 class a_test2(a_test1):
     cld = 'bob_2'
     cli = 'alice_2'
+    name = 'Basic test #2'
 
 class b_test2(b_test1):
-    cli = 'bob_2'
+    cli = a_test2.cld
+    name = a_test2.name
 
     def ring(self, ua):
         if self.connect_done or self.disconnect_done:

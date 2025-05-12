@@ -32,6 +32,7 @@ from time import sleep
 class a_test_reinv_adelay(a_test_reinvite):
     cld = 'bob_reinv_adelay'
     cli = 'alice_reinv_adelay'
+    name = f'{a_test_reinvite.name}: Bob delays the response, Alice CANCELs in meantime'
 
     def reinvite(self, ua, *args):
         a_test_reinvite.reinvite(self, ua, *args)
@@ -52,4 +53,5 @@ class a_test_reinv_adelay(a_test_reinvite):
 
 class b_test_reinv_adelay(b_test_reinvite):
     cli = a_test_reinv_adelay.cld
+    name = a_test_reinv_adelay.name
     reinv_answ_delay = 0.7

@@ -31,9 +31,11 @@ from sippy.CCEvents import CCEventFail
 class a_test5(a_test3):
     cld = 'bob_5'
     cli = 'alice_5'
+    name = 'Basic test #5'
 
 class b_test5(b_test2):
-    cli = 'bob_5'
+    cli = a_test5.cld
+    name = a_test5.name
 
     def connect(self, ua):
         if self.connect_done or self.disconnect_done:

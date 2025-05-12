@@ -43,6 +43,7 @@ def cripple_body(self, sdp_body):
 class a_test_inv_brkn1(a_test_inv):
     cld = 'bob_inv_brkn1'
     cli = 'alice_inv_brkn1'
+    name = f'{a_test_inv.name}: Bob screws response SDP'
 
     def alldone(self, ua):
         if self.disconnect_done and self.nerrs == 0:
@@ -60,7 +61,8 @@ class a_test_inv_brkn1(a_test_inv):
         return (super().recvEvent(event, ua))
 
 class b_test_inv_brkn1(b_test_inv):
-    cli = 'bob_inv_brkn1'
+    cli = a_test_inv_brkn1.cld
+    name = a_test_inv_brkn1.name
     p_incr = -10
 
     def ring(self, ua):

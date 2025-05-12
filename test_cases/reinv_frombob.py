@@ -29,10 +29,12 @@ from .t1 import a_test1, b_test1
 class a_test_reinv_frombob(test_reinvite, a_test1):
     cld = 'bob_reinv_frombob'
     cli = 'alice_reinv_frombob'
+    name = f'{test_reinvite.name}: Bob sends re-INVITE'
     compact_sip = False
 
 class b_test_reinv_frombob(test_reinvite, b_test1):
     cli = a_test_reinv_frombob.cld
+    name = a_test_reinv_frombob.name
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 5.0

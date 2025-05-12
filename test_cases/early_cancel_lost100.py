@@ -28,9 +28,11 @@ from .early_cancel import a_test_early_cancel, b_test_early_cancel
 class a_test_early_cancel_lost100(a_test_early_cancel):
     cld = 'bob_early_cancel_lost100'
     cli = 'alice_early_cancel_lost100'
+    name = f'{a_test_early_cancel.name}: Provisional response (100 Trying) is lost'
 
 class b_test_early_cancel_lost100(b_test_early_cancel):
-    cli = 'bob_early_cancel_lost100'
+    cli = a_test_early_cancel_lost100.cld
+    name = a_test_early_cancel_lost100.name
     max_delay = 1.0
 
     def complete_answer(self, ua, req, sip_t):

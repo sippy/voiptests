@@ -31,6 +31,7 @@ from sippy.CCEvents import CCEventRing, CCEventDisconnect, CCEventFail, \
 class a_test_reinv_fail(a_test_reinvite):
     cld = 'bob_reinv_fail'
     cli = 'alice_reinv_fail'
+    name = f'{a_test_reinvite.name}: Bob responds with the 408'
 
     def recvEvent(self, event, ua):
         if self.reinvite_in_progress and not isinstance(event, CCEventRing):
@@ -45,7 +46,8 @@ class a_test_reinv_fail(a_test_reinvite):
         return (a_test_reinvite.recvEvent(self, event, ua))
 
 class b_test_reinv_fail(b_test_reinvite):
-    cli = 'bob_reinv_fail'
+    cli = a_test_reinv_fail.cld
+    name = a_test_reinv_fail.name
     def recvEvent(self, event, ua):
         if not isinstance(event, CCEventUpdate):
             return (b_test_reinvite.recvEvent(self, event, ua))

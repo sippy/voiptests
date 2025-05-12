@@ -28,6 +28,7 @@ from .t1 import a_test1, b_test1
 class a_test11(a_test1):
     cld = 'bob_11'
     cli = 'alice_11'
+    name = 'Basic test #11'
     compact_sip = True
 
     def alldone(self, ua):
@@ -36,7 +37,8 @@ class a_test11(a_test1):
         self.tccfg.done_cb(self)
 
 class b_test11(b_test1):
-    cli = 'bob_11'
+    cli = a_test11.cld
+    name = a_test11.name
     compact_sip = True
     answer_ival = 55.0
 

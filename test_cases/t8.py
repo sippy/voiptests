@@ -28,8 +28,10 @@ from .t3 import a_test3, b_test3
 class a_test8(a_test3):
     cld = 'bob_8'
     cli = 'alice_8'
+    name = 'Basic test #8'
     compact_sip = True
 
 class b_test8(b_test3):
-    cli = 'bob_8'
+    cli = a_test8.cld
+    name = a_test8.name
     compact_sip = True

@@ -28,11 +28,13 @@ from .t1 import a_test1, b_test1
 class a_test14(a_test1):
     cld = 'bob_14'
     cli = 'alice_14'
+    name = 'Basic test #14'
     compact_sip = False
     disconnect_ival = 120
 
 class b_test14(b_test1):
-    cli = 'bob_14'
+    cli = a_test14.cld
+    name = a_test14.name
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 2.0

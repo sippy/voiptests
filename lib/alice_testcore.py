@@ -98,7 +98,7 @@ class a_test(object):
                 atype = ttype[0]
             cli += '_ipv%s' % atype[-1]
             subtest_cfg.tcfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
-            print('tcfg.gen_tccfg(%s, self.subtest_done, %s)' % (atype, cli))
+            print(f'Scheduling test: {subtest_class.name} [{atype}, {cli=}]')
             i += 1
         shuffle(atests)
         for subtest_cfg in atests:

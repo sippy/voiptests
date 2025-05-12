@@ -35,10 +35,12 @@ from .t12 import b_test12
 class a_test13(a_test11):
     cld = 'bob_13'
     cli = 'alice_13'
+    name = 'Basic test #13'
     compact_sip = True
 
 class b_test13(b_test12):
-    cli = 'bob_13'
+    cli = a_test13.cld
+    name = a_test13.name
     compact_sip = True
     ring_ival = 1.0
     answer_ival = 70.0

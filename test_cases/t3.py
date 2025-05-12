@@ -30,6 +30,7 @@ from sippy.CCEvents import CCEventFail
 class a_test3(a_test1):
     cld = 'bob_3'
     cli = 'alice_3'
+    name = 'Basic test #3'
 
     def alldone(self, ua):
         if self.disconnect_done and self.nerrs == 0:
@@ -37,7 +38,8 @@ class a_test3(a_test1):
         self.tccfg.done_cb(self)
 
 class b_test3(b_test1):
-    cli = 'bob_3'
+    cli = a_test3.cld
+    name = a_test3.name
 
     def connect(self, ua):
         if self.connect_done or self.connect_done:

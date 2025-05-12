@@ -26,6 +26,7 @@
 from .t1 import a_test1, b_test1
 
 class test_early_cancel(object):
+    name = 'Early CANCEL'
     max_delay = 0.75
 
     def alldone(self, ua):
@@ -52,7 +53,7 @@ class a_test_early_cancel(test_early_cancel, a_test1):
         a_test1.__init__(self, tccfg)
 
 class b_test_early_cancel(test_early_cancel, b_test1):
-    cli = 'bob_early_cancel'
+    cli = a_test_early_cancel.cld
 
     def __init__(self, tccfg):
         tccfg.uas_creds = None

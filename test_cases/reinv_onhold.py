@@ -28,11 +28,12 @@ from random import random
 from sippy.CCEvents import CCEventUpdate
 from sippy.Time.Timeout import Timeout
 
-from .reinvite import a_test_reinvite, b_test_reinvite
+from .reinvite import test_reinvite, a_test_reinvite, b_test_reinvite
 
 class a_test_reinv_onhold(a_test_reinvite):
     cld = 'bob_reinv_onhold'
     cli = 'alice_reinv_onhold'
+    name = f'{test_reinvite.name}: Alice puts Bob on-hold and then off-hold'
     sched = None
     onhold_count = 0
     offhold_count = 0
@@ -90,7 +91,8 @@ class a_test_reinv_onhold(a_test_reinvite):
         a_test_reinvite.disconnect(self, ua)
 
 class b_test_reinv_onhold(b_test_reinvite):
-    cli = 'bob_reinv_onhold'
+    cli = a_test_reinv_onhold.cld
+    name = a_test_reinv_onhold.name
     onhold_count = 0
     offhold_count = 0
 

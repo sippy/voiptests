@@ -24,15 +24,18 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from .reinv_fail import a_test_reinv_fail, b_test_reinv_fail
+from .reinvite import a_test_reinvite
 
 from sippy.CCEvents import CCEventUpdate, CCEventConnect
 
 class a_test_reinv_brkn1(a_test_reinv_fail):
     cld = 'bob_reinv_brkn1'
     cli = 'alice_reinv_brkn1'
+    name = f'{a_test_reinvite.name}: Bob screws up the SDP'
 
 class b_test_reinv_brkn1(b_test_reinv_fail):
-    cli = 'bob_reinv_brkn1'
+    cli = a_test_reinv_brkn1.cld
+    name = a_test_reinv_brkn1.name
     p_incr = -10
 
     def recvEvent(self, event, ua):

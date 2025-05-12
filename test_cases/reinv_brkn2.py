@@ -24,11 +24,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from .reinv_fail import a_test_reinv_fail
-from .reinvite import b_test_reinvite
+from .reinvite import a_test_reinvite, b_test_reinvite
 
 class a_test_reinv_brkn2(a_test_reinv_fail):
     cld = 'bob_reinv_brkn2'
     cli = 'alice_reinv_brkn2'
+    name = f'{a_test_reinvite.name}: Alice screws up the SDP'
 
     def reinvite(self, ua):
         if not self.connect_done or self.disconnect_done:
@@ -42,4 +43,5 @@ class a_test_reinv_brkn2(a_test_reinv_fail):
         return rval
 
 class b_test_reinv_brkn2(b_test_reinvite):
-    cli = 'bob_reinv_brkn2'
+    cli = a_test_reinv_brkn2.cld
+    name = a_test_reinv_brkn2.name
