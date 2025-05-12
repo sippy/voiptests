@@ -276,12 +276,24 @@ if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
   if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
   then
-    diff -uB rtpproxy.${MM_TYPE}.output rtpproxy.rout
+    RTPP_OUT="rtpproxy.${MM_TYPE}.output"
+    if [ "${RTPP_VERSION}" != "debug" ]
+    then
+      grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
+      RTPP_OUT="${RTPP_OUT}.pp"
+    fi
+    diff -uB "${RTPP_OUT}" rtpproxy.rout
     RTPP_CHECK_RC="${?}"
   else
     for nret in 0 1 2
     do
-      diff -uB rtpproxy.${MM_TYPE}.output.nr${nret} rtpproxy.rout
+      RTPP_OUT="rtpproxy.${MM_TYPE}.output.nr${nret}"
+      if [ "${RTPP_VERSION}" != "debug" ]
+      then
+        grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
+        RTPP_OUT="${RTPP_OUT}.pp"
+      fi
+      diff -uB "${RTPP_OUT}" rtpproxy.rout
       RTPP_CHECK_RC="${?}"
       if [ ${RTPP_CHECK_RC} -eq 0 ]
       then

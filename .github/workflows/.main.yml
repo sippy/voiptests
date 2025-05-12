@@ -28,7 +28,7 @@ on:
       rtpp-image-tag:
         required: false
         type: string
-        default: 'latest-ubuntu_latest'
+        default: 'latest'
       artifact-files:
         required: false
         type: string
@@ -77,16 +77,21 @@ jobs:
           fi
           echo "ARTNAME=${ARTNAME}" >> $GITHUB_OUTPUT
 
-      - name: script
-        run: sh -x ./test_run.sh
+      - name: Test (debug)
+        run: |
+          RTPP_VERSION=debug sh -x ./test_run.sh
+          mkdir -p test.logs/debug
+          mv bob.log alice.log rtpproxy.log ${{ inputs.artifact-files }} test.logs/debug
+
+      - name: Test (production)
+        run: |
+          RTPP_VERSION=production sh -x ./test_run.sh
+          mkdir -p test.logs/production
+          mv bob.log alice.log rtpproxy.log ${{ inputs.artifact-files }} test.logs/production
 
       - name: Test logs
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.transform_var.outputs.ARTNAME }}
-          path: |
-            bob.log
-            alice.log
-            rtpproxy.log
-            ${{ inputs.artifact-files }}
+          path: test.logs
         continue-on-error: true
