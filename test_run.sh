@@ -62,6 +62,11 @@ start_mm() {
     then
       rm ${MM_LOG}
     fi
+    if [ "${RTPPC_TYPE}" = "rtp.io" ]
+    then
+      ST_PARAMS="`echo "-m 12000 -M 15000 -W 45 ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /,/g'`"
+      RTPP_SOCK_TEST="${RTPP_SOCK_TEST}${ST_PARAMS}"
+    fi
     sed "s|%%SIPPY_ROOT%%|${MM_ROOT}|g" ${BUILDDIR}/install_depends/b2bua_test.py.in > \
       ${MM_ROOT}/sippy/b2bua_test.py
     chmod 755 ${MM_ROOT}/sippy/b2bua_test.py
