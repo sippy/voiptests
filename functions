@@ -50,6 +50,7 @@ RTPP_SOCK_CUNIX="cunix:${BASEDIR}/rtpproxy.csock"
 RTPP_SOCK_UDP6="udp6:::1:22222"
 RTPP_SOCK_TCP="tcp:127.0.0.1:22222"
 RTPP_SOCK_TCP6="tcp6:::1:22222"
+RTPP_SOCK_RTP_IO="rtp.io:auto"
 
 fail_rc() {
   RC=${1}
@@ -75,7 +76,7 @@ case "${RTPPC_TYPE}" in
   "cunix")  RTPP_SOCK_TEST="${RTPP_SOCK_CUNIX}";;
   "tcp")    RTPP_SOCK_TEST="${RTPP_SOCK_TCP}";;
   "tcp6")   RTPP_SOCK_TEST="${RTPP_SOCK_TCP6}";;
-  "rtp.io") RTPP_SOCK_TEST="${RTPP_SOCK_TCP}";;
+  "rtp.io") RTPP_SOCK_TEST="${RTPP_SOCK_RTP_IO}";;
   *)        fail_rc 1 "Unknown socket type RTPPC_TYPE=${RTPPC_TYPE}";;
 esac
 

@@ -33,7 +33,7 @@ loadmodule "uri/uri.so"
 #define STATUS       $rs
 
 #if RTPPC_TYPE == rtp.io
-modparam("rtp.io", "rtpproxy_args", $$"-s tcp:127.0.0.1:22222 -m 12000 -M 15000 RTPP_LISTEN"$$)
+modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 RTPP_LISTEN"$$)
 #else
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 #endif
