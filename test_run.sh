@@ -64,7 +64,7 @@ start_mm() {
     fi
     if [ "${RTPPC_TYPE}" = "rtp.io" ]
     then
-      ST_PARAMS="`echo "-m 12000 -M 15000 -W 45 ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /,/g'`"
+      ST_PARAMS="`echo "-m 12000 -M 15000 -W 45 ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /;/g'`"
       RTPP_SOCK_TEST="${RTPP_SOCK_TEST}${ST_PARAMS}"
       RTPP_SOCK_PARAM="--rtp_proxy_client"
     else
