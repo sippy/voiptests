@@ -66,6 +66,9 @@ start_mm() {
     then
       ST_PARAMS="`echo "-m 12000 -M 15000 -W 45 ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /,/g'`"
       RTPP_SOCK_TEST="${RTPP_SOCK_TEST}${ST_PARAMS}"
+      RTPP_SOCK_PARAM="--rtp_proxy_client"
+    else
+      RTPP_SOCK_PARAM="--rtp_proxy_clients"
     fi
     sed "s|%%SIPPY_ROOT%%|${MM_ROOT}|g" ${BUILDDIR}/install_depends/b2bua_test.py.in > \
       ${MM_ROOT}/sippy/b2bua_test.py
@@ -74,7 +77,7 @@ start_mm() {
      ${PYTHON_CMD} ${MM_ROOT}/sippy/b2bua_test.py --sip_address='*' \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \
      --static_route="localhost:5062;ash=SIP-Hello1%3A%20World%21;ash=SIP-Hello2%3A%20World%21" \
-     --b2bua_socket="${MM_SOCK}" --rtp_proxy_clients="${RTPP_SOCK_TEST}" \
+     --b2bua_socket="${MM_SOCK}" ${RTPP_SOCK_PARAM}="${RTPP_SOCK_TEST}" \
      --allowed_pts="18,0,2,4,8,[G726-40/8000],[G726-24/8000],[G726-16/8000],[telephone-event/8000]" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
