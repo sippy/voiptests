@@ -52,7 +52,7 @@ class a_test_reinv_bad_ack(test_reinvite, a_test1):
     def on_reinvite_failed(self, ua, event):
         if isinstance(event, CCEventFail):
             ua.global_config['_sip_tm'].sendACK(ua.tr)
-        a_test1.on_reinvite_failed(self, ua, event)
+        test_reinvite.on_reinvite_failed(self, ua, event)
 
     def disconnect(self, ua):
         if not self.disconnect_done:
