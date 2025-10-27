@@ -184,13 +184,7 @@ then
   rm "${RTPP_SOCK_BARE}"
 fi
 
-GMTM="${RTPPROXY_DIST}/python/sippy_lite/sippy/tools/getmonotime.py"
-if [ ! -e "${GMTM}" ]
-then
-  GMTM="${RTPPROXY_DIST}/python/tools/getmonotime.py"
-else
-  GMTM="${GMTM} -S ${RTPPROXY_DIST}/python/sippy_lite"
-fi
+GMTM="${RTPPROXY_DIST}/python/tools/getmonotime.py"
 
 MR_TIME="`${PYTHON_CMD} ${GMTM} -r`"
 SIPLOG_TSTART="`echo ${MR_TIME} | awk '{print $2}'`"
@@ -235,6 +229,9 @@ then
     i=$((${i} + 1))
   done
   sleep 1
+  RQC="${RTPPROXY_DIST}/python/tools/rtpp_query.py"
+  ${RQC} -b -s "${RTPP_SOCK_TEST}" I || \
+    report_rc_log ${?} "rtpproxy.rout rtpproxy.log" "Checking if ${RTPP_SOCK_TEST} works"
 fi
 
 MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
