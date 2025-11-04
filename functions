@@ -43,6 +43,7 @@ then
   RTPP_SUFF="_debug"
 fi
 RTPPROXY="${LOCALBASE}/bin/rtpproxy${RTPP_SUFF} --dso ${LOCALBASE}/lib/rtpproxy/rtpp_acct_csv${RTPP_SUFF}.so"
+RQC="${RTPPROXY_DIST}/python/tools/rtpp_query.py"
 RTPP_SOCK_BARE="${BASEDIR}/rtpproxy.sock"
 RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
@@ -89,7 +90,8 @@ TEST_SET="${TEST_SET},reinvite,reinv_fail,reinv_onhold,reinv_frombob"
 
 if [ "${MM_TYPE}" = "b2bua" -o "${MM_TYPE}" = "go-b2bua" ]
 then
-  MM_SOCK="unix:${BASEDIR}/b2bua.sock"
+  MM_SOCK_BARE="${BASEDIR}/b2bua.sock"
+  MM_SOCK="unix:${MM_SOCK_BARE}"
   # Python b2bua needs slightly more time to init everything
   MM_INIT_DELAY=5
   # RTP sessions might take up to 60 seconds to disconnect on no media

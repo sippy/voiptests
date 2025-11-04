@@ -73,6 +73,10 @@ start_mm() {
     sed "s|%%SIPPY_ROOT%%|${MM_ROOT}|g" ${BUILDDIR}/install_depends/b2bua_test.py.in > \
       ${MM_ROOT}/sippy/b2bua_test.py
     chmod 755 ${MM_ROOT}/sippy/b2bua_test.py
+    if [ -e "${MM_SOCK_BARE}" ]
+    then
+      rm "${MM_SOCK_BARE}"
+    fi
     SIPLOG_LOGFILE_FILE="${MM_LOG}" SIPLOG_BEND="file" \
      ${PYTHON_CMD} ${MM_ROOT}/sippy/b2bua_test.py --sip_address='*' \
      --sip_port=5060 --foreground=on --acct_enable=off --auth_enable=off \
@@ -81,6 +85,17 @@ start_mm() {
      --allowed_pts="18,0,2,4,8,[G726-40/8000],[G726-24/8000],[G726-16/8000],[telephone-event/8000]" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
+    while [ ! -e "${MM_SOCK_BARE}" ]
+    do
+      if [ ${i} -gt 4 ]
+      then
+        report_rc_log 1 "${MM_LOG}" "Waiting for the B2BUA to become ready"
+      fi
+      sleep 1
+      i=$((${i} + 1))
+    done
+    ${RQC} -b -s "${MM_SOCK}" L || \
+     report_rc_log ${?} "${MM_LOG}" "Checking if ${MM_SOCK} works"
     ;;
 
   opensips)
@@ -229,7 +244,6 @@ then
     i=$((${i} + 1))
   done
   sleep 1
-  RQC="${RTPPROXY_DIST}/python/tools/rtpp_query.py"
   ${RQC} -b -s "${RTPP_SOCK_TEST}" I || \
     report_rc_log ${?} "rtpproxy.rout rtpproxy.log" "Checking if ${RTPP_SOCK_TEST} works"
 fi
