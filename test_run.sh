@@ -20,14 +20,17 @@ fi
 
 PYTHON_CMD="${PYTHON_CMD:-"python"}"
 
+sleep_until() {
+  ${PYTHON_CMD} -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${1} - time(); sleep(tleft) if tleft > 0 else False;"
+}
+
 rtpproxy_cmds_gen() {
   if [ x"${RTPP_PRE_STAT_TIMEOUT}" != x"" ]
   then
-    sleep ${RTPP_PRE_STAT_TIMEOUT}
+    sleep_until ${RTPP_PRE_STAT_TIMEOUT}
     cat "${BUILDDIR}/rtpproxy.stats.input"
-    RTPP_STAT_TIMEOUT=$((${RTPP_STAT_TIMEOUT} - ${RTPP_PRE_STAT_TIMEOUT}))
   fi
-  sleep ${RTPP_STAT_TIMEOUT}
+  sleep_until ${RTPP_STAT_TIMEOUT}
   cat "${BUILDDIR}/rtpproxy.stats.input"
 }
 
@@ -166,7 +169,7 @@ start_mm() {
 
   ALICE_ARGS="${ALICE_ARGS:-"-46"}"
   echo ${MM_PID} > "${MM_PIDF}"
-  sleep ${MM_INIT_DELAY}
+  sleep_until ${MM_INIT_DELAY}
   return 0
 }
 
@@ -277,7 +280,7 @@ if [ ${ALICE_RC} -eq 0 -a ${BOB_RC} -eq 0 -a ${MM_RC} -eq 0 ]
 then
   # Always give the RTPproxy enough time to execute final stats command,
   # before we SIGHUP it
-  ${PYTHON_CMD} -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${RTPP_STAT_TIMEOUT} + 5 - time(); sleep(tleft) if tleft > 0 else False;"
+  sleep_until $((${RTPP_STAT_TIMEOUT} + 6))
 fi
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
