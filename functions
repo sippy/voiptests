@@ -81,7 +81,7 @@ case "${RTPPC_TYPE}" in
   *)        fail_rc 1 "Unknown socket type RTPPC_TYPE=${RTPPC_TYPE}";;
 esac
 
-MM_INIT_DELAY=1
+MM_INIT_DELAY="${MM_INIT_DELAY:-"1"}"
 RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
 ALICE_TIMEOUT=45
 BOB_TIMEOUT=45
@@ -93,7 +93,7 @@ then
   MM_SOCK_BARE="${BASEDIR}/b2bua.sock"
   MM_SOCK="unix:${MM_SOCK_BARE}"
   # Python b2bua needs slightly more time to init everything
-  MM_INIT_DELAY=5
+  MM_INIT_DELAY=$((4 + ${MM_INIT_DELAY}))
   # RTP sessions might take up to 60 seconds to disconnect on no media
   RTPP_STAT_TIMEOUT=$((70 + ${MM_INIT_DELAY}))
   RTPP_PRE_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
