@@ -69,9 +69,15 @@ class test(object):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
         else:
+            mightfail = self.cli in self.tccfg.tests_mightfail
             if self.debug_lvl > -1 and not self.finfo_displayed:
-                print(self.failed_msg())
+                fmsg = self.failed_msg()
+                if mightfail:
+                    fmsg = f'{fmsg} [IGNORED]'
+                print(fmsg)
                 self.finfo_displayed = True
+            if mightfail:
+                self.rval = 0
         self.tccfg.done_cb(self)
 
 class a_test1(test):

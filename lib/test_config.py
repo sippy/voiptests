@@ -88,6 +88,7 @@ class test_config(object):
     body = None
     portrange = PortRange('12000-15000')
     tests = None
+    tests_mightfail = tuple()
     test_timeout = 60
     nh_address4 = ('127.0.0.1', 5060)
     nh_address6 = ('[::1]', 5060)
