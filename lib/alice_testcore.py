@@ -61,13 +61,14 @@ from ..test_cases.reinv_adelay import a_test_reinv_adelay
 from ..test_cases.reinv_frombob import a_test_reinv_frombob
 from ..test_cases.reinv_bad_ack import a_test_reinv_bad_ack
 from ..test_cases.inv_brkn1 import a_test_inv_brkn1
+from ..test_cases.nated_contact import a_test_nated_contact
 
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \
   a_test_early_cancel, a_test_early_cancel_lost100, a_test_reinvite, \
   a_test_reinv_fail, a_test_reinv_brkn1, a_test_reinv_brkn2, \
   a_test_reinv_onhold, a_test_reinv_adelay, a_test_reinv_frombob, \
-  a_test_reinv_bad_ack, a_test_inv_brkn1)
+  a_test_reinv_bad_ack, a_test_inv_brkn1, a_test_nated_contact)
 
 class a_cfg(object):
     test_class = None

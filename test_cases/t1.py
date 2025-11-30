@@ -127,7 +127,14 @@ class a_test1(test):
         self.tccfg = tccfg
         if tccfg.cli != None:
             self.cli = tccfg.cli
-        uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
+        uaO = self.build_ua(tccfg)
+        self.call_id = SipCallId(body = gen_test_cid())
+        event = CCEventTry((self.call_id, self.cli, self.cld, tccfg.body, \
+          None, 'Alice Smith'))
+        self.run(uaO, event)
+
+    def build_ua(self, tccfg, UA_class = UA):
+        uaO = UA_class(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,), ltag = gen_test_tag())
         if tccfg.uac_creds != None:
@@ -137,10 +144,7 @@ class a_test1(test):
 
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
-        self.call_id = SipCallId(body = gen_test_cid())
-        event = CCEventTry((self.call_id, self.cli, self.cld, tccfg.body, \
-          None, 'Alice Smith'))
-        self.run(uaO, event)
+        return uaO
 
     def run(self, ua, event):
         ua.recvEvent(event)
