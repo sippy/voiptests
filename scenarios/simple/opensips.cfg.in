@@ -15,6 +15,7 @@ loadmodule "sipmsgops/sipmsgops.so"
 loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
 loadmodule "rr/rr.so"
+loadmodule "nathelper/nathelper.so"
 loadmodule "maxfwd/maxfwd.so"
 #if RTPPC_TYPE == rtp.io
 loadmodule "rtp.io/rtp.io.so"
@@ -36,6 +37,12 @@ loadmodule "uri/uri.so"
 modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 RTPP_LISTEN"$$)
 #else
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
+#endif
+
+#if OPENSIPS_VER_FULL == master || OPENSIPS_VER > 33
+#define NAT_PCONTACT "private-contact"
+#else
+#define NAT_PCONTACT INT(1)
 #endif
 
 listen=udp:127.0.0.1:5060
@@ -83,13 +90,27 @@ route {
     };
 
     if (is_method("BYE")) {
-        xlog("    calling rtpproxy_unforce()\n");
+        xlog("  calling rtpproxy_unforce()\n");
         rtpproxy_unforce();
     };
 
     record_route();
 
+    if (is_method("INVITE") && !has_totag() && nat_uac_test(NAT_PCONTACT)) {
+        xlog("  NAT contact detected\n");
+#if OPENSIPS_VER_FULL == master
+        if (add_contact_alias()) {
+            xlog("    adding alias\n");
+        };
+#endif
+    };
+
     if (loose_route()) {
+#if OPENSIPS_VER_FULL == master
+        if (handle_ruri_alias()) {
+            xlog("  alias removed from the R-URI\n");
+        };
+#endif
         t_relay();
         exit;
     };
@@ -109,6 +130,14 @@ onreply_route[1]
 {
     xlog("OpenSIPS received a reply $rs/$rm from $si\n");
     if (STATUS =~ "(183)|2[0-9][0-9]") {
+        if (nat_uac_test(NAT_PCONTACT)) {
+            xlog("  NAT contact detected\n");
+#if OPENSIPS_VER_FULL == master
+            if (add_contact_alias()) {
+                xlog("    adding alias\n");
+            };
+#endif
+        };
         xlog("  calling search()\n");
         if(!search("^Content-Length:[ ]*0")) {
             xlog("    calling rtpproxy_answer()\n");
@@ -121,6 +150,6 @@ onreply_route[1]
 failure_route[1]
 {
     xlog("OpenSIPS handling $rm failure in from $si in failure_route[1]\n");
-    xlog("    calling rtpproxy_unforce()\n");
+    xlog("  calling rtpproxy_unforce()\n");
     rtpproxy_unforce();
 }
