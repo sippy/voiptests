@@ -1,7 +1,12 @@
-#if OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 31
-# define NCMDS_BASE 275
+#if OPENSIPS_VER_FULL == master
+# define NCMDS_BASE 295
+# define NSESS_BASE 68
 #else
-# define NCMDS_BASE 272
+# if OPENSIPS_VER >= 31
+#  define NCMDS_BASE 275
+# else
+#  define NCMDS_BASE 272
+# endif
 #endif
 
 #include "rtpproxy.output/common.in"

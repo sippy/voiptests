@@ -1,3 +1,4 @@
-#define NCMDS_BASE 263
+#define NCMDS_BASE 283
+#define NSESS_BASE 68
 
 #include "rtpproxy.output/common.in"

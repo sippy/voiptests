@@ -5,7 +5,10 @@
 #define NSCV #eval (NRCV - 1 - NRET)
 #define NERV NRET
 #define NRPV #eval (NSCV + NRET)
+#define NSCR NSESS_BASE
+#define NSCM #eval (NSESS_BASE - NSESS_INCM)
+#define NSNR #eval (NSCM / 2)
 
-nsess_created=64 nsess_destroyed=64 nsess_timeout=0 nsess_complete=40 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=40 nsess_owrtcp=0
+nsess_created=NSCR nsess_destroyed=NSCR nsess_timeout=0 nsess_complete=NSCM nsess_nortp=NSNR nsess_owrtp=0 nsess_nortcp=NSCM nsess_owrtcp=0
 ncmds_rcvd=NRCV ncmds_succd=NSCV ncmds_errs=NERV ncmds_repld=NRPV
 MEMDEB(rtpproxy): all clear

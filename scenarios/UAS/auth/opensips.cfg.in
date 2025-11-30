@@ -14,6 +14,7 @@ loadmodule "auth/auth.so"
 loadmodule "sl/sl.so"
 loadmodule "tm/tm.so"
 loadmodule "rr/rr.so"
+loadmodule "nathelper/nathelper.so"
 loadmodule "maxfwd/maxfwd.so"
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
@@ -34,6 +35,12 @@ modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
+
+#if OPENSIPS_VER_FULL == master || OPENSIPS_VER > 33
+#define NAT_PCONTACT "private-contact"
+#else
+#define NAT_PCONTACT INT(1)
+#endif
 
 socket=udp:127.0.0.1:5060
 socket=udp:[::1]:5060
@@ -86,13 +93,27 @@ route {
     };
 
     if (is_method("BYE")) {
-        xlog("    calling rtpproxy_unforce()\n");
+        xlog("  calling rtpproxy_unforce()\n");
         rtpproxy_unforce();
     };
 
     record_route();
 
+    if (is_method("INVITE") && !has_totag() && nat_uac_test(NAT_PCONTACT)) {
+        xlog("  NAT contact detected\n");
+#if OPENSIPS_VER_FULL == master
+        if (fix_nated_contact("", "preserve-uri")) {
+            xlog("    adding alias\n");
+        };
+#endif
+    };
+
     if (loose_route()) {
+#if OPENSIPS_VER_FULL == master
+        if (restore_nated_ruri()) {
+            xlog("  alias removed from the R-URI\n");
+        };
+#endif
         t_relay();
         exit;
     };
@@ -112,6 +133,14 @@ onreply_route[1]
 {
     xlog("OpenSIPS received a reply $rs/$rm from $si\n");
     if (STATUS =~ "(183)|2[0-9][0-9]") {
+        if (nat_uac_test(NAT_PCONTACT)) {
+            xlog("  NAT contact detected\n");
+#if OPENSIPS_VER_FULL == master
+            if (fix_nated_contact("", "preserve-uri")) {
+                xlog("    adding alias\n");
+            };
+#endif
+        };
         xlog("  calling search()\n");
         if(!search("^Content-Length:[ ]*0")) {
             xlog("    calling rtpproxy_answer()\n");
@@ -135,7 +164,7 @@ failure_route[invite]
             xlog("    uac_auth() FAILURE\n");
         }
     }
-    xlog("    calling rtpproxy_unforce()\n");
+    xlog("  calling rtpproxy_unforce()\n");
     rtpproxy_unforce();
 }
 
@@ -162,6 +191,6 @@ failure_route[re_invite]
 failure_route[uac_auth_fail]
 {
     xlog("OpenSIPS handling $rm failure in from $si in failure_route[uac_auth_fail]\n");
-    xlog("    calling rtpproxy_unforce()\n");
+    xlog("  calling rtpproxy_unforce()\n");
     rtpproxy_unforce();
 }
