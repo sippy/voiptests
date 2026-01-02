@@ -26,6 +26,10 @@ if [ "${MM_TYPE}" = "go-b2bua" ]
 then
   ${APT_INSTALL} golang-go
 fi
+if [ "${MM_TYPE}" = "kamailio" ]
+then
+  ${APT_INSTALL} libcurl4-gnutls-dev
+fi
 if [ -e requirements.txt ]
 then
   ${SUDO} ${PYTHON_CMD} -m pip install -r requirements.txt
