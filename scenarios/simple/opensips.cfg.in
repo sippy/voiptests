@@ -37,6 +37,7 @@ modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 RTPP_LISTEN"$$)
 #else
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 #endif
+modparam("rtpproxy", "rtpp_bind_local_avp", "$socket_out(ip)")
 
 listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
