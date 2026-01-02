@@ -18,6 +18,10 @@ on:
         required: false
         type: string
         default: ''
+      mm-repo:
+        required: false
+        type: string
+        default: ''
       rtppc-type:
         required: true
         type: string
@@ -58,9 +62,6 @@ jobs:
           PYTHON_VER="`echo ${{ matrix.python-version }} | sed 's|-dev$||'`"
           echo "PYTHON_CMD=python${PYTHON_VER}" >> $GITHUB_ENV
 
-      - name: before_install
-        run: sh -x cibits/before_install.sh
-
       - name: transform_var
         id: transform_var
         run: |
@@ -71,11 +72,19 @@ jobs:
             ARTNAME="${ARTNAME}_${MM_AUTH}"
             echo "MM_AUTH=${{ inputs.mm-auth }}" >> $GITHUB_ENV
           fi
+          MM_REPO="${{ inputs.mm-repo }}"
+          if [ "${MM_REPO}" != "" ]
+          then
+            echo "MM_REPO=${MM_REPO}" >> $GITHUB_ENV
+          fi
           if [ "${{ inputs.mm-type }}" = "b2bua" ]
           then
             ARTNAME="${ARTNAME}_${{ inputs.python-version }}"
           fi
           echo "ARTNAME=${ARTNAME}" >> $GITHUB_OUTPUT
+
+      - name: before_install
+        run: sh -x cibits/before_install.sh
 
       - name: Test (debug)
         run: |
