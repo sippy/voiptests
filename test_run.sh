@@ -222,7 +222,7 @@ fi
 
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
-  RTPP_ARGS="-p ${RTPP_PIDF} -d dbug -F -f -s stdio: -s ${RTPP_SOCK_UDP} \
+  RTPP_ARGS="--no_resolve -p ${RTPP_PIDF} -d dbug -F -f -s stdio: -s ${RTPP_SOCK_UDP} \
     -s ${RTPP_SOCK_CUNIX} -s ${RTPP_SOCK_UNIX} -s ${RTPP_SOCK_TCP} \
     -m 12000 -M 15000 ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG}"
   if [ "${RTPPC_TYPE}" = "udp6" ]
