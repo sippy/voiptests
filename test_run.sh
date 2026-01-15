@@ -88,6 +88,7 @@ start_mm() {
      --allowed_pts="18,0,2,4,8,[G726-40/8000],[G726-24/8000],[G726-16/8000],[telephone-event/8000]" \
      --logfile="${MM_LOG}" &
     MM_PID=${!}
+    i=0
     while [ ! -e "${MM_SOCK_BARE}" ]
     do
       if [ ${i} -gt 4 ]
