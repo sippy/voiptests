@@ -55,6 +55,7 @@ class test_case_config(object):
     uas_creds = None
     uac_creds = None
     check_media_ips = None
+    cli = None
 
     def __init__(self, nh_address):
         self.nh_address = nh_address
@@ -93,8 +94,9 @@ class test_config(object):
     nh_address6 = ('[::1]', 5060)
     acfg = None
     bcfg = None
+    tests_mightfail = tuple()
 
-    def gen_tccfg(self, atype, done_cb, cli = None):
+    def gen_tccfg(self, atype, done_cb, cli=None):
         if atype == 'IP4':
             nh_address = self.nh_address4
         else:

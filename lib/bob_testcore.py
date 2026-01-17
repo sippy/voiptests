@@ -94,9 +94,9 @@ class BobSTM(SipTransactionManager):
 class b_test(object):
     rval = 1
     nsubtests_running = 0
-    tcfg = None
+    tcfg: 'test_config' = None
 
-    def __init__(self, tcfg):
+    def __init__(self, tcfg:'test_config'):
         tcfg.global_config['_sip_tm'] = BobSTM(tcfg.global_config, self.recvRequest)
         Timeout(self.timeout, tcfg.test_timeout, 1)
         self.tcfg = tcfg
@@ -122,6 +122,8 @@ class b_test(object):
             tccfg = self.tcfg.gen_tccfg(atype, self.subtest_done)
 
             subtest = tclass(tccfg)
+            test_id = req.getHFBody('to').getUrl().username
+            subtest.mightfail = test_id in self.tcfg.tests_mightfail
 
             self.nsubtests_running += 1
             self.rval += 1

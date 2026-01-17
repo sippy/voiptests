@@ -13,7 +13,7 @@ fi
 
 . $(dirname $0)/functions
 
-if [ ! -z "`which ${CC}`" ]
+if [ -n "`which ${CC}`" ]
 then
   ${CC} --version
 fi
@@ -252,7 +252,12 @@ then
     report_rc_log ${?} "rtpproxy.rout rtpproxy.log" "Checking if ${RTPP_SOCK_TEST} works"
 fi
 
-MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' -P 5062 -T ${BOB_TIMEOUT} 2>bob.log &
+BOB_ARGS="-P 5062 -T ${BOB_TIMEOUT}"
+if [ -n "${TEST_SET_MIGHTFAIL}" ]
+then
+  BOB_ARGS="${BOB_ARGS} -m ${TEST_SET_MIGHTFAIL}"
+fi
+MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' ${BOB_ARGS} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 start_mm

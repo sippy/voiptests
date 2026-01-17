@@ -23,23 +23,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .t1 import a_test1, b_test1
+from .t1 import a_test1, b_test1, test
 
-class test_early_cancel(object):
+class test_early_cancel(test):
     name = 'Early CANCEL'
     max_delay = 0.75
 
     def alldone(self, ua):
+        nerr = 1
         if self.disconnect_done:
             duration, delay, connected, disconnected = self.acct
             if (duration, connected, disconnected) == (0, False, True) and \
               round(delay, 1) <= self.max_delay:
-                self.rval = 0
-            else:
-                if self.debug_lvl > -1:
-                    print(self.failed_msg())
-                    self.finfo_displayed = True
-        self.tccfg.done_cb(self)
+                self.ring_done = True
+                self.connect_done = True
+                nerr = 0
+        self.nerrs += nerr
+        super().alldone(ua)
 
 class a_test_early_cancel(test_early_cancel, a_test1):
     cld = 'bob_early_cancel'

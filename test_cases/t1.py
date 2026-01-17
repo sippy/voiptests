@@ -59,6 +59,7 @@ class test(object):
     godead_timeout = 10.0
     acct = None
     finfo_displayed = False
+    mightfail = False
 
     def failed_msg(self):
         msg = '%s: subclass %s failed, call_id=%s, acct=%s' % (self.my_name(), \
@@ -70,8 +71,13 @@ class test(object):
             self.rval = 0
         else:
             if self.debug_lvl > -1 and not self.finfo_displayed:
-                print(self.failed_msg())
+                fmsg = self.failed_msg()
+                if self.mightfail:
+                    fmsg = f'{fmsg} [IGNORED]'
+                print(fmsg)
                 self.finfo_displayed = True
+            if self.mightfail:
+                self.rval = 0
         self.tccfg.done_cb(self)
 
 class a_test1(test):
