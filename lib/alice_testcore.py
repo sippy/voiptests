@@ -77,6 +77,7 @@ class a_test(object):
     rval = 1
 
     def __init__(self, tcfg):
+        SipTransactionManager.model_udp_server[1].nworkers = 1
         tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
 
         i = 0

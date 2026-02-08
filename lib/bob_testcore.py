@@ -97,6 +97,7 @@ class b_test(object):
     tcfg: 'test_config' = None
 
     def __init__(self, tcfg:'test_config'):
+        BobSTM.model_udp_server[1].nworkers = 1
         tcfg.global_config['_sip_tm'] = BobSTM(tcfg.global_config, self.recvRequest)
         Timeout(self.timeout, tcfg.test_timeout, 1)
         self.tcfg = tcfg
