@@ -108,6 +108,7 @@ class b_test(object):
     active_subtests = None
 
     def __init__(self, tcfg:'test_config'):
+        BobSTM.model_udp_server[1].nworkers = 1
         tcfg.global_config['_sip_tm'] = BobSTM(tcfg.global_config, self.recvRequest)
         if not tcfg.continuous:
             Timeout(self.timeout, tcfg.test_timeout, 1)
