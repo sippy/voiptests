@@ -63,7 +63,7 @@ def main_func():
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:cC:')
+        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:cC:s')
     except getopt.GetoptError:
         usage(global_config)
 
@@ -117,6 +117,9 @@ def main_func():
         if o == '-c':
             tcfg.continuous = True
             continue
+        if o == '-s':
+            tcfg.signalling_only = True
+            continue
         if o == '-C':
             if not a.startswith('='):
                 cpsval = float(a)
@@ -142,6 +145,7 @@ def main_func():
     if not dry_run:
         ED2.loop()
 
+        print('\n-- Types Summary: --')
         show_most_common_types(50)
 
         sys.exit(acore.rval)

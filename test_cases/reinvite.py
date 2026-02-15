@@ -96,7 +96,8 @@ class test_reinvite(object):
         pass
 
     def on_reinvite_failed(self, ua, event):
-        raise ScenarioFailure('%s: re-INVITE has failed' % (self.failed_msg(),))
+        self.nerrs += 1
+        print(ScenarioFailure('%s: re-INVITE has failed' % (self.failed_msg(),)))
 
     def process_reinvite(self, ua):
         if self.reinv_answ_delay > 0:

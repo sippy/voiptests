@@ -50,4 +50,4 @@ class b_test12(b_test2):
         else:
             if self.debug_lvl > -1:
                 print('%s: subclass %s failed' % (self.my_name(), str(self.__class__)))
-        self.tccfg.done_cb(self)
+        self.done()

@@ -57,6 +57,8 @@ class test_case_config(object):
     uac_creds = None
     check_media_ips = None
     cli = None
+    continuous = False
+    signalling_only = False
 
     def __init__(self, nh_address):
         self.nh_address = nh_address
@@ -96,6 +98,7 @@ class test_config(object):
     acfg = None
     bcfg = None
     continuous = False
+    signalling_only = False
     cps = None
     ntime = None
     tests_mightfail = tuple()
@@ -119,6 +122,8 @@ class test_config(object):
         tccfg.cli = cli
         tccfg.atype = atype
         tccfg.portrange = self.portrange
+        tccfg.continuous = self.continuous
+        tccfg.signalling_only = self.signalling_only
         return tccfg
 
     def __init__(self, global_config):

@@ -65,13 +65,13 @@ body_fax = 'v=0\r\n' + \
 BODIES_ALL = (body_audio, body_fax)
 
 def usage(args):
-    printf("bob.py -p xx -l yy -P zz -T tt -n aa -N bb -w cc")
+    printf("bob.py -p xx -l yy -P zz -T tt -n aa -N bb -w cc -s")
 
 def main_func():
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:n:N:w:m:c')
+        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:n:N:w:m:cs')
     except getopt.GetoptError:
         usage(global_config)
     tcfg = test_config(global_config)
@@ -110,6 +110,9 @@ def main_func():
             continue
         if o == '-c':
             tcfg.continuous = True
+            continue
+        if o == '-s':
+            tcfg.signalling_only = True
             continue
 
     bodys = [MsgBody(x) for x in BODIES_ALL]

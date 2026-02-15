@@ -34,7 +34,7 @@ class a_test11(a_test1):
     def alldone(self, ua):
         if not self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
-        self.tccfg.done_cb(self)
+        self.done()
 
 class b_test11(b_test1):
     cli = a_test11.cld
@@ -48,4 +48,4 @@ class b_test11(b_test1):
         else:
             if self.debug_lvl > -1:
                 print('%s: subclass %s failed' % (self.my_name(), str(self.__class__)))
-        self.tccfg.done_cb(self)
+        self.done()
