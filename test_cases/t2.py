@@ -40,7 +40,8 @@ class b_test2(b_test1):
     def ring(self, ua):
         if self.connect_done or self.disconnect_done:
             return
-        event = CCEventRing((183, 'Session Progress', self.body), \
+        body = self._make_media_answer(ua.rSDP)
+        event = CCEventRing((183, 'Session Progress', body), \
           origin = 'switch')
         Timeout(self.connect, self.answer_ival, 1, ua)
         ua.recvEvent(event)

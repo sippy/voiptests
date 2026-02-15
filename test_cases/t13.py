@@ -32,11 +32,31 @@ from .t12 import b_test12
 # disconnected. The no-media timeout is expected to hit around 61.0 sec mark,
 # since the session is to be refreshed at 1.0 sec via 183.
 
+def _mute_sdp(sdp):
+    for sect in sdp.content.sections:
+        sect.m_header.port = 0
+        ch = sect.c_header
+        if ch.atype == 'IP4':
+            ch.addr = '0.0.0.0'
+        else:
+            ch.addr = '::'
+        while 'sendrecv' in sect.a_headers:
+            sect.a_headers.remove('sendrecv')
+
 class a_test13(a_test11):
     cld = 'bob_13'
     cli = 'alice_13'
     name = 'Basic test #13'
     compact_sip = True
+
+    def __init__(self, *a, **kwa):
+        super().__init__(*a, **kwa)
+        if self._rtp_enabled:
+            self.tccfg.checkhostport = lambda sdp_body: (True, 'all good')
+
+    def _rtp_prepare_local_sdp(self, body, *a, **kwa):
+        if self._rtp_enabled:
+            _mute_sdp(body)
 
 class b_test13(b_test12):
     cli = a_test13.cld
@@ -45,6 +65,17 @@ class b_test13(b_test12):
     ring_ival = 1.0
     answer_ival = 70.0
 
+    def __init__(self, *a, **kwa):
+        super().__init__(*a, **kwa)
+        if self._rtp_enabled:
+            self.tccfg.checkhostport = lambda sdp_body: (True, 'all good')
+
+    def _make_media_answer(self, sdp):
+        if self._rtp_enabled:
+            sdp = sdp.getCopy()
+            _mute_sdp(sdp)
+        return sdp
+
     def alldone(self, ua):
         #print('b_test13.alldone', self.ring_done)
         if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
@@ -52,4 +83,4 @@ class b_test13(b_test12):
         else:
             if self.debug_lvl > -1:
                 print('%s: subclass %s failed' % (self.my_name(), str(self.__class__)))
-        self.tccfg.done_cb(self)
+        self.done()

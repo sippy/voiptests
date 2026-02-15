@@ -95,7 +95,7 @@ then
   # Python b2bua needs slightly more time to init everything
   MM_INIT_DELAY=$((4 + ${MM_INIT_DELAY}))
   # RTP sessions might take up to 60 seconds to disconnect on no media
-  RTPP_STAT_TIMEOUT=$((70 + ${MM_INIT_DELAY}))
+  RTPP_STAT_TIMEOUT=$((71 + ${MM_INIT_DELAY}))
   RTPP_PRE_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
   ALICE_TIMEOUT=90
   BOB_TIMEOUT=90

@@ -60,7 +60,7 @@ def main_func():
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:')
+        opts, args = getopt.getopt(sys.argv[1:], 'Dp:t:l:P:T:46n:N:w:s')
     except getopt.GetoptError:
         usage(global_config)
 
@@ -111,6 +111,9 @@ def main_func():
             continue
         if o == '-D':
             dry_run = True
+            continue
+        if o == '-s':
+            tcfg.signalling_only = True
             continue
     if len(ttype) > 0:
         tcfg.ttype = tuple(ttype)

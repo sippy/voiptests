@@ -1,7 +1,3 @@
-#if (KAMAILIO_VER_FULL != master) && (KAMAILIO_VER_FULL < 44)
-# define NCMDS_BASE 149
-#else
-# define NCMDS_BASE 145
-#endif
+#define NCMDS_BASE 263
 
 #include "rtpproxy.common.output.in"

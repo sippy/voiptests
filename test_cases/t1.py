@@ -33,15 +33,40 @@ from sippy.UA import UA
 from sippy.SipFrom import gen_test_tag
 from sippy.SipHeader import SipHeader
 from sippy.SipWWWAuthenticate import SipWWWAuthenticate
+from sippy.misc import local4remote
 
-from random import random
+from array import array
+from threading import Lock
+from random import random, randint
+from socket import AF_INET, AF_INET6
+
+from sippy.Rtp.Core.AudioChunk import AudioChunk
+from sippy.Rtp.EPoint import RTPEPoint
+from sippy.Rtp.Params import RTPParams
+from sippy.Rtp.Conf import RTPConf
+from sippy.Rtp.OutputWorker import RTPOutputWorker
+from sippy.Rtp.Handlers import RTPHandlers
+from sippy.Rtp.Codecs.G711 import G711Codec
+from sippy.Rtp.Codecs.G722 import G722Codec
+
+class FeedingOutputWorker(RTPOutputWorker):
+    def __init__(self, rtp_params, owner):
+        self._on_drain = owner._rtp_feed_once
+        super().__init__(rtp_params)
+
+    def update_frm_ctrs(self, rcvd_inc = 0, prcsd_inc = 0):
+        #print('update_frm_ctrs', self)
+        res = super().update_frm_ctrs(rcvd_inc, prcsd_inc)
+        if res[0] == res[1]:
+            self._on_drain(self.soundout)
+        return res
 
 class AuthRequired(Exception):
     challenges = None
 
     def __init__(self, challenges):
         self.challenges = challenges
-        Exception.__init__(self)
+        super().__init__()
 
 class AuthFailed(Exception):
     pass
@@ -60,11 +85,185 @@ class test(object):
     acct = None
     finfo_displayed = False
     mightfail = False
+    _done_called = False
+    _rtp_inited = False
+    rtp_chunk_ms = 100
+    rtp_audio_sr = 8000
 
     def failed_msg(self):
         msg = '%s: subclass %s failed, call_id=%s, acct=%s' % (self.my_name(), \
           str(self.__class__), str(self.call_id), str(self.acct))
         return msg
+
+    def _rtp_init(self):
+        assert not self._rtp_inited
+        self._rtp_inited = True
+        self._done_called = False
+        self._rtp_enabled = not self.tccfg.signalling_only
+        self._rtp_lock = Lock()
+        self._rtp_ep = None
+        self._rtp_closing = False
+        self._rtp_tx_gen = 0
+        self._rtp_tx_chunks = 0
+        self._rtp_rx_frames = 0
+        self._rtp_target = None
+        self._rtp_codec = None
+        self._rtp_ptime = None
+        self._rtp_updates = 0
+        self._rtp_error = None
+        self._rtp_tx_chunk = None
+
+    def _rtp_pick_media(self, sdp_body):
+        assert sdp_body is not None
+        sdp_body.parse()
+        for sect in sdp_body.content.sections:
+            if sect.m_header.stype.lower() != 'audio':
+                continue
+            if sect.m_header.transport.lower() not in ('udp', 'rtp/avp'):
+                continue
+            if 0 in sect.m_header.formats:
+                codec = G711Codec
+            elif 9 in sect.m_header.formats:
+                codec = G722Codec
+            else:
+                continue
+            ptime = 20
+            for ah in sect.a_headers:
+                if ah.name != 'ptime' or ah.value is None:
+                    continue
+                try:
+                    ptime = max(10, int(ah.value))
+                except ValueError:
+                    pass
+                break
+            rtp_proto = sect.c_header.atype
+            return ((sect.c_header.addr, sect.m_header.port), codec, ptime, rtp_proto)
+        return None
+
+    def _rtp_audio_in(self, chunk):
+        with self._rtp_lock:
+            self._rtp_rx_frames += chunk.nframes
+
+    def _rtp_feed_once(self, rtp_soundout):
+        if self._rtp_closing:
+            return
+        if self._rtp_tx_chunk is None:
+            nframes = max(1, self.rtp_audio_sr * self.rtp_chunk_ms // 1000)
+            self._rtp_tx_chunk = AudioChunk(array('h', (randint(-32768, 32767) for _ in range(nframes))), \
+              self.rtp_audio_sr)
+        achunk = self._rtp_tx_chunk
+        try:
+            rtp_soundout(achunk)
+        except Exception as ex:
+            self._rtp_error = str(ex)
+            return
+        with self._rtp_lock:
+            self._rtp_tx_gen += achunk.nframes
+            self._rtp_tx_chunks += 1
+
+    def _rtp_start_or_update(self, sdp_body):
+        assert self._rtp_inited
+        if not self._rtp_enabled:
+            return
+        mdata = self._rtp_pick_media(sdp_body)
+        if mdata is None:
+            return
+        rtp_target, codec, ptime, rtp_proto = mdata
+        params = RTPParams(rtp_target, out_ptime = ptime, out_sr = self.rtp_audio_sr, \
+          rtp_proto = rtp_proto)
+        params.codec = codec
+        if self._rtp_ep is None:
+            handlers = RTPHandlers()
+            handlers.writer_cls = lambda rtp_params: FeedingOutputWorker(rtp_params, self)
+            self._rtp_ep = RTPEPoint(RTPConf(), params, self._rtp_audio_in, handlers = handlers)
+        else:
+            self._rtp_ep.update(params)
+            self._rtp_updates += 1
+        self._rtp_target = rtp_target
+        self._rtp_codec = codec.__name__
+        self._rtp_ptime = ptime
+
+    def _rtp_prepare_local_sdp(self, sdp_body, laddr=None, af=None):
+        assert self._rtp_inited
+        if not self._rtp_enabled:
+            return
+        mdata = self._rtp_pick_media(sdp_body)
+        assert mdata is not None
+        _rtp_target, codec, ptime, rtp_proto = mdata
+        if af is not None:
+            rtp_proto = 'IP4' if af == AF_INET else 'IP6'
+        if self._rtp_ep is None:
+            params = RTPParams(None, out_ptime = ptime, out_sr = self.rtp_audio_sr, \
+              rtp_proto = rtp_proto)
+            params.codec = codec
+            handlers = RTPHandlers()
+            handlers.writer_cls = lambda rtp_params: FeedingOutputWorker(rtp_params, self)
+            self._rtp_ep = RTPEPoint(RTPConf(), params, self._rtp_audio_in, handlers = handlers)
+        rp = self._rtp_ep.rtp_params
+        _laddr, lport = rp.rtp_laddr, rp.rtp_lport
+        if laddr is None:
+            laddr = _laddr
+        assert laddr not in ('0.0.0.0', '::', None, '*', '')
+        assert not laddr.startswith('[') and not laddr.endswith(']')
+        self._rtp_apply_local_media(sdp_body, laddr, lport, rtp_proto)
+
+    def _rtp_apply_local_media(self, sdp_body, laddr, lport, rtp_proto):
+        sdp_body.parse()
+        for sect in sdp_body.content.sections:
+            if sect.m_header.stype.lower() != 'audio':
+                continue
+            if sect.m_header.transport.lower() not in ('udp', 'rtp/avp'):
+                continue
+            sect.m_header.port = lport
+            if None not in (laddr, sect.c_header):
+                sect.c_header.addr = laddr
+                sect.c_header.atype = rtp_proto
+            return
+
+    def _rtp_shutdown_stats(self):
+        assert self._rtp_inited
+        if not self._rtp_enabled:
+            return {'tx_rcvd' : 0, 'tx_prcsd' : 0, 'rx_pkts' : 0}
+        assert not self._rtp_closing
+        self._rtp_closing = True
+        stats = {'tx_rcvd' : 0, 'tx_prcsd' : 0, 'rx_pkts' : 0}
+        if self._rtp_ep is None:
+            return stats
+        try:
+            if self._rtp_ep.writer is not None:
+                tx_rcvd, tx_prcsd = self._rtp_ep.writer.get_frm_ctrs()
+                stats['tx_rcvd'] = tx_rcvd
+                stats['tx_prcsd'] = tx_prcsd
+            if self._rtp_ep.rsess is not None:
+                stats['rx_pkts'] = self._rtp_ep.rsess.npkts
+            self._rtp_ep.shutdown()
+        except Exception as ex:
+            self._rtp_error = str(ex)
+        finally:
+            self._rtp_ep = None
+        return stats
+
+    def report_rtp(self):
+        assert self._rtp_inited
+        stats = self._rtp_shutdown_stats()
+        if self._rtp_error is not None and self.debug_lvl > -1:
+            print('%s: RTP error: %s' % (self.my_name(), self._rtp_error))
+        if self._rtp_target is None:
+            print('%s: RTP stats: no session' % self.my_name())
+            return
+        smsg = '%s: RTP stats: target=%s:%d codec=%s ptime=%d tx_gen=%d tx_chunks=%d tx_rcvd=%d tx_prcsd=%d rx_frames=%d rx_pkts=%d updates=%d'
+        args = (self.my_name(), self._rtp_target[0], self._rtp_target[1], self._rtp_codec, \
+          self._rtp_ptime, self._rtp_tx_gen, self._rtp_tx_chunks, stats['tx_rcvd'], \
+          stats['tx_prcsd'], self._rtp_rx_frames, stats['rx_pkts'], self._rtp_updates)
+        print(smsg % args)
+
+    def done(self):
+        assert self._rtp_inited
+        assert not self._done_called
+        self._done_called = True
+        if not self.tccfg.signalling_only:
+            self.report_rtp()
+        self.tccfg.done_cb(self)
 
     def alldone(self, ua):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
@@ -78,7 +277,7 @@ class test(object):
                 self.finfo_displayed = True
             if self.mightfail:
                 self.rval = 0
-        self.tccfg.done_cb(self)
+        self.done()
 
 class a_test1(test):
     cld = 'bob_1'
@@ -100,6 +299,7 @@ class a_test1(test):
                     self.nerrs += 1
                     raise SDPValidationFailure('%s: SDP body has failed validation: %s:\n%s' %
                       (self.my_name(), why, str(sdp_body)))
+                self._rtp_start_or_update(sdp_body)
         if self.debug_lvl > 0:
             print('%s: Incoming event: %s' % (self.my_name(), event))
 
@@ -131,9 +331,30 @@ class a_test1(test):
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
+        self._rtp_init()
+        body = tccfg.body
+        if self._rtp_enabled:
+            body = body.getCopy()
+            nh_host = tccfg.nh_address[0]
+            if nh_host.startswith('[') and nh_host.endswith(']'):
+                af = AF_INET6
+                nh_host = nh_host[1:-1]
+            else:
+                af = AF_INET
+            rtp_laddr = local4remote(nh_host, family=af)
+            if af == AF_INET6 and rtp_laddr.startswith('[') and rtp_laddr.endswith(']'):
+                rtp_laddr = rtp_laddr[1:-1]
+            self._rtp_prepare_local_sdp(body, rtp_laddr, af)
         if tccfg.cli != None:
             self.cli = tccfg.cli
-        uaO = UA(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
+        uaO = self.build_ua(tccfg)
+        self.call_id = SipCallId(body = gen_test_cid())
+        event = CCEventTry((self.call_id, self.cli, self.cld, body, \
+          None, 'Alice Smith'))
+        self.run(uaO, event)
+
+    def build_ua(self, tccfg, UA_class = UA):
+        uaO = UA_class(tccfg.global_config, event_cb = self.recvEvent, nh_address = tccfg.nh_address, \
           conn_cbs = (self.connected,), disc_cbs = (self.disconnected,), fail_cbs = (self.disconnected,), \
           dead_cbs = (self.alldone,), ltag = gen_test_tag())
         if tccfg.uac_creds != None:
@@ -143,10 +364,7 @@ class a_test1(test):
 
         uaO.godead_timeout = self.godead_timeout
         uaO.compact_sip = self.compact_sip
-        self.call_id = SipCallId(body = gen_test_cid())
-        event = CCEventTry((self.call_id, self.cli, self.cld, tccfg.body, \
-          None, 'Alice Smith'))
-        self.run(uaO, event)
+        return uaO
 
     def run(self, ua, event):
         ua.recvEvent(event)
@@ -164,6 +382,7 @@ class b_test1(test):
 
     def __init__(self, tccfg):
         self.tccfg = tccfg
+        self._rtp_init()
         if self.answer_ival == None:
             self.answer_ival = 9.0 + random() * 5.0
         if self.disconnect_ival == None:
@@ -198,6 +417,7 @@ class b_test1(test):
                     raise AuthFailed()
             except ValueError:
                 raise AuthFailed()
+        assert self._rtp_inited
         # New dialog
         uaA = UA(global_config, self.recvEvent, disc_cbs = (self.disconnected,), \
           fail_cbs = (self.disconnected,), dead_cbs = (self.alldone,))
@@ -220,13 +440,26 @@ class b_test1(test):
         ua.recvEvent(event)
         self.ring_done = True
 
+    def _make_media_answer(self, sdp):
+        body = self.body
+        assert sdp is not None
+        if self._rtp_enabled:
+            body = body.getCopy()
+            self._rtp_start_or_update(sdp)
+            rp = self._rtp_ep.rtp_params
+            laddr, lport = rp.rtp_laddr, rp.rtp_lport
+            rtp_proto = rp.rtp_proto
+            self._rtp_apply_local_media(body, laddr, lport, rtp_proto)
+        return body
+
     def connect(self, ua):
         #if random() > 0.3:
         #    ua.recvEvent(CCEventFail((666, 'Random Failure')))
         #    return
         if self.connect_done or self.disconnect_done:
             return
-        event = CCEventConnect((200, 'OK', self.body), origin = 'switch')
+        body = self._make_media_answer(ua.rSDP)
+        event = CCEventConnect((200, 'OK', body), origin = 'switch')
         Timeout(self.disconnect, self.disconnect_ival, 1, ua)
         ua.recvEvent(event)
         self.connect_done = True

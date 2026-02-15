@@ -31,7 +31,7 @@ from sippy.SipTransactionManager import SipTransactionManager
 from sippy.Core.EventDispatcher import ED2
 from random import random
 
-from .test_config import fillhostport
+from .test_config import fillhostport, SIPPY_RTP_OUSER
 
 from ..test_cases.t1 import b_test1, AuthRequired, AuthFailed
 from ..test_cases.t2 import b_test2
@@ -120,7 +120,15 @@ class b_test(object):
                 atype = 'IP6'
             else:
                 atype = 'IP4'
-            tccfg = self.tcfg.gen_tccfg(atype, self.subtest_done)
+
+            in_body = req.getBody()
+            if in_body is None:
+                signalling_only = True
+            else:
+                in_body.parse()
+                signalling_only = (str(in_body.content.s_header) != SIPPY_RTP_OUSER)
+
+            tccfg = self.tcfg.gen_tccfg(atype, signalling_only, self.subtest_done)
 
             subtest = tclass(tccfg)
             test_id = req.getHFBody('to').getUrl().username
@@ -128,8 +136,10 @@ class b_test(object):
 
             self.nsubtests_running += 1
             self.rval += 1
-            sdp_body = self.tcfg.bodys[0 if random() < 0.5 else 1].getCopy()
-            fillhostport(sdp_body, self.tcfg.portrange, tccfg.atype)
+            bidx = 0 if not tccfg.signalling_only or random() < 0.5 else 1
+            sdp_body = self.tcfg.bodys[bidx].getCopy()
+            fillhostport(sdp_body, self.tcfg.portrange, tccfg.atype, signalling_only)
+
             try:
                 return subtest.answer(self.tcfg.global_config, sdp_body, req, sip_t)
             except AuthRequired as ce:

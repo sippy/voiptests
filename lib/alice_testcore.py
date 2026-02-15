@@ -68,6 +68,7 @@ class a_cfg(object):
     test_class = None
     disabled = False
     tcfg = None
+    signalling_only = False
     
     def __init__(self, test_class):
         self.test_class = test_class
@@ -80,27 +81,25 @@ class a_test(object):
         SipTransactionManager.model_udp_server[1].nworkers = 1
         tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
 
-        i = 0
         ttype = tcfg.ttype
         if len(ttype) == 1:
             ttype += ttype
-        atests = [a_cfg(x) for x in ALL_TESTS * len(ttype)]
-        for subtest_cfg in atests:
-            subtest_class = subtest_cfg.test_class
-            if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
-                subtest_cfg.disabled = True
-                i += 1
-                continue
-            subtest_cfg.disabled = False
-            cli = subtest_class.cli
-            if i >= len(ALL_TESTS):
-                atype = ttype[1]
-            else:
-                atype = ttype[0]
-            cli += '_ipv%s' % atype[-1]
-            subtest_cfg.tcfg = tcfg.gen_tccfg(atype, self.subtest_done, cli)
-            print(f'Scheduling test: {subtest_class.name} [{atype}, {cli=}]')
-            i += 1
+        smodes = (True,) if tcfg.signalling_only else (False, True)
+        atests = []
+        for atype in ttype:
+            for subtest_class in ALL_TESTS:
+                if tcfg.tests != None and subtest_class.cli not in tcfg.tests:
+                    continue
+                cli = f'{subtest_class.cli}_ipv{atype[-1]}'
+                for signalling_only in smodes:
+                    subtest_cfg = a_cfg(subtest_class)
+                    subtest_cfg.signalling_only = signalling_only
+                    subtest_cfg.tcfg = tcfg.gen_tccfg(atype, signalling_only, \
+                      self.subtest_done, cli)
+                    atests.append(subtest_cfg)
+                    mode = 'signalling-only' if signalling_only else 'rtp-enabled'
+                    print(f'Scheduling test: {subtest_class.name} [{atype}, {mode}, {cli=}]')
+        self.tcfg = tcfg
         shuffle(atests)
         for subtest_cfg in atests:
             if subtest_cfg.disabled:

@@ -24,6 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from .t1 import a_test1, b_test1
+from .t13 import _mute_sdp
 
 class a_test14(a_test1):
     cld = 'bob_14'
@@ -32,6 +33,15 @@ class a_test14(a_test1):
     compact_sip = False
     disconnect_ival = 120
 
+    def __init__(self, *a, **kwa):
+        super().__init__(*a, **kwa)
+        if self._rtp_enabled:
+            self.tccfg.checkhostport = lambda sdp_body: (True, 'all good')
+
+    def _rtp_prepare_local_sdp(self, body, *a, **kwa):
+        if self._rtp_enabled:
+            _mute_sdp(body)
+
 class b_test14(b_test1):
     cli = a_test14.cld
     name = a_test14.name
@@ -39,3 +49,14 @@ class b_test14(b_test1):
     ring_ival = 1.0
     answer_ival = 2.0
     disconnect_ival = 120
+
+    def __init__(self, *a, **kwa):
+        super().__init__(*a, **kwa)
+        if self._rtp_enabled:
+            self.tccfg.checkhostport = lambda sdp_body: (True, 'all good')
+
+    def _make_media_answer(self, sdp):
+        if self._rtp_enabled:
+            sdp = sdp.getCopy()
+            _mute_sdp(sdp)
+        return sdp

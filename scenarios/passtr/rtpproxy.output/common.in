@@ -6,6 +6,6 @@
 #define NERV NRET
 #define NRPV #eval (NSCV + NRET)
 
-nsess_created=60 nsess_destroyed=60 nsess_timeout=0 nsess_complete=20 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=20 nsess_owrtcp=0
+nsess_created=120 nsess_destroyed=120 nsess_timeout=0 nsess_complete=40 nsess_nortp=20 nsess_owrtp=0 nsess_nortcp=40 nsess_owrtcp=0
 ncmds_rcvd=NRCV ncmds_succd=NSCV ncmds_errs=NERV ncmds_repld=NRPV
 MEMDEB(rtpproxy): all clear
