@@ -331,6 +331,8 @@ then
   fi
 fi
 
+${SUDO} find /tmp/ -type f -name core\*
+
 report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log ${MM_LOG}" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "Checking if Bob is happy"
 
