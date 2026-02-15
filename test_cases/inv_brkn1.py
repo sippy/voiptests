@@ -48,7 +48,7 @@ class a_test_inv_brkn1(a_test_inv):
     def alldone(self, ua):
         if self.disconnect_done and self.nerrs == 0:
             self.rval = 0
-        self.tccfg.done_cb(self)
+        self.done()
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventTry):
@@ -74,4 +74,4 @@ class b_test_inv_brkn1(b_test_inv):
     def alldone(self, ua):
         if self.ring_done and not self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
-        self.tccfg.done_cb(self)
+        self.done()

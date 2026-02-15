@@ -35,7 +35,7 @@ class a_test3(a_test1):
     def alldone(self, ua):
         if self.disconnect_done and self.nerrs == 0:
             self.rval = 0
-        self.tccfg.done_cb(self)
+        self.done()
 
 class b_test3(b_test1):
     cli = a_test3.cld

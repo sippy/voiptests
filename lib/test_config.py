@@ -5,12 +5,17 @@ from importlib.util import spec_from_file_location, module_from_spec
 import os
 
 from sippy.SdpOrigin import SdpOrigin
+from sippy.SdpGeneric import SdpGeneric
 
 from .GenIPs import genIP
 from .PortRange import PortRange
 
-def fillhostport(sdp_body, portrange, atype = None):
+SIPPY_RTP_OUSER = 'SippyRTP'
+
+def fillhostport(sdp_body, portrange, atype, signalling_only):
     sdp_body.content.o_header = SdpOrigin()
+    if not signalling_only:
+        sdp_body.content.s_header = SdpGeneric(SIPPY_RTP_OUSER)
     for i in range(0, len(sdp_body.content.sections)):
         sect = sdp_body.content.sections[i]
         if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
@@ -56,6 +61,7 @@ class test_case_config(object):
     uac_creds = None
     check_media_ips = None
     cli = None
+    signalling_only = False
 
     def __init__(self, nh_address):
         self.nh_address = nh_address
@@ -95,8 +101,9 @@ class test_config(object):
     acfg = None
     bcfg = None
     tests_mightfail = tuple()
+    signalling_only = False
 
-    def gen_tccfg(self, atype, done_cb, cli=None):
+    def gen_tccfg(self, atype, signalling_only, done_cb, cli=None):
         if atype == 'IP4':
             nh_address = self.nh_address4
         else:
@@ -109,11 +116,12 @@ class test_config(object):
         tccfg.global_config = self.global_config
         if self.body != None:
             tccfg.body = self.body.getCopy()
-            fillhostport(tccfg.body, self.portrange, atype)
+            fillhostport(tccfg.body, self.portrange, atype, signalling_only)
         tccfg.done_cb = done_cb
         tccfg.cli = cli
         tccfg.atype = atype
         tccfg.portrange = self.portrange
+        tccfg.signalling_only = signalling_only
         return tccfg
 
     def __init__(self, global_config):
