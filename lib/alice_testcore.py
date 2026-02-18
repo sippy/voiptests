@@ -31,6 +31,8 @@ from sippy.Time.Timeout import Timeout
 from sippy.Core.EventDispatcher import ED2
 from random import shuffle
 
+from .testcore_base import testcore_base
+
 from ..test_cases.t1 import a_test1
 from ..test_cases.t2 import a_test2
 from ..test_cases.t3 import a_test3
@@ -73,13 +75,17 @@ class a_cfg(object):
     def __init__(self, test_class):
         self.test_class = test_class
 
-class a_test(object):
+    def init_test(self):
+        return self.test_class(self.tcfg)
+
+class a_test(testcore_base):
+    stm_class = SipTransactionManager
+    stats_name = 'Alice'
     nsubtests_running = 0
     rval = 1
 
     def __init__(self, tcfg):
-        SipTransactionManager.model_udp_server[1].nworkers = 1
-        tcfg.global_config['_sip_tm'] = SipTransactionManager(tcfg.global_config, self.recvRequest)
+        self.setup_stm(tcfg)
 
         ttype = tcfg.ttype
         if len(ttype) == 1:
@@ -99,25 +105,11 @@ class a_test(object):
                     atests.append(subtest_cfg)
                     mode = 'signalling-only' if signalling_only else 'rtp-enabled'
                     print(f'Scheduling test: {subtest_class.name} [{atype}, {mode}, {cli=}]')
+        atests = [x for x in atests if not x.disabled]
         self.tcfg = tcfg
         shuffle(atests)
         for subtest_cfg in atests:
-            if subtest_cfg.disabled:
-                continue
-            subtest = subtest_cfg.test_class(subtest_cfg.tcfg)
+            subtest = subtest_cfg.init_test()
             self.nsubtests_running += 1
         self.rval = self.nsubtests_running
         Timeout(self.timeout, tcfg.test_timeout, 1)
-
-    def recvRequest(self, req, sip_t):
-        return (req.genResponse(501, 'Not Implemented'), None, None)
-
-    def subtest_done(self, subtest):
-        self.nsubtests_running -= 1
-        if subtest.rval == 0:
-            self.rval -= 1
-        if self.nsubtests_running == 0:
-            ED2.breakLoop()
-
-    def timeout(self):
-        ED2.breakLoop()

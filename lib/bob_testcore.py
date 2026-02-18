@@ -28,10 +28,10 @@
 
 from sippy.Time.Timeout import Timeout
 from sippy.SipTransactionManager import SipTransactionManager
-from sippy.Core.EventDispatcher import ED2
 from random import random
 
 from .test_config import fillhostport, SIPPY_RTP_OUSER
+from .testcore_base import testcore_base
 
 from ..test_cases.t1 import b_test1, AuthRequired, AuthFailed
 from ..test_cases.t2 import b_test2
@@ -91,14 +91,15 @@ class BobSTM(SipTransactionManager):
                 Timeout(self.spuriousDup, lossemul.dupemul, 1, *tdargs)
         return rval
 
-class b_test(object):
+class b_test(testcore_base):
+    stm_class = BobSTM
+    stats_name = 'Bob'
     rval = 1
     nsubtests_running = 0
     tcfg: 'test_config' = None
 
     def __init__(self, tcfg:'test_config'):
-        BobSTM.model_udp_server[1].nworkers = 1
-        tcfg.global_config['_sip_tm'] = BobSTM(tcfg.global_config, self.recvRequest)
+        self.setup_stm(tcfg)
         Timeout(self.timeout, tcfg.test_timeout, 1)
         self.tcfg = tcfg
 
@@ -136,6 +137,7 @@ class b_test(object):
 
             self.nsubtests_running += 1
             self.rval += 1
+
             bidx = 0 if not tccfg.signalling_only or random() < 0.5 else 1
             sdp_body = self.tcfg.bodys[bidx].getCopy()
             fillhostport(sdp_body, self.tcfg.portrange, tccfg.atype, signalling_only)
@@ -155,14 +157,6 @@ class b_test(object):
                 return (resp, None, None)
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
-    def timeout(self):
-        ED2.breakLoop()
-
-    def subtest_done(self, subtest):
-        self.nsubtests_running -= 1
-        if subtest.rval == 0:
-            self.rval -= 1
-        if self.nsubtests_running == 0:
-            if self.rval == 1:
-                self.rval = 0
-            ED2.breakLoop()
+    def _on_no_subtests_left(self):
+        if self.rval == 1:
+            self.rval = 0
