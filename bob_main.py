@@ -26,14 +26,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys, getopt
-from time import sleep
 
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
-from sippy.SipConf import SipConf
 from sippy.Core.EventDispatcher import ED2
 
-from .lib.PortRange import PortRange
 from .lib.test_config import test_config
 
 body_audio = 'v=0\r\n' + \
@@ -68,43 +65,12 @@ def main_func():
     global_config = {}
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'p:l:P:T:n:N:w:m:')
+        opts, args = getopt.getopt(sys.argv[1:], test_config.getopts)
     except getopt.GetoptError:
         usage(global_config)
-    tcfg = test_config(global_config)
-    pre_wait = None
-    for o, a in opts:
-        if o == '-p':
-            tcfg.portrange = PortRange(a.strip())
-            continue
-        if o == '-l':
-            saddr = a.strip()
-            if saddr == '*':
-                saddr = SipConf.my_address
-            global_config['_sip_address'] = saddr
-            continue
-        if o == '-P':
-            global_config['_sip_port'] = int(a)
-            continue
-        if o == '-T':
-            tcfg.test_timeout = int(a)
-            continue
-        if o == '-n':
-            nh_address4 = a.split(':', 1)
-            nh_address4[1] = int(nh_address4[1])
-            tcfg.nh_address4 = tuple(nh_address4)
-            continue
-        if o == '-N':
-            nh_address6 = a.rsplit(':', 1)
-            nh_address6[1] = int(nh_address6[1])
-            tcfg.nh_address6 = tuple(nh_address6)
-            continue
-        if o == '-w':
-            pre_wait = float(a)
-            continue
-        if o == '-m':
-            tcfg.tests_mightfail = tuple('bob_' + x for x in a.split(','))
-            continue
+    tcfg = test_config(global_config, opts)
+    assert len(opts) == 0
+    tcfg.tests_mightfail = tuple('bob_' + x for x in tcfg.tests_mightfail)
 
     bodys = [MsgBody(x) for x in BODIES_ALL]
     for body in bodys:
@@ -115,8 +81,6 @@ def main_func():
     global_config['_sip_logger'] = sl
 
     from .lib.bob_testcore import b_test
-    if pre_wait != None:
-        sleep(pre_wait)
     bcore = b_test(tcfg)
 
     ED2.loop()

@@ -293,6 +293,7 @@ class a_test1(test):
     name = 'Basic test #1'
     disconnect_ival = 9.0
     cancel_ival = None
+    test_id  = None
 
     def recvEvent(self, event, ua):
         if isinstance(event, CCEventRing) and not self.ring_done:
@@ -338,6 +339,7 @@ class a_test1(test):
             print('%s: disconnected' % self.my_name(), rtime, origin, result, self.acct)
 
     def __init__(self, tccfg):
+        self.test_id = self.cli
         self.tccfg = tccfg
         self._rtp_init()
         body = tccfg.body

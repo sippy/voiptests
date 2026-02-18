@@ -256,12 +256,13 @@ BOB_ARGS="-P 5062 -T ${BOB_TIMEOUT}"
 if [ -n "${TEST_SET_MIGHTFAIL}" ]
 then
   BOB_ARGS="${BOB_ARGS} -m ${TEST_SET_MIGHTFAIL}"
+  ALICE_ARGS="${ALICE_ARGS} -m ${TEST_SET_MIGHTFAIL}"
 fi
 MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' ${BOB_ARGS} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 start_mm
-MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} alice.py "${ALICE_ARGS}" -t "${TEST_SET}" -l '*' -P 5061 \
+MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} alice.py -l '*' ${ALICE_ARGS} -t "${TEST_SET}" -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
 echo "${ALICE_PID}" > "${ALICE_PIDF}"

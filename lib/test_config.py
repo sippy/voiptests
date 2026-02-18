@@ -3,9 +3,12 @@
 
 from importlib.util import spec_from_file_location, module_from_spec
 import os
+from time import monotonic
 
 from sippy.SdpOrigin import SdpOrigin
 from sippy.SdpGeneric import SdpGeneric
+from sippy.SipConf import SipConf
+from sippy.Time.MonoTime import MonoTime
 
 from .GenIPs import genIP
 from .PortRange import PortRange
@@ -90,6 +93,7 @@ class test_case_config(object):
         return (True, 'all good')
 
 class test_config(object):
+    getopts = 'p:l:P:T:n:N:w:m:'
     global_config = None
     ttype = ('IP4', 'IP6')
     body = None
@@ -102,6 +106,7 @@ class test_config(object):
     bcfg = None
     tests_mightfail = tuple()
     signalling_only = False
+    pre_wait = None
 
     def gen_tccfg(self, atype, signalling_only, done_cb, cli=None):
         if atype == 'IP4':
@@ -124,8 +129,50 @@ class test_config(object):
         tccfg.signalling_only = signalling_only
         return tccfg
 
-    def __init__(self, global_config):
+    def _parse_common_opt(self, o, a):
+        if o == '-p':
+            self.portrange = PortRange(a.strip())
+            return True
+        if o == '-l':
+            saddr = a.strip()
+            if saddr == '*':
+                saddr = SipConf.my_address
+            self.global_config['_sip_address'] = saddr
+            return True
+        if o == '-P':
+            self.global_config['_sip_port'] = int(a)
+            return True
+        if o == '-T':
+            self.test_timeout = int(a)
+            return True
+        if o == '-n':
+            nh_address4 = a.split(':', 1)
+            nh_address4[1] = int(nh_address4[1])
+            self.nh_address4 = tuple(nh_address4)
+            return True
+        if o == '-N':
+            nh_address6 = a.rsplit(':', 1)
+            nh_address6[1] = int(nh_address6[1])
+            self.nh_address6 = tuple(nh_address6)
+            return True
+        if o == '-w':
+            self.pre_wait = monotonic() + float(a)
+            return True
+        if o == '-m':
+            self.tests_mightfail = tuple(a.split(','))
+            return True
+        return False
+
+    def __init__(self, global_config, opts = None):
         self.global_config = global_config
+        if opts != None:
+            i = 0
+            while i < len(opts):
+                o, a = opts[i]
+                if self._parse_common_opt(o, a):
+                    del opts[i]
+                else:
+                    i += 1
         try:
             self.acfg = load_cfg('alice')
         except ImportError:
