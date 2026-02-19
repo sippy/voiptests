@@ -27,6 +27,8 @@
 
 import sys, getopt
 
+from .contrib.objgraph import show_most_common_types
+
 from sippy.MsgBody import MsgBody
 from sippy.SipLogger import SipLogger
 from sippy.Core.EventDispatcher import ED2
@@ -85,6 +87,9 @@ def main_func():
         if o == '-s':
             tcfg.signalling_only = True
             continue
+        if o == '-C':
+            tcfg.cps = float(a)
+            continue
     if len(ttype) > 0:
         tcfg.ttype = tuple(ttype)
 
@@ -100,5 +105,8 @@ def main_func():
 
     if not dry_run:
         ED2.loop()
+
+        print('\n-- Types Summary: --')
+        show_most_common_types(50)
 
         sys.exit(acore.rval)

@@ -23,11 +23,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-##import sys
+import sys
+from signal import SIGUSR1
 ##sys.path.insert(0, 'dist/b2bua')
 
 from sippy.Time.Timeout import Timeout
 from sippy.SipTransactionManager import SipTransactionManager
+from sippy.Signal import Signal
+
 from random import random
 
 from .test_config import fillhostport, SIPPY_RTP_OUSER
@@ -98,13 +101,30 @@ class b_test(testcore_base):
     rval = 1
     nsubtests_running = 0
     tcfg: 'test_config' = None
+    debug = False
+    spinor = None
+    last_ulen = 0
+    active_subtests = None
 
     def __init__(self, tcfg:'test_config'):
         self.setup_stm(tcfg)
         super().__init__(tcfg)
-        Timeout(self.timeout, tcfg.test_timeout, 1)
+        if not tcfg.continuous:
+            Timeout(self.timeout, tcfg.test_timeout, 1)
+        else:
+            self.active_subtests = []
+            self.setup_continuous_stats()
+            Signal(SIGUSR1, self.dumpcalls)
+
+    def dumpcalls(self):
+        sys.stderr.write('BOB: Active tests:\n')
+        for c in self.active_subtests:
+            sys.stderr.write('\t%d %s\n' % (id(c), str(c)))
+        sys.stderr.flush()
 
     def recvRequest(self, req, sip_t):
+        if self.debug:
+            print('recvRequest')
         if req.getHFBody('to').getTag() is not None:
             # Request within dialog, but no such dialog
             return (req.genResponse(481, 'Call Leg/Transaction Does Not Exist'), None, None)
@@ -132,11 +152,17 @@ class b_test(testcore_base):
 
             tccfg = self.tcfg.gen_tccfg(atype, signalling_only, self.subtest_done)
 
+            if self.tcfg.continuous:
+                tclass.debug_lvl = -1
+                tclass.godead_timeout = 1.0
             subtest = tclass(tccfg)
             test_id = req.getHFBody('to').getUrl().username
             subtest.mightfail = test_id in self.tcfg.tests_mightfail
 
             self.nsubtests_running += 1
+            if self.tcfg.continuous:
+                self.active_subtests.append(subtest)
+                self.update_stats()
             self.rval += 1
 
             bidx = 0 if not tccfg.signalling_only or random() < 0.5 else 1
@@ -150,6 +176,9 @@ class b_test(testcore_base):
                 resp.appendHeaders(ce.challenges)
                 self.nsubtests_running -= 1
                 self.rval -= 1
+                if self.tcfg.continuous:
+                    self.active_subtests.remove(subtest)
+                    self.update_stats()
                 resp.lossemul = STMHooks()
                 resp.lossemul.dupemul = 0.001
                 return (resp, None, None)
@@ -162,3 +191,6 @@ class b_test(testcore_base):
         if self.nsubtests_running == 0 and self.rval == 1:
             self.rval = 0
         super().timeout()
+
+    def _subtest_done_continuous(self, subtest):
+        self.active_subtests.remove(subtest)

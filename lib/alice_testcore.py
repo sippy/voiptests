@@ -23,13 +23,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-##import sys
+import sys
+from signal import SIGINT
 ##sys.path.insert(0, 'dist/b2bua')
 
 from sippy.SipTransactionManager import SipTransactionManager
-from sippy.Time.Timeout import Timeout
+from sippy.Signal import Signal
+from sippy.Time.Timeout import Timeout, TimeoutAbsMono
 from sippy.Core.EventDispatcher import ED2
-from random import shuffle
+from random import shuffle, choice
 
 from .testcore_base import testcore_base
 
@@ -84,6 +86,9 @@ class a_test(testcore_base):
     stats_name = 'Alice'
     nsubtests_running = 0
     rval = 1
+    tcfg = None
+    last_ulen = 0
+    nextr = None
 
     def __init__(self, tcfg):
         self.setup_stm(tcfg)
@@ -104,10 +109,22 @@ class a_test(testcore_base):
                     subtest_cfg.tcfg = tcfg.gen_tccfg(atype, signalling_only, \
                       self.subtest_done, cli)
                     atests.append(subtest_cfg)
-                    mode = 'signalling-only' if signalling_only else 'rtp-enabled'
-                    print(f'Scheduling test: {subtest_class.name} [{atype}, {mode}, {cli=}]')
+                    if tcfg.continuous:
+                        subtest_class.debug_lvl = -1
+                        subtest_class.godead_timeout = 1.0
+                    else:
+                        mode = 'signalling-only' if signalling_only else 'rtp-enabled'
+                        print(f'Scheduling test: {subtest_class.name} [{atype}, {mode}, {cli=}]')
         atests = [x for x in atests if not x.disabled]
         super().__init__(tcfg)
+        if tcfg.continuous:
+            self.atests = atests
+            self.ntime = tcfg.ntime.getCopy()
+            #Timeout(self.runnext, 0.1, -1)
+            self.setup_continuous_stats()
+            self.runnext()
+            Signal(SIGINT, self.deorbit)
+            return
         shuffle(atests)
         for subtest_cfg in atests:
             subtest = subtest_cfg.init_test()
@@ -119,3 +136,27 @@ class a_test(testcore_base):
     def _on_no_subtests_left(self):
         super()._on_no_subtests_left()
         ED2.breakLoop()
+
+    def deorbit(self, signum = None):
+        self.nextr.cancel()
+        Timeout(self.slowexit, 0.1, -1)
+        Timeout(self.timeout, 140.0)
+
+    def slowexit(self):
+        self.update_stats()
+        if self.nsubtests_running > 0:
+            return
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+        ED2.breakLoop()
+
+    def runnext(self):
+        subtest_cfg = choice(self.atests)
+        subtest = subtest_cfg.init_test()
+        self.nsubtests_running += 1
+        if self.tcfg.cps != None:
+            self.ntime.offset(1.0 / self.tcfg.cps)
+            self.nextr = TimeoutAbsMono(self.runnext, self.ntime)
+        else:
+            self.runnext()
+        self.update_stats()

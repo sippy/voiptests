@@ -26,8 +26,11 @@
 import sys
 
 from sippy.Core.EventDispatcher import ED2
+from sippy.Math.recfilter import recfilter
+from sippy.Time.Timeout import Timeout
 
 from .sleep_abs_mono import sleep_abs_mono
+from .spinor import spinor
 
 class testcore_base(object):
     stm_class = None
@@ -44,13 +47,40 @@ class testcore_base(object):
         self.stm_class.model_udp_server[1].nworkers = 1
         tcfg.global_config['_sip_tm'] = self.stm_class(tcfg.global_config, self.recvRequest)
 
+    def setup_continuous_stats(self):
+        self.spinor = spinor()
+        self.rcf = recfilter(0.999, 1.0)
+        self.update_stats()
+        Timeout(self.idle_update, 1.0, -1)
+
     def recvRequest(self, req, sip_t):
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):
         ED2.breakLoop()
 
+    def update_stats(self):
+        if self.nsubtests_running == 0:
+            self.spinor.idle = True
+        else:
+            self.spinor.idle = False
+        omsg = '\r%s: %d tests running %s, %f' % (self.stats_name, \
+          self.nsubtests_running, self.spinor.tick(), self.rcf.lastval)
+        sys.stdout.write(omsg)
+        if len(omsg) < self.last_ulen:
+            pad = ' ' * (self.last_ulen - len(omsg))
+            sys.stdout.write(pad)
+        sys.stdout.flush()
+        self.last_ulen = len(omsg)
+
+    def idle_update(self):
+        if self.spinor.idle:
+            self.update_stats()
+
     def _subtest_done_common(self, subtest):
+        pass
+
+    def _subtest_done_continuous(self, subtest):
         pass
 
     def _on_no_subtests_left(self):
@@ -61,5 +91,12 @@ class testcore_base(object):
         self._subtest_done_common(subtest)
         if subtest.rval == 0:
             self.rval -= 1
-        if self.nsubtests_running == 0:
+        if self.tcfg.continuous:
+            self._subtest_done_continuous(subtest)
+            if subtest.rval == 0:
+                self.rcf.apply(1.0)
+            else:
+                self.rcf.apply(0.0)
+            self.update_stats()
+        elif self.nsubtests_running == 0:
             self._on_no_subtests_left()

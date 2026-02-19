@@ -65,6 +65,7 @@ class test_case_config(object):
     check_media_ips = None
     cli = None
     signalling_only = False
+    continuous = False
 
     def __init__(self, nh_address):
         self.nh_address = nh_address
@@ -93,7 +94,7 @@ class test_case_config(object):
         return (True, 'all good')
 
 class test_config(object):
-    getopts = 'p:l:P:T:n:N:w:m:'
+    getopts = 'p:l:P:T:n:N:w:m:c'
     global_config = None
     ttype = ('IP4', 'IP6')
     body = None
@@ -107,8 +108,12 @@ class test_config(object):
     tests_mightfail = tuple()
     signalling_only = False
     pre_wait = None
+    continuous = False
+    cps = None
+    ntime = None
 
     def gen_tccfg(self, atype, signalling_only, done_cb, cli=None):
+        self.ntime = MonoTime()
         if atype == 'IP4':
             nh_address = self.nh_address4
         else:
@@ -127,6 +132,7 @@ class test_config(object):
         tccfg.atype = atype
         tccfg.portrange = self.portrange
         tccfg.signalling_only = signalling_only
+        tccfg.continuous = self.continuous
         return tccfg
 
     def _parse_common_opt(self, o, a):
@@ -160,6 +166,9 @@ class test_config(object):
             return True
         if o == '-m':
             self.tests_mightfail = tuple(a.split(','))
+            return True
+        if o == '-c':
+            self.continuous = True
             return True
         return False
 
