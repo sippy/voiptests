@@ -61,7 +61,7 @@ class test_reinvite(object):
             for sect in sdp_body.content.sections:
                 if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
                     continue
-                sect.m_header.port += 10
+                sect.m_header.port = self._rtp_port_alloc()
         event = CCEventUpdate(sdp_body, origin = 'switch')
         self.reinvite_in_progress = True
         ua.recvEvent(event)
@@ -110,7 +110,7 @@ class test_reinvite(object):
         for sect in sdp_body.content.sections:
             if sect.m_header.transport.lower() not in ('udp', 'udptl', 'rtp/avp'):
                 continue
-            sect.m_header.port -= 10
+            sect.m_header.port = self._rtp_port_alloc()
         sdp_body.content.o_header.version += 1
         event = CCEventConnect((200, 'OK', sdp_body), origin = 'switch')
         ua.recvEvent(event)

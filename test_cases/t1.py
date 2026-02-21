@@ -66,6 +66,10 @@ class test(object):
           str(self.__class__), str(self.call_id), str(self.acct))
         return msg
 
+    def _rtp_port_alloc(self, ntry=0):
+        assert ntry < 10
+        return self.tccfg.portrange.gennotinrange()
+
     def alldone(self, ua):
         if self.ring_done and self.connect_done and self.disconnect_done and self.nerrs == 0:
             self.rval = 0
