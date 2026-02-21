@@ -5,6 +5,7 @@ class PortRange(object):
     abs_maxp = 65535
     minp = None
     maxp = None
+    ctl_portn = 22222
 
     def __init__(self, s):
         sparts = s.split('-', 1)
@@ -15,6 +16,8 @@ class PortRange(object):
     def gennotinrange(self):
         while True:
             portn = 2 * (1 + int(32765.0 * random()))
+            if portn == self.ctl_portn:
+                continue
             if (portn >= self.abs_minp and portn <= self.abs_maxp) and \
               (portn < self.minp or portn > self.maxp):
                 return portn
