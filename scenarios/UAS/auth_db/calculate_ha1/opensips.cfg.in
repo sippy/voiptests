@@ -39,8 +39,8 @@ modparam("auth_db", "db_url", "text://<#exec echo -n `pwd`>/scenarios/<#MM_AUTH>
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
-listen=udp:127.0.0.1:5060
-listen=udp:[::1]:5060
+socket=udp:127.0.0.1:5060
+socket=udp:[::1]:5060
 
 #if OPENSIPS_VER_FULL == master
 stderror_enabled=yes

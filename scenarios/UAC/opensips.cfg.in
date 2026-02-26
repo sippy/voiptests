@@ -29,8 +29,8 @@ loadmodule "uri/uri.so"
 modparam("uac_auth", "credential", "mightyuser:VoIPTests.NET:s3cr3tpAssw0Rd")
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
-listen=udp:127.0.0.1:5060
-listen=udp:[::1]:5060
+socket=udp:127.0.0.1:5060
+socket=udp:[::1]:5060
 
 #if OPENSIPS_VER_FULL == master
 stderror_enabled=yes

@@ -38,8 +38,13 @@ modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 RTPP_LISTEN"$$)
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 #endif
 
+#if OPENSIPS_VER != 24 && OPENSIPS_VER != 30
+socket=udp:127.0.0.1:5060
+socket=udp:[::1]:5060
+#else
 listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
+#endif
 
 #if OPENSIPS_VER_FULL == master
 stderror_enabled=yes
