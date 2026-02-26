@@ -28,6 +28,9 @@ jobs:
           - mm-branch: 'master'
             mm-auths: '["", "passtr", "UAC", "UAS/auth", "UAS/auth_db/calculate_ha1", "UAS/auth_db/ha1"]'
             rtppc-types: '["unix", "udp", "udp6", "tcp", "tcp6"]'
+          - mm-branch: '3.6'
+            mm-auths: '[""]'
+            rtppc-types: '["unix", "udp", "udp6", "tcp", "tcp6"]'
           - mm-branch: '3.5'
             mm-auths: '[""]'
             rtppc-types: '["unix", "udp", "udp6", "tcp", "tcp6"]'
@@ -57,7 +60,7 @@ jobs:
     with:
       mm-type: 'b2bua'
       mm-branch: ${{ matrix.mm-branch }}
-      python-versions: '["3.9", "3.10", "3.11", "3.12", "3.13-dev"]'
+      python-versions: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14-dev"]'
       rtppc-types: '["unix", "cunix", "udp", "udp6", "tcp", "tcp6"]'
       use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
       artifact-files: 'b2bua.log'
@@ -89,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mm-branch: ['master', '6.0', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1', '4.4']
+        mm-branch: ['master', '6.1', '6.0', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1']
 
   publish:
     needs: [opensips, sippy_py_b2bua, sippy_go_b2bua, kamailio]
