@@ -72,7 +72,10 @@ fi
 
 if [ "${MM_TYPE}" = "b2bua" ]
 then
-  ${PYTHON_CMD} -m pip install -U -r b2bua/requirements.txt
+  if [ "${SKIP_PY_DEPS}" != "1" ]
+  then
+    ${PYTHON_CMD} -m pip install -U -r b2bua/requirements.txt
+  fi
 fi
 
 if [ "${MM_TYPE}" = "kamailio" ]

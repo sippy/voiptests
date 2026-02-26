@@ -1,0 +1,21 @@
+# syntax=docker/dockerfile:1
+
+ARG BASE_IMAGE=ghcr.io/sippy/rtpproxy:latest
+FROM ${BASE_IMAGE}
+
+ARG MM_TYPE
+ARG MM_BRANCH
+
+ENV MM_TYPE=${MM_TYPE} \
+    MM_BRANCH=${MM_BRANCH} \
+    RTPP_BRANCH=DOCKER \
+    BASEDIR=/opt/voiptests \
+    BUILDDIR=/opt/voiptests \
+    PYTHON_CMD=python3 \
+    DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /opt/voiptests
+
+COPY . /opt/voiptests
+
+RUN /bin/sh -eux ./cibits/build_ssut_image.sh
