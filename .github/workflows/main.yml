@@ -60,7 +60,7 @@ jobs:
     with:
       mm-type: 'b2bua'
       mm-branch: ${{ matrix.mm-branch }}
-      python-versions: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14-dev"]'
+      python-versions: '["3.10", "3.11", "3.12", "3.13", "3.14-dev"]'
       rtppc-types: '["unix", "cunix", "udp", "udp6", "tcp", "tcp6"]'
       use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
       artifact-files: 'b2bua.log'

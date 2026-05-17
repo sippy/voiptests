@@ -56,18 +56,24 @@ if [ "${MM_TYPE}" = "opensips" ]
 then
   MM_DIR="${BUILDDIR}/dist/opensips"
   perl -pi -e 's|-O[3-9]|-O0 -g3|' "${MM_DIR}/Makefile.defs"
-  if [ "${MM_BRANCH}" = "2.3" ]
-  then
+  case "${MM_BRANCH}" in
+  2[.]3)
     mm_patch_set_append mod.rtpproxy_iodebug.diff
-  fi
-  if [ "${MM_BRANCH}" = "2.4" ]
-  then
+    ;;
+  2[.]4)
     mm_patch_set_append old/mod.rtpproxy_retry.diff
-  fi
-  if [ "${MM_BRANCH}" = "master" ]
-  then
-    MM_KILL_MODULES="rabbitmq_consumer event_kafka"
-  fi
+    mm_patch_set_append old/mi_trace.c.2.4.diff
+    ;;
+  3[.]0)
+    mm_patch_set_append old/mi_trace.c.3.0.diff
+    ;;
+  3[.]6)
+    mm_patch_set_append old/bin_interface.c.3.6.diff
+    ;;
+  master)
+    MM_KILL_MODULES="rabbitmq_consumer event_kafka freeswitch freeswitch_scripting dispatcher load_balancer"
+    ;;
+  esac
 fi
 
 if [ "${MM_TYPE}" = "b2bua" ]
@@ -112,17 +118,29 @@ then
   do
     rm -rf "${MM_DIR}/modules/${m}"
   done
-  if [ "${MM_BRANCH}" = "master" ]
-  then
+  case ${MM_BRANCH} in
+  master)
     _EXTRA_OPTS="CC_EXTRA_OPTS=-Werror"
-  fi
-  ${MAKE_CMD} -C "${MM_DIR}" ${_EXTRA_OPTS} CC_NAME=gcc CC="${CC}" \
+    ;;
+  2[.]4 | 3[.]0)
+    _EXTRA_OPTS="CC_EXTRA_OPTS=-Werror -std=gnu17 -Wno-misleading-indentation"
+    ;;
+  *)
+    _EXTRA_OPTS="CC_EXTRA_OPTS=-Werror -std=gnu17"
+    ;;
+  esac
+  ${MAKE_CMD} -C "${MM_DIR}" "${_EXTRA_OPTS}" CC_NAME=gcc CC="${CC}" \
    NICER=0 all modules
 fi
 
 if [ "${MM_TYPE}" = "kamailio" ]
 then
-  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" CC_NAME=gcc CC="${CC}" LD="${CC}" \
+  case ${MM_BRANCH} in
+  5[.][1234567])
+    _EXTRA_OPTS="CC_EXTRA_OPTS=-std=gnu17"
+    ;;
+  esac
+  ${MAKE_CMD} -C "${BUILDDIR}/dist/kamailio" ${_EXTRA_OPTS} CC_NAME=gcc CC="${CC}" LD="${CC}" \
    include_modules="sl tm rr maxfwd rtpproxy textops" \
    skip_modules="erlang corex sipcapture sms app_sqlang" all modules
 fi
