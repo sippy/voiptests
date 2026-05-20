@@ -67,9 +67,6 @@ then
   3[.]0)
     mm_patch_set_append old/mi_trace.c.3.0.diff
     ;;
-  3[.]6)
-    mm_patch_set_append old/bin_interface.c.3.6.diff
-    ;;
   master)
     MM_KILL_MODULES="rabbitmq_consumer event_kafka freeswitch freeswitch_scripting dispatcher load_balancer"
     ;;
