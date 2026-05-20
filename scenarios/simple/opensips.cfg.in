@@ -34,6 +34,7 @@ loadmodule "uri/uri.so"
 
 #if RTPPC_TYPE == rtp.io
 modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 RTPP_LISTEN"$$)
+modparam("rtpproxy", "rtpproxy_timeout", "3")
 #else
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 #endif
