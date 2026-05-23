@@ -89,9 +89,10 @@ start_mm() {
      --logfile="${MM_LOG}" &
     MM_PID=${!}
     i=0
+    MM_WAITREADY=$((${MM_WAITREADY:-"4"}))
     while [ ! -e "${MM_SOCK_BARE}" ]
     do
-      if [ ${i} -gt 4 ]
+      if [ ${i} -gt ${MM_WAITREADY} ]
       then
         report_rc_log 1 "${MM_LOG}" "Waiting for the B2BUA to become ready"
       fi
@@ -252,7 +253,7 @@ then
     report_rc_log ${?} "rtpproxy.rout rtpproxy.log" "Checking if ${RTPP_SOCK_TEST} works"
 fi
 
-BOB_ARGS="-P 5062 -T ${BOB_TIMEOUT}"
+BOB_ARGS="-P 5062 -T $((${BOB_TIMEOUT} + ${MM_INIT_DELAY}))"
 if [ -n "${TEST_SET_MIGHTFAIL}" ]
 then
   BOB_ARGS="${BOB_ARGS} -m ${TEST_SET_MIGHTFAIL}"
