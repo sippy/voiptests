@@ -256,6 +256,8 @@ class test(object):
         stats = self._rtp_shutdown_stats()
         if self._rtp_error is not None and self.debug_lvl > -1:
             print('%s: RTP error: %s' % (self.my_name(), self._rtp_error))
+        if self.tccfg.continuous:
+            return
         if self._rtp_target is None:
             print('%s: RTP stats: no session' % self.my_name())
             return

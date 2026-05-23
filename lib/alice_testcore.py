@@ -23,13 +23,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-##import sys
+import sys
+from signal import SIGINT
 ##sys.path.insert(0, 'dist/b2bua')
 
 from sippy.SipTransactionManager import SipTransactionManager
-from sippy.Time.Timeout import Timeout
+from sippy.Signal import Signal
+from sippy.Time.Timeout import Timeout, TimeoutAbsMono
 from sippy.Core.EventDispatcher import ED2
-from random import shuffle
+from random import shuffle, choice
 
 from .testcore_base import testcore_base
 
@@ -58,13 +60,14 @@ from ..test_cases.reinv_adelay import a_test_reinv_adelay
 from ..test_cases.reinv_frombob import a_test_reinv_frombob
 from ..test_cases.reinv_bad_ack import a_test_reinv_bad_ack
 from ..test_cases.inv_brkn1 import a_test_inv_brkn1
+from ..test_cases.nated_contact import a_test_nated_contact
 
 ALL_TESTS = (a_test1, a_test2, a_test3, a_test4, a_test5, a_test6, a_test7, \
   a_test8, a_test9, a_test10, a_test11, a_test12, a_test13, a_test14, \
   a_test_early_cancel, a_test_early_cancel_lost100, a_test_reinvite, \
   a_test_reinv_fail, a_test_reinv_brkn1, a_test_reinv_brkn2, \
   a_test_reinv_onhold, a_test_reinv_adelay, a_test_reinv_frombob, \
-  a_test_reinv_bad_ack, a_test_inv_brkn1)
+  a_test_reinv_bad_ack, a_test_inv_brkn1, a_test_nated_contact)
 
 class a_cfg(object):
     test_class = None
@@ -83,6 +86,9 @@ class a_test(testcore_base):
     stats_name = 'Alice'
     nsubtests_running = 0
     rval = 1
+    tcfg = None
+    last_ulen = 0
+    nextr = None
 
     def __init__(self, tcfg):
         self.setup_stm(tcfg)
@@ -103,10 +109,22 @@ class a_test(testcore_base):
                     subtest_cfg.tcfg = tcfg.gen_tccfg(atype, signalling_only, \
                       self.subtest_done, cli)
                     atests.append(subtest_cfg)
-                    mode = 'signalling-only' if signalling_only else 'rtp-enabled'
-                    print(f'Scheduling test: {subtest_class.name} [{atype}, {mode}, {cli=}]')
+                    if tcfg.continuous:
+                        subtest_class.debug_lvl = -1
+                        subtest_class.godead_timeout = 1.0
+                    else:
+                        mode = 'signalling-only' if signalling_only else 'rtp-enabled'
+                        print(f'Scheduling test: {subtest_class.name} [{atype}, {mode}, {cli=}]')
         atests = [x for x in atests if not x.disabled]
         super().__init__(tcfg)
+        if tcfg.continuous:
+            self.atests = atests
+            self.ntime = tcfg.ntime.getCopy()
+            #Timeout(self.runnext, 0.1, -1)
+            self.setup_continuous_stats()
+            self.runnext()
+            Signal(SIGINT, self.deorbit)
+            return
         shuffle(atests)
         for subtest_cfg in atests:
             subtest = subtest_cfg.init_test()
@@ -118,3 +136,27 @@ class a_test(testcore_base):
     def _on_no_subtests_left(self):
         super()._on_no_subtests_left()
         ED2.breakLoop()
+
+    def deorbit(self, signum = None):
+        self.nextr.cancel()
+        Timeout(self.slowexit, 0.1, -1)
+        Timeout(self.timeout, 140.0)
+
+    def slowexit(self):
+        self.update_stats()
+        if self.nsubtests_running > 0:
+            return
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+        ED2.breakLoop()
+
+    def runnext(self):
+        subtest_cfg = choice(self.atests)
+        subtest = subtest_cfg.init_test()
+        self.nsubtests_running += 1
+        if self.tcfg.cps != None:
+            self.ntime.offset(1.0 / self.tcfg.cps(self.ntime - self.tcfg.ntime))
+            self.nextr = TimeoutAbsMono(self.runnext, self.ntime)
+        else:
+            self.runnext()
+        self.update_stats()
