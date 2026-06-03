@@ -164,6 +164,7 @@ jobs:
           echo "artname=${ARTNAME}" >> "$GITHUB_OUTPUT"
 
       - name: Run tests
+        id: run_tests
         run: |
           cd /opt/voiptests
           rm -rf test.logs
@@ -173,15 +174,25 @@ jobs:
             LOG_FILES="${LOG_FILES} ${ARTIFACT_FILES}"
           fi
 
-          RTPP_VERSION=debug sh -x ./test_run.sh
+          TEST_RES="ok"
+          RTPP_VERSION=debug sh -x ./test_run.sh || TEST_RES="fail"
           mkdir -p test.logs/debug
-          mv ${LOG_FILES} test.logs/debug
+          for f in ${LOG_FILES}
+          do
+            mv ${f} test.logs/debug || true
+          done
+          test "${TEST_RES}" = "ok"
 
-          RTPP_VERSION=production sh -x ./test_run.sh
+          RTPP_VERSION=production sh -x ./test_run.sh || TEST_RES="fail"
           mkdir -p test.logs/production
-          mv ${LOG_FILES} test.logs/production
+          for f in ${LOG_FILES}
+          do
+            mv ${f} test.logs/production || true
+          done
+          test "${TEST_RES}" = "ok"
 
       - name: Upload test logs
+        if: always() && ( steps.run_tests.outcome == 'success' || steps.run_tests.outcome == 'failure' )
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact_name.outputs.artname }}
@@ -266,13 +277,22 @@ jobs:
                 LOG_FILES="${LOG_FILES} ${ARTIFACT_FILES}"
               fi
 
-              RTPP_VERSION=debug sh -x ./test_run.sh
+              TEST_RES="ok"
+              RTPP_VERSION=debug sh -x ./test_run.sh || TEST_RES="fail"
               mkdir -p test.logs/debug
-              mv ${LOG_FILES} test.logs/debug
+              for f in ${LOG_FILES}
+              do
+                mv ${f} test.logs/debug || true
+              done
+              test "${TEST_RES}" = "ok"
 
-              RTPP_VERSION=production sh -x ./test_run.sh
+              RTPP_VERSION=production sh -x ./test_run.sh || TEST_RES="fail"
               mkdir -p test.logs/production
-              mv ${LOG_FILES} test.logs/production
+              for f in ${LOG_FILES}
+              do
+                mv ${f} test.logs/production || true
+              done
+              test "${TEST_RES}" = "ok"
             '
 
           docker start -a "${CTR_NAME}"
@@ -280,6 +300,7 @@ jobs:
           docker cp "${CTR_NAME}:/opt/voiptests/test.logs" ./test.logs
 
       - name: Upload test logs
+        if: always() && ( steps.run_tests.outcome == 'success' || steps.run_tests.outcome == 'failure' )
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact_name.outputs.artname }}
