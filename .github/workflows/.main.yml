@@ -168,7 +168,7 @@ jobs:
         run: |
           cd /opt/voiptests
           rm -rf test.logs
-          LOG_FILES="bob.log alice.log rtpproxy.log"
+          LOG_FILES="bob.log alice.log rtpproxy.log rtpproxy.rout.diff.txt"
           if [ -n "${ARTIFACT_FILES}" ]
           then
             LOG_FILES="${LOG_FILES} ${ARTIFACT_FILES}"
@@ -271,7 +271,7 @@ jobs:
               fi
 
               rm -rf test.logs
-              LOG_FILES="bob.log alice.log rtpproxy.log"
+              LOG_FILES="bob.log alice.log rtpproxy.log rtpproxy.rout.diff.txt"
               if [ -n "${ARTIFACT_FILES}" ]
               then
                 LOG_FILES="${LOG_FILES} ${ARTIFACT_FILES}"

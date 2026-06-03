@@ -302,6 +302,7 @@ fi
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
+RRO_DIFF="rtpproxy.rout.diff.txt"
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
   if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
@@ -312,7 +313,7 @@ then
       grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
       RTPP_OUT="${RTPP_OUT}.pp"
     fi
-    diff -uB "${RTPP_OUT}" rtpproxy.rout
+    diff -uB "${RTPP_OUT}" rtpproxy.rout > ${RRO_DIFF}
     RTPP_CHECK_RC="${?}"
   else
     for nret in 0 1 2
@@ -323,15 +324,17 @@ then
         grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
         RTPP_OUT="${RTPP_OUT}.pp"
       fi
-      diff -uB "${RTPP_OUT}" rtpproxy.rout
+      diff -uB "${RTPP_OUT}" rtpproxy.rout > ${RRO_DIFF}.${nret}
       RTPP_CHECK_RC="${?}"
       if [ ${RTPP_CHECK_RC} -eq 0 ]
       then
         break
       fi
     done
+    mv ${RRO_DIFF}.0 ${RRO_DIFF}
   fi
 fi
+test ${RTPP_CHECK_RC} -eq 0 || cat ${RRO_DIFF}
 
 report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log ${MM_LOG}" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "Checking if Bob is happy"
@@ -341,11 +344,12 @@ then
   report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy exit code"
   if [ x"${MM_LOG}" != x"" ]
   then
-    report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG}" "Checking RTPproxy stdout"
+    report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG} ${RRO_DIFF}" "Checking RTPproxy stdout"
   else
-    report_rc_log "${RTPP_CHECK_RC}" rtpproxy.log "Checking RTPproxy stdout"
+    report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${RRO_DIFF}" "Checking RTPproxy stdout"
   fi
 fi
+rm ${RRO_DIFF}
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
