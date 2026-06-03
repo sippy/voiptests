@@ -156,10 +156,12 @@ report_rc_log() {
   else
     if [ x"${VT_NO_LOG_DUMP}" = x"" ]
     then
+      echo "----------------------- Logdump for the ${@} failure BEGINS -----------------------" >&2
       for logf in ${FAIL_LOGFILES}
       do
         cat -n "${logf}" | grep -a -v '/DBUG:GLOBAL:rtpp_proc_async_run:' >&2 || true
       done
+      echo "----------------------- Logdump for the ${@} failure ENDS -----------------------" >&2
     fi
     fail_rc "${RC}" "${@}"
   fi
