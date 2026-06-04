@@ -1,0 +1,8 @@
+#if !defined(NSESS_BASE)
+#define NSESS_BASE 64
+#endif
+#if !defined(NSESS_INCM)
+#define NSESS_INCM 24
+#endif
+
+#include <rtpproxy.output/common.in>

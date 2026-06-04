@@ -38,7 +38,7 @@ pp_file() {
   file="${1}"
   fname="`basename ${file}`"
   shift
-  ${PP_CMD} "${@}" "${file}" -o "${fname%.in}.pp"
+  ${PP_CMD} -Iscenarios/ "${@}" "${file}" -o "${fname%.in}.pp"
   grep -v '^#' "${fname%.in}.pp" | cat -s > "${fname%.in}${PP_SUF}"
 }
 

@@ -4,4 +4,7 @@
 # define NCMDS_BASE 272
 #endif
 
-#include "rtpproxy.output/common.in"
+#define NSESS_BASE 128
+#define NSESS_INCM 84
+
+#include <rtpproxy.output/common.in>
