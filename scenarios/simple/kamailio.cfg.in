@@ -9,6 +9,7 @@ loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 loadmodule "pv/pv.so"
 loadmodule "siputils/siputils.so"
+loadmodule "xlog/xlog.so"
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 
@@ -16,6 +17,7 @@ listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
 
 route {
+    xlog("Kamailio received a request $rm from $si\n");
     // initial sanity checks -- messages with
     // max_forwards==0, or excessively long requests
     if (!mf_process_maxfwd_header("10")) {
@@ -46,15 +48,21 @@ route {
     };
 
     if (method == "BYE") {
+        xlog("  calling rtpproxy_unforce()\n");
         unforce_rtp_proxy();
     };
 
     record_route();
 
     if (method == "INVITE" && !has_totag() && nat_uac_test("1")) {
-        if (!add_contact_alias()) {
+        xlog("  NAT contact detected\n");
+        add_contact_alias();
+        if ($rc < 0) {
             sl_send_reply("400", "Bad Request");
             exit;
+        };
+        if ($rc == 1) {
+            xlog("    adding alias\n");
         };
     };
 
@@ -63,6 +71,9 @@ route {
         if ($rc < 0) {
             sl_send_reply("400", "Bad Request");
             exit;
+        };
+        if ($rc == 1) {
+            xlog("  alias removed from the R-URI\n");
         };
         t_relay();
         exit;
@@ -80,11 +91,18 @@ route {
 
 onreply_route[1]
 {
+    xlog("Kamailio received a reply $rs/$rm from $si\n");
     if (status=~"(180)|(183)|2[0-9][0-9]") {
         if (status=~"(183)|2[0-9][0-9]" && nat_uac_test("1")) {
+            xlog("  NAT contact detected\n");
             add_contact_alias();
+            if ($rc == 1) {
+                xlog("    adding alias\n");
+            };
         };
+        xlog("  calling search()\n");
         if(!search("^Content-Length:[ ]*0")) {
+            xlog("    calling rtpproxy_answer()\n");
             rtpproxy_answer("r");
             // rtpproxy_stream2uas("ringback", "10");
         };
@@ -94,5 +112,7 @@ onreply_route[1]
 failure_route[1]
 {
 
+    xlog("Kamailio handling $rm failure in from $si in failure_route[1]\n");
+    xlog("  calling rtpproxy_unforce()\n");
     unforce_rtp_proxy();
 }
