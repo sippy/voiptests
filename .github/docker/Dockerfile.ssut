@@ -16,6 +16,12 @@ ENV MM_TYPE=${MM_TYPE} \
 
 WORKDIR /opt/voiptests
 
-COPY . /opt/voiptests
+RUN --mount=type=bind,source=cibits/install_ssut_bdeps.sh,target=install_ssut_bdeps.sh \
+ /bin/sh -eux install_ssut_bdeps.sh
 
-RUN /bin/sh -eux ./cibits/build_ssut_image.sh
+RUN --mount=type=bind,source=cibits,target=cibits \
+ --mount=type=bind,source=functions,target=functions \
+ --mount=type=bind,source=install_depends,target=install_depends \
+ /bin/sh -eux ./cibits/build_ssut_image.sh
+
+COPY . /opt/voiptests
