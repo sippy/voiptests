@@ -35,6 +35,8 @@ modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
 
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
+modparam("rtpproxy", "rtpp_notify_socket", RTPP_NOTIFY_SOCK)
+#define RTPP_OA_ARGS "rn"
 
 #if OPENSIPS_VER_FULL == master || OPENSIPS_VER > 33
 #define NAT_PCONTACT "private-contact"
@@ -77,12 +79,20 @@ route {
             consume_credentials();
         }
         t_reply(INT(100), "Trying");
-        if (rtpproxy_offer("r")) {
+        if (!has_totag()) {
+            create_dialog();
+        };
+        record_route();
+        if (has_totag() && !match_dialog()) {
+            xlog("  no dialog matched for in-dialog INVITE\n");
+            t_reply(INT(481), "Call/Transaction Does Not Exist");
+            exit;
+        };
+        if (rtpproxy_offer(RTPP_OA_ARGS)) {
             t_on_reply("1");
             if (!has_totag()) {
                 /* Get rid of session when INVITE fails unless it's re-INVITE */
                 t_on_failure("invite");
-                create_dialog();
             } else {
                 t_on_failure("re_invite");
             }
@@ -96,8 +106,6 @@ route {
         xlog("  calling rtpproxy_unforce()\n");
         rtpproxy_unforce();
     };
-
-    record_route();
 
     if (is_method("INVITE") && !has_totag() && nat_uac_test(NAT_PCONTACT)) {
         xlog("  NAT contact detected\n");
@@ -141,10 +149,10 @@ onreply_route[1]
             };
 #endif
         };
-        xlog("  calling search()\n");
-        if(!search("^Content-Length:[ ]*0")) {
+        xlog("  checking for SDP body\n");
+        if(has_body_part("application/sdp")) {
             xlog("    calling rtpproxy_answer()\n");
-            rtpproxy_answer("r");
+            rtpproxy_answer(RTPP_OA_ARGS);
             ##rtpproxy_stream2uas("ringback", "10");
         };
     };
@@ -152,7 +160,7 @@ onreply_route[1]
 
 failure_route[invite]
 {
-    xlog("OpenSIPS handling $rm failure in from $si in failure_route[invite]\n");
+    xlog("OpenSIPS handling $rm failure with $T_reply_code from $si in failure_route[invite]\n");
     if (t_check_status("40[17]")) {
 	$var(accept_algs) = "md5-sess,sha-256-sess";
         if (uac_auth($var(accept_algs))) {
@@ -164,13 +172,17 @@ failure_route[invite]
             xlog("    uac_auth() FAILURE\n");
         }
     }
+    if ($DLG_end_reason == "RTPProxy Timeout") {
+        xlog("  RTPProxy timeout already terminated the dialog; leaving final reply untouched\n");
+        return;
+    };
     xlog("  calling rtpproxy_unforce()\n");
     rtpproxy_unforce();
 }
 
 failure_route[re_invite]
 {
-    xlog("OpenSIPS handling $rm failure in from $si in failure_route[re_invite]\n");
+    xlog("OpenSIPS handling $rm failure with $T_reply_code from $si in failure_route[re_invite]\n");
     if (t_was_cancelled()) {
         exit;
     }
@@ -190,7 +202,11 @@ failure_route[re_invite]
 
 failure_route[uac_auth_fail]
 {
-    xlog("OpenSIPS handling $rm failure in from $si in failure_route[uac_auth_fail]\n");
+    xlog("OpenSIPS handling $rm failure with $T_reply_code from $si in failure_route[uac_auth_fail]\n");
+    if ($DLG_end_reason == "RTPProxy Timeout") {
+        xlog("  RTPProxy timeout already terminated the dialog; leaving final reply untouched\n");
+        return;
+    };
     xlog("  calling rtpproxy_unforce()\n");
     rtpproxy_unforce();
 }

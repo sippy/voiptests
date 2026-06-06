@@ -100,8 +100,8 @@ onreply_route[1]
                 xlog("    adding alias\n");
             };
         };
-        xlog("  calling search()\n");
-        if(!search("^Content-Length:[ ]*0")) {
+        xlog("  checking for SDP body\n");
+        if(has_body("application/sdp")) {
             xlog("    calling rtpproxy_answer()\n");
             rtpproxy_answer("r");
             // rtpproxy_stream2uas("ringback", "10");

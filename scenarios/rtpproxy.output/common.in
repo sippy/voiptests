@@ -1,14 +1,21 @@
 #if !defined(NRET)
 #define NRET 0
 #endif
+#if !defined(NSESS_TOUT)
+#define NSESS_TOUT 0
+#endif
 #define NRCV #eval (NCMDS_BASE + NRET)
 #define NSCV #eval (NRCV - 1 - NRET)
 #define NERV NRET
 #define NRPV #eval (NSCV + NRET)
 #define NSCR NSESS_BASE
 #define NSCM #eval (NSESS_BASE - NSESS_INCM)
+#if !defined(NSESS_NRTP)
 #define NSNR #eval (NSCM / 2)
+#else
+#define NSNR NSESS_NRTP
+#endif
 
-nsess_created=NSCR nsess_destroyed=NSCR nsess_timeout=0 nsess_complete=NSCM nsess_nortp=NSNR nsess_owrtp=0 nsess_nortcp=NSCM nsess_owrtcp=0
+nsess_created=NSCR nsess_destroyed=NSCR nsess_timeout=NSESS_TOUT nsess_complete=NSCM nsess_nortp=NSNR nsess_owrtp=0 nsess_nortcp=NSCM nsess_owrtcp=0
 ncmds_rcvd=NRCV ncmds_succd=NSCV ncmds_errs=NERV ncmds_repld=NRPV
 MEMDEB(rtpproxy): all clear

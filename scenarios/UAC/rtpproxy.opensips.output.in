@@ -1,5 +1,14 @@
-#define NCMDS_BASE 295
-#define NSESS_BASE 68
-#define NSESS_INCM 24
+#if OPENSIPS_VER_FULL == master
+# define NCMDS_BASE 319
+# define NSESS_BASE 84
+# define NSESS_NRTP 30
+#else
+# define NCMDS_BASE 299
+# define NSESS_BASE 80
+# define NSESS_NRTP 28
+#endif
+
+#define NSESS_INCM 32
+#define NSESS_TOUT 16
 
 #include <rtpproxy.output/common.in>

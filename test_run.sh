@@ -108,7 +108,8 @@ start_mm() {
     MM_BIN="${MM_ROOT}/opensips"
     pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
      -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}" \
-     -DRTPPC_TYPE="${RTPPC_TYPE}" -DRTPP_LISTEN="${RTPP_LISTEN}"
+     -DRTPPC_TYPE="${RTPPC_TYPE}" -DRTPP_LISTEN="${RTPP_LISTEN}" \
+     -DRTPP_NOTIFY_SOCK=\"${RTPP_NOTIFY_SOCK_SPEC}\" -DRTPP_NOTIFY_ARG="${RTPP_NOTIFY_ARG}"
     for nret in 0 1 2
     do
       PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.opensips.output.in -DOPENSIPS_VER=${MM_VER} \
@@ -194,7 +195,17 @@ do
   kill -TERM "${pid}" || true
 done
 
-if [ x"${MM_SOCK}" != x"" ]
+RTPP_NOTIFY_ARG=""
+if [ "${MM_TYPE}" = "opensips" ]
+then
+  RTPP_NOTIFY_SOCK="${RTPP_NOTIFY_SOCK:-"${BASEDIR}/rtpproxy_timeout.sock"}"
+  RTPP_NOTIFY_SOCK_SPEC="unix:${RTPP_NOTIFY_SOCK}"
+  RTPP_NOTIFY_ARG="-n ${RTPP_NOTIFY_SOCK_SPEC} -W 45"
+  if [ -e "${RTPP_NOTIFY_SOCK}" ]
+  then
+    rm "${RTPP_NOTIFY_SOCK}"
+  fi
+elif [ x"${MM_SOCK}" != x"" ]
 then
   RTPP_NOTIFY_ARG="-n ${MM_SOCK} -W 45"
 fi
