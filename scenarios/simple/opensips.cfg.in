@@ -42,7 +42,7 @@ modparam("rtpproxy", "rtpp_notify_socket", RTPP_NOTIFY_SOCK)
 #endif
 #define RTPP_OA_ARGS "rn"
 
-#if OPENSIPS_VER_FULL == master || OPENSIPS_VER > 33
+#if (OPENSIPS_VER_FULL == master || OPENSIPS_VER > 33)
 #define NAT_PCONTACT "private-contact"
 #else
 #define NAT_PCONTACT INT(1)
@@ -56,7 +56,7 @@ listen=udp:127.0.0.1:5060
 listen=udp:[::1]:5060
 #endif
 
-#if OPENSIPS_VER_FULL == master
+#if (OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 40)
 stderror_enabled=yes
 syslog_enabled=no
 #endif
