@@ -59,8 +59,9 @@ jobs:
         run: |
           MM_BRANCH_SAFE="$(echo '${{ inputs.mm-branch }}' | sed 's|[^a-zA-Z0-9_.-]|-|g')"
           SHA_SHORT="$(printf '%s' "$GITHUB_SHA" | cut -c1-12)"
-          IMAGE_REF="ghcr.io/${{ github.repository_owner }}/voiptests-${{ inputs.mm-type }}:ssut-${MM_BRANCH_SAFE}-${SHA_SHORT}"
-          CACHE_SPEC="type=registry,ref=${IMAGE_REF}-buildcache"
+          IMAGE_BASE="ghcr.io/${{ github.repository_owner }}/voiptests-${{ inputs.mm-type }}:ssut-${MM_BRANCH_SAFE}"
+          IMAGE_REF="${IMAGE_BASE}-${SHA_SHORT}"
+          CACHE_SPEC="type=registry,ref=${IMAGE_BASE}-buildcache"
           IMAGE_ARTIFACT="ssut-image-${{ inputs.mm-type }}-${MM_BRANCH_SAFE}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           echo "image-ref=${IMAGE_REF}" >> "$GITHUB_OUTPUT"
           echo "image-artifact=${IMAGE_ARTIFACT}" >> "$GITHUB_OUTPUT"
