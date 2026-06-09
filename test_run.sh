@@ -313,9 +313,9 @@ fi
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
-RRO_DIFF="rtpproxy.rout.diff.txt"
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
+  RRO_DIFF="rtpproxy.rout.diff.txt"
   if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
   then
     RTPP_OUT="rtpproxy.${MM_TYPE}.output"
@@ -344,8 +344,8 @@ then
     done
     mv ${RRO_DIFF}.0 ${RRO_DIFF}
   fi
+  test ${RTPP_CHECK_RC} -eq 0 || cat ${RRO_DIFF}
 fi
-test ${RTPP_CHECK_RC} -eq 0 || cat ${RRO_DIFF}
 
 report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log ${MM_LOG}" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "Checking if Bob is happy"
@@ -359,8 +359,8 @@ then
   else
     report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${RRO_DIFF}" "Checking RTPproxy stdout"
   fi
+  rm ${RRO_DIFF}
 fi
-rm ${RRO_DIFF}
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
