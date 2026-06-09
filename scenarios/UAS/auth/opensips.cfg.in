@@ -16,6 +16,9 @@ loadmodule "tm/tm.so"
 loadmodule "rr/rr.so"
 loadmodule "nathelper/nathelper.so"
 loadmodule "maxfwd/maxfwd.so"
+#if RTPPC_TYPE == rtp.io
+loadmodule "rtp.io/rtp.io.so"
+#endif
 loadmodule "rtpproxy/rtpproxy.so"
 loadmodule "textops/textops.so"
 #if !(OPENSIPS_VER_FULL == master || OPENSIPS_VER >= 30)
@@ -34,8 +37,13 @@ modparam("auth", "username_spec", "$avp(username)")
 modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
 
+#if RTPPC_TYPE == rtp.io
+modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 -W 45 RTPP_LISTEN"$$)
+modparam("rtpproxy", "rtpproxy_timeout", "3")
+#else
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)
 modparam("rtpproxy", "rtpp_notify_socket", RTPP_NOTIFY_SOCK)
+#endif
 #define RTPP_OA_ARGS "rn"
 
 #if (OPENSIPS_VER_FULL == master || OPENSIPS_VER > 33)
