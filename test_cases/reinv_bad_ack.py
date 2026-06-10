@@ -62,10 +62,13 @@ class a_test_reinv_bad_ack(test_reinvite, a_test1):
             raise ValueError('%s: The call was not interrupted early.' % self.my_name())
         a_test1.disconnect(self, ua)
 
+    def get_reinvite_ival(self):
+        return super().get_reinvite_ival() / 4
+
 class b_test_reinv_bad_ack(test_reinvite, b_test1):
     cli = a_test_reinv_bad_ack.cld
     name = a_test_reinv_bad_ack.name
     compact_sip = True
     ring_ival = 1.0
-    answer_ival = 5.0
+    answer_ival = 1.0
     disconnect_ival = 60
