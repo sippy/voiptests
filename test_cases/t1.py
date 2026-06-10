@@ -98,7 +98,6 @@ class test(object):
     def _rtp_init(self):
         assert not self._rtp_inited
         self._rtp_inited = True
-        self._done_called = False
         self._rtp_enabled = not self.tccfg.signalling_only
         self._rtp_lock = Lock()
         self._rtp_ep = None

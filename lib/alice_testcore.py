@@ -82,7 +82,6 @@ class a_cfg(object):
 class a_test(testcore_base):
     stm_class = SipTransactionManager
     stats_name = 'Alice'
-    nsubtests_running = 0
     rval = 1
 
     def __init__(self, tcfg):
@@ -112,8 +111,8 @@ class a_test(testcore_base):
         for subtest_cfg in atests:
             subtest = subtest_cfg.init_test()
             subtest.mightfail = subtest.test_id in self.tcfg.tests_mightfail
-            self.nsubtests_running += 1
-        self.rval = self.nsubtests_running
+            self.subtests_running.append(subtest)
+        self.rval = len(self.subtests_running)
         Timeout(self.timeout, tcfg.test_timeout, 1)
 
     def _on_no_subtests_left(self):

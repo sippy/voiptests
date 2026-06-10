@@ -30,11 +30,13 @@ from sippy.Core.EventDispatcher import ED2
 from .sleep_abs_mono import sleep_abs_mono
 
 class testcore_base(object):
+    subtests_running = None
     stm_class = None
     stats_name = 'Core'
 
     def __init__(self, tcfg):
         self.tcfg = tcfg
+        self.subtests_running = []
         if tcfg.pre_wait is not None:
             sleep_abs_mono(tcfg.pre_wait)
 
@@ -48,6 +50,8 @@ class testcore_base(object):
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):
+        for subtest in self.subtests_running:
+            print(f'{subtest.my_name()}: subclass {str(subtest.__class__)} timeout')
         ED2.breakLoop()
 
     def _subtest_done_common(self, subtest):
@@ -57,9 +61,9 @@ class testcore_base(object):
         pass
 
     def subtest_done(self, subtest):
-        self.nsubtests_running -= 1
+        self.subtests_running.remove(subtest)
         self._subtest_done_common(subtest)
         if subtest.rval == 0:
             self.rval -= 1
-        if self.nsubtests_running == 0:
+        if len(self.subtests_running) == 0:
             self._on_no_subtests_left()

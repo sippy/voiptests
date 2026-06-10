@@ -96,7 +96,6 @@ class b_test(testcore_base):
     stm_class = BobSTM
     stats_name = 'Bob'
     rval = 1
-    nsubtests_running = 0
     tcfg: 'test_config' = None
 
     def __init__(self, tcfg:'test_config'):
@@ -136,7 +135,7 @@ class b_test(testcore_base):
             test_id = req.getHFBody('to').getUrl().username
             subtest.mightfail = test_id in self.tcfg.tests_mightfail
 
-            self.nsubtests_running += 1
+            self.subtests_running.append(subtest)
             self.rval += 1
 
             bidx = 0 if not tccfg.signalling_only or random() < 0.5 else 1
@@ -148,7 +147,7 @@ class b_test(testcore_base):
             except AuthRequired as ce:
                 resp = req.genResponse(401, 'Unauthorized')
                 resp.appendHeaders(ce.challenges)
-                self.nsubtests_running -= 1
+                self.subtests_running.remove(subtest)
                 self.rval -= 1
                 resp.lossemul = STMHooks()
                 resp.lossemul.dupemul = 0.001
@@ -159,6 +158,6 @@ class b_test(testcore_base):
         return (req.genResponse(501, 'Not Implemented'), None, None)
 
     def timeout(self):
-        if self.nsubtests_running == 0 and self.rval == 1:
+        if len(self.subtests_running) == 0 and self.rval == 1:
             self.rval = 0
         super().timeout()
