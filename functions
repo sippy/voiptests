@@ -100,7 +100,7 @@ then
   MM_INIT_DELAY=$((4 + ${MM_INIT_DELAY}))
   # RTP sessions might take up to 60 seconds to disconnect on no media
   RTPP_STAT_TIMEOUT=$((57 + ${MM_INIT_DELAY}))
-  RTPP_PRE_STAT_TIMEOUT=$((40 + ${MM_INIT_DELAY}))
+  RTPP_PRE_STAT_TIMEOUT=$((44 + ${MM_INIT_DELAY}))
   ALICE_TIMEOUT=${NO_MEDIA_TIMEOUT}
   BOB_TIMEOUT=${NO_MEDIA_TIMEOUT}
   TEST_SET="${TEST_SET},11,12,13,14,reinv_brkn1,reinv_brkn2,reinv_bad_ack"
