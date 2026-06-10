@@ -52,6 +52,8 @@ RTPP_SOCK_UDP6="udp6:::1:22222"
 RTPP_SOCK_TCP="tcp:127.0.0.1:22222"
 RTPP_SOCK_TCP6="tcp6:::1:22222"
 RTPP_SOCK_RTP_IO="${RTPP_SOCK_RTP_IO:-"rtp.io:"}"
+RTPP_PORTS="-m 12000 -M 15000"
+RTPP_TO_PARAMS="-W 30 -T 45"
 
 fail_rc() {
   RC=${1}
@@ -83,9 +85,11 @@ esac
 
 MM_INIT_DELAY="${MM_INIT_DELAY:-"1"}"
 RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
-ALICE_TIMEOUT=45
-BOB_TIMEOUT=45
-TEST_SET="1,2,3,4,5,6,7,8,9,10,early_cancel"
+BASIC_TIMEOUT=45
+NO_MEDIA_TIMEOUT=75
+ALICE_TIMEOUT=${BASIC_TIMEOUT}
+BOB_TIMEOUT=${BASIC_TIMEOUT}
+TEST_SET="1,2,3,4,5,6,7,8,9,10,early_cancel,early_cancel_lost100"
 TEST_SET="${TEST_SET},reinvite,reinv_fail,reinv_onhold,reinv_frombob"
 
 if [ "${MM_TYPE}" = "b2bua" -o "${MM_TYPE}" = "go-b2bua" ]
@@ -95,20 +99,20 @@ then
   # Python b2bua needs slightly more time to init everything
   MM_INIT_DELAY=$((4 + ${MM_INIT_DELAY}))
   # RTP sessions might take up to 60 seconds to disconnect on no media
-  RTPP_STAT_TIMEOUT=$((72 + ${MM_INIT_DELAY}))
-  RTPP_PRE_STAT_TIMEOUT=$((55 + ${MM_INIT_DELAY}))
-  ALICE_TIMEOUT=90
-  BOB_TIMEOUT=90
+  RTPP_STAT_TIMEOUT=$((57 + ${MM_INIT_DELAY}))
+  RTPP_PRE_STAT_TIMEOUT=$((40 + ${MM_INIT_DELAY}))
+  ALICE_TIMEOUT=${NO_MEDIA_TIMEOUT}
+  BOB_TIMEOUT=${NO_MEDIA_TIMEOUT}
   TEST_SET="${TEST_SET},11,12,13,14,reinv_brkn1,reinv_brkn2,reinv_bad_ack"
 fi
 if [ "${MM_TYPE}" = "opensips" ]
 then
   TEST_SET="${TEST_SET},11,12,13,14"
-  RTPP_STAT_TIMEOUT=$((72 + ${MM_INIT_DELAY}))
-  ALICE_TIMEOUT=90
-  BOB_TIMEOUT=90
+  RTPP_STAT_TIMEOUT=$((57 + ${MM_INIT_DELAY}))
+  ALICE_TIMEOUT=${NO_MEDIA_TIMEOUT}
+  BOB_TIMEOUT=${NO_MEDIA_TIMEOUT}
+  MM_ARGS="-d"
 fi
-TEST_SET="${TEST_SET},early_cancel_lost100"
 
 MM_ROOT="${MM_ROOT:-"${BUILDDIR}/dist/${MM_TYPE}"}"
 
@@ -120,16 +124,6 @@ fi
 if [ "${MM_TYPE}" = "kamailio" ] || [ "${MM_TYPE}" = "opensips" -a "${MM_BRANCH}" = "master" ]
 then
   TEST_SET="${TEST_SET},nated_contact"
-fi
-
-#if [ "${MM_TYPE}" = "kamailio" ]
-#then
-#  TEST_SET="${TEST_SET}"
-#fi
-
-if [ "${MM_TYPE}" = "opensips" ]
-then
-  MM_ARGS="-d"
 fi
 
 forcefail() {

@@ -27,7 +27,7 @@ from .t11 import a_test11
 from .t2 import b_test2
 
 # This tests verifies that settion half-setup no-media timeout (which is set
-# to 45 seconds via -W45 option to the rtpproxy) is correctly executed and that
+# to 30 seconds via -W30 option to the rtpproxy) is correctly executed and that
 # media timeout is properly deliered to the B2B causing session to be
 # disconnected.
 
@@ -41,7 +41,7 @@ class b_test12(b_test2):
     cli = a_test12.cld
     name = a_test12.name
     compact_sip = True
-    ring_ival = 55.0
+    ring_ival = 40.0
 
     def alldone(self, ua):
         #print('b_test12.alldone', self.ring_done)

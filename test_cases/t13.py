@@ -27,9 +27,9 @@ from .t11 import a_test11
 from .t12 import b_test12
 
 # This tests verifies that settion fully-setup no-media timeout (which is set
-# to 60 seconds by default in the rtpproxy) is correctly executed and that
+# to 45 seconds by -T45 option in the rtpproxy) is correctly executed and that
 # media timeout is properly deliered to the B2B causing session to be
-# disconnected. The no-media timeout is expected to hit around 61.0 sec mark,
+# disconnected. The no-media timeout is expected to hit around 46.0 sec mark,
 # since the session is to be refreshed at 1.0 sec via 183.
 
 class a_test13(a_test11):
@@ -47,7 +47,7 @@ class b_test13(b_test12):
     name = a_test13.name
     compact_sip = True
     ring_ival = 1.0
-    answer_ival = 70.0
+    answer_ival = 55.0
 
     def __init__(self, *a, **kwa):
         super().__init__(*a, **kwa)

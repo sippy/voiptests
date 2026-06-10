@@ -38,7 +38,7 @@ modparam("auth", "password_spec", "$avp(password)")
 modparam("auth", "calculate_ha1", 1)
 
 #if RTPPC_TYPE == rtp.io
-modparam("rtp.io", "rtpproxy_args", $$"-m 12000 -M 15000 -W 45 RTPP_LISTEN"$$)
+modparam("rtp.io", "rtpproxy_args", $$"RTPP_PARAMS"$$)
 modparam("rtpproxy", "rtpproxy_timeout", "3")
 #else
 modparam("rtpproxy", "rtpproxy_sock", RTPP_SOCK_TEST)

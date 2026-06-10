@@ -67,7 +67,7 @@ start_mm() {
     fi
     if [ "${RTPPC_TYPE}" = "rtp.io" ]
     then
-      ST_PARAMS="`echo "-m 12000 -M 15000 -W 45 ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /;/g'`"
+      ST_PARAMS="`echo "${RTPP_PORTS} ${RTPP_TO_PARAMS} ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /;/g'`"
       RTPP_SOCK_TEST="${RTPP_SOCK_TEST}${ST_PARAMS}"
       RTPP_SOCK_PARAM="--rtp_proxy_client"
     else
@@ -106,9 +106,10 @@ start_mm() {
   opensips)
     MM_CFG="opensips.cfg"
     MM_BIN="${MM_ROOT}/opensips"
+    RTPP_PARAMS="${RTPP_PORTS} ${RTPP_TO_PARAMS} ${RTPP_LISTEN}"
     pp_file "scenarios/${MM_AUTH}/${MM_CFG}.in" -DRTPP_SOCK_TEST=\"${RTPP_SOCK_TEST}\" -DOPENSIPS_VER=${MM_VER} \
      -DOPENSIPS_VER_FULL=${MM_VER_FULL} -DMM_AUTH="${MM_AUTH}" -DMM_ROOT="${MM_ROOT}" \
-     -DRTPPC_TYPE="${RTPPC_TYPE}" -DRTPP_LISTEN="${RTPP_LISTEN}" \
+     -DRTPPC_TYPE="${RTPPC_TYPE}" -DRTPP_PARAMS="${RTPP_PARAMS}" \
      -DRTPP_NOTIFY_SOCK=\"${RTPP_NOTIFY_SOCK_SPEC}\" -DRTPP_NOTIFY_ARG="${RTPP_NOTIFY_ARG}"
     for nret in 0 1 2
     do
@@ -200,14 +201,14 @@ if [ "${MM_TYPE}" = "opensips" ]
 then
   RTPP_NOTIFY_SOCK="${RTPP_NOTIFY_SOCK:-"${BASEDIR}/rtpproxy_timeout.sock"}"
   RTPP_NOTIFY_SOCK_SPEC="unix:${RTPP_NOTIFY_SOCK}"
-  RTPP_NOTIFY_ARG="-n ${RTPP_NOTIFY_SOCK_SPEC} -W 45"
+  RTPP_NOTIFY_ARG="-n ${RTPP_NOTIFY_SOCK_SPEC} ${RTPP_TO_PARAMS}"
   if [ -e "${RTPP_NOTIFY_SOCK}" ]
   then
     rm "${RTPP_NOTIFY_SOCK}"
   fi
 elif [ x"${MM_SOCK}" != x"" ]
 then
-  RTPP_NOTIFY_ARG="-n ${MM_SOCK} -W 45"
+  RTPP_NOTIFY_ARG="-n ${MM_SOCK} ${RTPP_TO_PARAMS}"
 fi
 
 if [ -e "${RTPP_SOCK_BARE}" ]
@@ -237,7 +238,7 @@ if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
   RTPP_ARGS="-p ${RTPP_PIDF} -d dbug -F -f -s stdio: -s ${RTPP_SOCK_UDP} \
     -s ${RTPP_SOCK_CUNIX} -s ${RTPP_SOCK_UNIX} -s ${RTPP_SOCK_TCP} \
-    -m 12000 -M 15000 ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG}"
+    ${RTPP_PORTS} ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG}"
   if [ "${RTPPC_TYPE}" = "udp6" ]
   then
     RTPP_ARGS="${RTPP_ARGS} -s ${RTPP_SOCK_UDP6}"
