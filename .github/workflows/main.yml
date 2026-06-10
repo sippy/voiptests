@@ -10,9 +10,17 @@ on:
     - cron: "30 0 * * 0"
 
 jobs:
+  buildkit_image:
+    name: Prepare BuildKit Image
+    uses: sippy/cimagic/.github/workflows/GetCachedContainer.yml@v3
+    with:
+      image: moby/buildkit:buildx-stable-1
+      cache-key-prefix: buildkit-image
+
   # Alice->OpenSIPS->Bob
   opensips:
     name: OpenSIPS (${{ matrix.mm-branch }})
+    needs: buildkit_image
     uses: ./.github/workflows/.main.yml
     with:
       mm-type: 'opensips'
@@ -21,6 +29,10 @@ jobs:
       rtppc-types: ${{ matrix.rtppc-types }}
       use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
       artifact-files: 'opensips.cfg'
+      buildkit-image: ${{ needs.buildkit_image.outputs.image }}
+      buildkit-image-cache-key: ${{ needs.buildkit_image.outputs.image-cache-key }}
+      buildkit-image-cache-path: ${{ needs.buildkit_image.outputs.image-cache-path }}
+      buildkit-image-cache-tar: ${{ needs.buildkit_image.outputs.image-cache-tar }}
     strategy:
       fail-fast: false
       matrix:
@@ -53,6 +65,7 @@ jobs:
   # Alice->Sippy Python B2B->Bob
   sippy_py_b2bua:
     name: Sippy Py-B2BUA (${{ matrix.mm-branch }})
+    needs: buildkit_image
     uses: ./.github/workflows/.main.yml
     with:
       mm-type: 'b2bua'
@@ -61,6 +74,10 @@ jobs:
       rtppc-types: '["unix", "cunix", "udp", "udp6", "tcp", "tcp6"]'
       use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
       artifact-files: 'b2bua.log'
+      buildkit-image: ${{ needs.buildkit_image.outputs.image }}
+      buildkit-image-cache-key: ${{ needs.buildkit_image.outputs.image-cache-key }}
+      buildkit-image-cache-path: ${{ needs.buildkit_image.outputs.image-cache-path }}
+      buildkit-image-cache-tar: ${{ needs.buildkit_image.outputs.image-cache-tar }}
     strategy:
       fail-fast: false
       matrix:
@@ -69,6 +86,7 @@ jobs:
   # Alice->Sippy GO B2B->Bob
   sippy_go_b2bua:
     name: Sippy GO-B2BUA (${{ matrix.mm-branch }})
+    needs: buildkit_image
     uses: ./.github/workflows/.main.yml
     with:
       mm-type: 'go-b2bua'
@@ -76,6 +94,10 @@ jobs:
       rtppc-types: '["unix", "cunix", "udp", "udp6", "tcp", "tcp6"]'
       use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
       artifact-files: 'b2bua.log'
+      buildkit-image: ${{ needs.buildkit_image.outputs.image }}
+      buildkit-image-cache-key: ${{ needs.buildkit_image.outputs.image-cache-key }}
+      buildkit-image-cache-path: ${{ needs.buildkit_image.outputs.image-cache-path }}
+      buildkit-image-cache-tar: ${{ needs.buildkit_image.outputs.image-cache-tar }}
     strategy:
       fail-fast: false
       matrix:
@@ -84,6 +106,7 @@ jobs:
   # Alice->Kamailio->Bob
   kamailio:
     name: Kamailio (${{ matrix.mm-branch }})
+    needs: buildkit_image
     uses: ./.github/workflows/.main.yml
     with:
       mm-type: 'kamailio'
@@ -91,6 +114,10 @@ jobs:
       rtppc-types: '["unix", "udp", "udp6"]'
       use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
       artifact-files: 'kamailio.cfg'
+      buildkit-image: ${{ needs.buildkit_image.outputs.image }}
+      buildkit-image-cache-key: ${{ needs.buildkit_image.outputs.image-cache-key }}
+      buildkit-image-cache-path: ${{ needs.buildkit_image.outputs.image-cache-path }}
+      buildkit-image-cache-tar: ${{ needs.buildkit_image.outputs.image-cache-tar }}
     strategy:
       fail-fast: false
       matrix:
@@ -102,9 +129,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.x'
     - name: Install dependencies

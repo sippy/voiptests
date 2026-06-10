@@ -41,12 +41,25 @@ on:
         required: false
         type: string
         default: 'moby/buildkit:buildx-stable-1'
+      buildkit-image-cache-key:
+        required: false
+        type: string
+        default: ''
+      buildkit-image-cache-path:
+        required: false
+        type: string
+        default: ''
+      buildkit-image-cache-tar:
+        required: false
+        type: string
+        default: ''
 
 jobs:
   build_ssut_image:
     name: Build SSUT Image
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       packages: write
     outputs:
@@ -71,22 +84,19 @@ jobs:
           echo "image-artifact=${IMAGE_ARTIFACT}" >> "$GITHUB_OUTPUT"
           echo "cache-spec=${CACHE_SPEC}" >> "$GITHUB_OUTPUT"
 
-      - name: Pull BuildKit image
+      - name: Restore BuildKit image cache
+        if: ${{ inputs.buildkit-image-cache-key != '' && inputs.buildkit-image-cache-path != '' }}
+        id: restore_buildkit_image_cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ inputs.buildkit-image-cache-path }}
+          key: ${{ inputs.buildkit-image-cache-key }}
+
+      - name: Load BuildKit image cache
+        if: ${{ inputs.buildkit-image-cache-tar != '' && steps.restore_buildkit_image_cache.outputs.cache-hit == 'true' }}
+        id: load_buildkit_image_cache
         shell: bash
-        env:
-          BUILDKIT_IMAGE: ${{ inputs.buildkit-image }}
-        run: |
-          set -euo pipefail
-          for attempt in 1 2 3 4 5 6 7
-          do
-            if docker pull "${BUILDKIT_IMAGE}"
-            then
-              exit 0
-            fi
-            STIME="`python -c "from random import random; print(1 + int(random() * (2 ** ${attempt})))"`"
-            sleep "${STIME}"
-          done
-          docker pull "${BUILDKIT_IMAGE}"
+        run: docker load --input "${{ inputs.buildkit-image-cache-tar }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
