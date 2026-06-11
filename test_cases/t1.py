@@ -393,9 +393,9 @@ class b_test1(test):
         self.tccfg = tccfg
         self._rtp_init()
         if self.answer_ival == None:
-            self.answer_ival = 9.0 + random() * 5.0
+            self.answer_ival = 8.0 + random() * 5.0
         if self.disconnect_ival == None:
-            self.disconnect_ival = 5.0 + random() * 10.0
+            self.disconnect_ival = 4.0 + random() * 10.0
 
     def answer(self, global_config, body, req, sip_t):
         if self.connect_done or self.disconnect_done:
