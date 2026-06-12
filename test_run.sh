@@ -21,7 +21,7 @@ fi
 PYTHON_CMD="${PYTHON_CMD:-"python"}"
 
 sleep_until() {
-  ${PYTHON_CMD} -c "from time import time, sleep; tleft=${SIPLOG_TSTART} + ${1} - time(); sleep(tleft) if tleft > 0 else False;"
+  ${PYTHON_CMD} -c "from time import time, sleep; tleft=${TEST_EPOCH} + ${1} - time(); sleep(tleft) if tleft > 0 else False;"
 }
 
 rtpproxy_cmds_gen() {
@@ -221,6 +221,7 @@ GMTM="${RTPPROXY_DIST}/python/tools/getmonotime.py"
 MR_TIME="`${PYTHON_CMD} ${GMTM} -r`"
 SIPLOG_TSTART="`echo ${MR_TIME} | awk '{print $2}'`"
 export SIPLOG_TSTART
+TEST_EPOCH="${SIPLOG_TSTART}"
 SIPLOG_TFORM="rel"
 export SIPLOG_TFORM
 RTPP_LOG_TSTART="`echo ${MR_TIME} | awk '{print $1}'`"
@@ -275,6 +276,8 @@ MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' ${BOB_ARGS} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 start_mm
+MR_TIME="`${PYTHON_CMD} ${GMTM} -r`"
+TEST_EPOCH="`echo ${MR_TIME} | awk '{print $2}'`"
 MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} alice.py -l '*' ${ALICE_ARGS} -t "${TEST_SET}" -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}

@@ -84,7 +84,7 @@ case "${RTPPC_TYPE}" in
 esac
 
 MM_INIT_DELAY="${MM_INIT_DELAY:-"1"}"
-RTPP_STAT_TIMEOUT=$((36 + ${MM_INIT_DELAY}))
+RTPP_STAT_TIMEOUT=36
 BASIC_TIMEOUT=45
 NO_MEDIA_TIMEOUT=75
 ALICE_TIMEOUT=${BASIC_TIMEOUT}
@@ -99,8 +99,8 @@ then
   # Python b2bua needs slightly more time to init everything
   MM_INIT_DELAY=$((4 + ${MM_INIT_DELAY}))
   # RTP sessions might take up to 60 seconds to disconnect on no media
-  RTPP_STAT_TIMEOUT=$((57 + ${MM_INIT_DELAY}))
-  RTPP_PRE_STAT_TIMEOUT=$((44 + ${MM_INIT_DELAY}))
+  RTPP_STAT_TIMEOUT=57
+  RTPP_PRE_STAT_TIMEOUT=44
   ALICE_TIMEOUT=${NO_MEDIA_TIMEOUT}
   BOB_TIMEOUT=${NO_MEDIA_TIMEOUT}
   TEST_SET="${TEST_SET},11,12,13,14,reinv_brkn1,reinv_brkn2,reinv_bad_ack"
@@ -108,7 +108,7 @@ fi
 if [ "${MM_TYPE}" = "opensips" ]
 then
   TEST_SET="${TEST_SET},11,12,13,14"
-  RTPP_STAT_TIMEOUT=$((57 + ${MM_INIT_DELAY}))
+  RTPP_STAT_TIMEOUT=57
   ALICE_TIMEOUT=${NO_MEDIA_TIMEOUT}
   BOB_TIMEOUT=${NO_MEDIA_TIMEOUT}
   MM_ARGS="-d"
