@@ -45,6 +45,7 @@ fi
 RTPPROXY="${LOCALBASE}/bin/rtpproxy${RTPP_SUFF} --dso ${LOCALBASE}/lib/rtpproxy/rtpp_acct_csv${RTPP_SUFF}.so"
 RQC="${RTPPROXY_DIST}/python/tools/rtpp_query.py"
 RTPP_SOCK_BARE="${BASEDIR}/rtpproxy.sock"
+RTPP_SOCK_STATS="${BASEDIR}/rtpproxy_stats.sock"
 RTPP_SOCK_UDP="udp:127.0.0.1:22222"
 RTPP_SOCK_UNIX="unix:${RTPP_SOCK_BARE}"
 RTPP_SOCK_CUNIX="cunix:${BASEDIR}/rtpproxy.csock"

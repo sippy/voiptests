@@ -24,14 +24,17 @@ sleep_until() {
   ${PYTHON_CMD} -c "from time import time, sleep; tleft=${TEST_EPOCH} + ${1} - time(); sleep(tleft) if tleft > 0 else False;"
 }
 
-rtpproxy_cmds_gen() {
+rtpproxy_get_stats() {
+  local RQC_CMD="${RQC} -b -s ${RTPP_SOCK_STATS}"
   if [ x"${RTPP_PRE_STAT_TIMEOUT}" != x"" ]
   then
     sleep_until ${RTPP_PRE_STAT_TIMEOUT}
-    cat "${BUILDDIR}/rtpproxy.stats.input"
+    ${RQC_CMD} -i "${BUILDDIR}/rtpproxy.stats.input" > rtpproxy.stats
+  else
+    truncate -s 0 rtpproxy.stats
   fi
   sleep_until ${RTPP_STAT_TIMEOUT}
-  cat "${BUILDDIR}/rtpproxy.stats.input"
+  ${RQC_CMD} -i "${BUILDDIR}/rtpproxy.stats.input" >> rtpproxy.stats
 }
 
 pp_file() {
@@ -67,7 +70,8 @@ start_mm() {
     fi
     if [ "${RTPPC_TYPE}" = "rtp.io" ]
     then
-      ST_PARAMS="`echo "${RTPP_PORTS} ${RTPP_TO_PARAMS} ${RTPP_LISTEN}" | sed 's/  / /g ; s/ /;/g'`"
+      ST_PARAMS="`echo "${RTPP_PORTS} ${RTPP_TO_PARAMS} ${RTPP_LISTEN}" | \
+        sed 's/  / /g ; s/ /;/g'`"
       RTPP_SOCK_TEST="${RTPP_SOCK_TEST}${ST_PARAMS}"
       RTPP_SOCK_PARAM="--rtp_proxy_client"
     else
@@ -177,6 +181,16 @@ start_mm() {
   return 0
 }
 
+cleanup_rtpp_socks() {
+  for sock in "${RTPP_SOCK_BARE}" in "${RTPP_SOCK_STATS}"
+  do
+    if [ -e "${sock}" ]
+    then
+      rm "${sock}"
+    fi
+  done
+}
+
 #"${BUILDDIR}/install_depends/opensips.sh"
 
 RTPP_PIDF="${BUILDDIR}/rtpproxy.pid"
@@ -211,10 +225,7 @@ then
   RTPP_NOTIFY_ARG="-n ${MM_SOCK} ${RTPP_TO_PARAMS}"
 fi
 
-if [ -e "${RTPP_SOCK_BARE}" ]
-then
-  rm "${RTPP_SOCK_BARE}"
-fi
+cleanup_rtpp_socks
 
 GMTM="${RTPPROXY_DIST}/python/tools/getmonotime.py"
 
@@ -229,7 +240,7 @@ export RTPP_LOG_TSTART
 RTPP_LOG_TFORM="rel"
 export RTPP_LOG_TFORM
 
-RTPP_LISTEN="-l 0.0.0.0"
+RTPP_LISTEN="-s ${RTPP_SOCK_STATS} -l 0.0.0.0"
 if [ "${ALICE_ARGS}" != "-4" ]
 then
   RTPP_LISTEN="${RTPP_LISTEN} -6 /::"
@@ -237,7 +248,7 @@ fi
 
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
-  RTPP_ARGS="-p ${RTPP_PIDF} -d dbug -F -f -s stdio: -s ${RTPP_SOCK_UDP} \
+  RTPP_ARGS="-p ${RTPP_PIDF} -d dbug -F -f -s ${RTPP_SOCK_UDP} \
     -s ${RTPP_SOCK_CUNIX} -s ${RTPP_SOCK_UNIX} -s ${RTPP_SOCK_TCP} \
     ${RTPP_PORTS} ${RTPP_LISTEN} ${RTPP_NOTIFY_ARG}"
   if [ "${RTPPC_TYPE}" = "udp6" ]
@@ -248,7 +259,7 @@ then
   then
     RTPP_ARGS="${RTPP_ARGS} -s ${RTPP_SOCK_TCP6}"
   fi
-  rtpproxy_cmds_gen | ${RTPPROXY} ${RTPP_ARGS} > rtpproxy.rout 2>rtpproxy.log &
+  ${RTPPROXY} ${RTPP_ARGS} > rtpproxy.rout 2>rtpproxy.log &
   RTPP_PID=${!}
   sleep 1
   i=0
@@ -278,6 +289,8 @@ echo "${BOB_PID}" > "${BOB_PIDF}"
 start_mm
 MR_TIME="`${PYTHON_CMD} ${GMTM} -r`"
 TEST_EPOCH="`echo ${MR_TIME} | awk '{print $2}'`"
+rtpproxy_get_stats&
+STATS_PID=${!}
 MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} alice.py -l '*' ${ALICE_ARGS} -t "${TEST_SET}" -P 5061 \
  -T ${ALICE_TIMEOUT} 2>alice.log &
 ALICE_PID=${!}
@@ -285,6 +298,8 @@ echo "${ALICE_PID}" > "${ALICE_PIDF}"
 
 set +e
 
+wait ${STATS_PID}
+STATS_RC="${?}"
 wait ${ALICE_PID}
 ALICE_RC="${?}"
 wait ${BOB_PID}
@@ -316,6 +331,12 @@ else
 fi
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
+
+mv rtpproxy.rout rtpproxy._rout
+cat rtpproxy.stats rtpproxy._rout > rtpproxy.rout
+rm rtpproxy._rout
+
+cleanup_rtpp_socks
 
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
