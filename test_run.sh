@@ -287,6 +287,13 @@ MM_AUTH="${MM_AUTH}" ${PYTHON_CMD} bob.py -l '*' ${BOB_ARGS} 2>bob.log &
 BOB_PID=${!}
 echo "${BOB_PID}" > "${BOB_PIDF}"
 start_mm
+
+if [ "${RTPPC_TYPE}" = "rtp.io" ]
+then
+  ${RQC} -b -s "${RTPP_SOCK_STATS}" I || \
+    report_rc ${?} "Checking if ${RTPP_SOCK_STATS} works"
+fi
+
 MR_TIME="`${PYTHON_CMD} ${GMTM} -r`"
 TEST_EPOCH="`echo ${MR_TIME} | awk '{print $2}'`"
 rtpproxy_get_stats&
@@ -332,45 +339,47 @@ fi
 
 rm -f "${ALICE_PIDF}" "${BOB_PIDF}"
 
-mv rtpproxy.rout rtpproxy._rout
-cat rtpproxy.stats rtpproxy._rout > rtpproxy.rout
-rm rtpproxy._rout
+if [ "${RTPPC_TYPE}" != "rtp.io" ]
+then
+  mv rtpproxy.rout rtpproxy._rout
+  cat rtpproxy.stats rtpproxy._rout > rtpproxy.rout
+  rm rtpproxy._rout
+else
+  cp rtpproxy.stats rtpproxy.rout
+fi
 
 cleanup_rtpp_socks
 
-if [ "${RTPPC_TYPE}" != "rtp.io" ]
+RRO_DIFF="rtpproxy.rout.diff.txt"
+if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
 then
-  RRO_DIFF="rtpproxy.rout.diff.txt"
-  if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
+  RTPP_OUT="rtpproxy.${MM_TYPE}.output"
+  if [ "${RTPP_VERSION}" != "debug" -o "${RTPPC_TYPE}" = "rtp.io" ]
   then
-    RTPP_OUT="rtpproxy.${MM_TYPE}.output"
-    if [ "${RTPP_VERSION}" != "debug" ]
+    grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
+    RTPP_OUT="${RTPP_OUT}.pp"
+  fi
+  diff -uB "${RTPP_OUT}" rtpproxy.rout > ${RRO_DIFF}
+  RTPP_CHECK_RC="${?}"
+else
+  for nret in 0 1 2
+  do
+    RTPP_OUT="rtpproxy.${MM_TYPE}.output.nr${nret}"
+    if [ "${RTPP_VERSION}" != "debug" -o "${RTPPC_TYPE}" = "rtp.io" ]
     then
       grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
       RTPP_OUT="${RTPP_OUT}.pp"
     fi
-    diff -uB "${RTPP_OUT}" rtpproxy.rout > ${RRO_DIFF}
+    diff -uB "${RTPP_OUT}" rtpproxy.rout > ${RRO_DIFF}.${nret}
     RTPP_CHECK_RC="${?}"
-  else
-    for nret in 0 1 2
-    do
-      RTPP_OUT="rtpproxy.${MM_TYPE}.output.nr${nret}"
-      if [ "${RTPP_VERSION}" != "debug" ]
-      then
-        grep -v "^MEMDEB" "${RTPP_OUT}" > "${RTPP_OUT}.pp"
-        RTPP_OUT="${RTPP_OUT}.pp"
-      fi
-      diff -uB "${RTPP_OUT}" rtpproxy.rout > ${RRO_DIFF}.${nret}
-      RTPP_CHECK_RC="${?}"
-      if [ ${RTPP_CHECK_RC} -eq 0 ]
-      then
-        break
-      fi
-    done
-    mv ${RRO_DIFF}.0 ${RRO_DIFF}
-  fi
-  test ${RTPP_CHECK_RC} -eq 0 || cat ${RRO_DIFF}
+    if [ ${RTPP_CHECK_RC} -eq 0 ]
+    then
+      break
+    fi
+  done
+  mv ${RRO_DIFF}.0 ${RRO_DIFF}
 fi
+test ${RTPP_CHECK_RC} -eq 0 || cat ${RRO_DIFF}
 
 report_rc_log "${ALICE_RC}" "${MM_CFG} alice.log bob.log rtpproxy.log ${MM_LOG}" "Checking if Alice is happy"
 report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "Checking if Bob is happy"
@@ -378,14 +387,15 @@ report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
   report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy exit code"
-  if [ x"${MM_LOG}" != x"" ]
-  then
-    report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG} ${RRO_DIFF}" "Checking RTPproxy stdout"
-  else
-    report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${RRO_DIFF}" "Checking RTPproxy stdout"
-  fi
-  rm ${RRO_DIFF}
 fi
+if [ x"${MM_LOG}" != x"" ]
+then
+  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG} ${RRO_DIFF}" "Checking RTPproxy stdout"
+else
+  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${RRO_DIFF}" "Checking RTPproxy stdout"
+fi
+rm ${RRO_DIFF}
+
 if [ x"${MM_LOG}" != x"" ]
 then
   report_rc_log "${MM_RC}" "${MM_LOG}" "Checking ${MM_TYPE} exit code"
