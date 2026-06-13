@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mm-branch: ['master', 'PRACK']
+        mm-branch: ['master', 'wip', 'PRACK']
 
   # Alice->Sippy GO B2B->Bob
   sippy_go_b2bua:
