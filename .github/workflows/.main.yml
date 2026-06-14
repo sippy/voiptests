@@ -204,6 +204,7 @@ jobs:
 
       - name: Run tests
         id: run_tests
+        timeout-minutes: 3
         run: |
           cd /opt/voiptests
           rm -rf test.logs
