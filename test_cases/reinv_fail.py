@@ -33,6 +33,9 @@ class a_test_reinv_fail(a_test_reinvite):
     cli = 'alice_reinv_fail'
     name = f'{a_test_reinvite.name}: Bob responds with the 408'
 
+    def get_reinvite_ival(self):
+        return super().get_reinvite_ival() / 2.0
+
     def recvEvent(self, event, ua):
         if self.reinvite_in_progress and not isinstance(event, CCEventRing):
             if not (isinstance(event, CCEventFail) or isinstance(event, CCEventDisconnect)):
