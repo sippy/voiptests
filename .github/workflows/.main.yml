@@ -17,7 +17,7 @@ on:
       python-versions:
         required: false
         type: string
-        default: '["3.12"]'
+        default: '["3.x"]'
       rtppc-types:
         required: true
         type: string
@@ -62,27 +62,29 @@ jobs:
       actions: read
       contents: read
       packages: write
-    outputs:
-      image-ref: ${{ steps.meta.outputs.image-ref }}
-      image-artifact: ${{ steps.meta.outputs.image-artifact }}
     env:
       DOCKER_BUILD_SUMMARY: false
       DOCKER_BUILD_RECORD_UPLOAD: false
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJSON(inputs.python-versions) }}
     steps:
       - uses: actions/checkout@v6
 
       - name: Compute image metadata
         id: meta
         run: |
-          MM_BRANCH_SAFE="$(echo '${{ inputs.mm-branch }}' | sed 's|[^a-zA-Z0-9_.-]|-|g')"
-          SHA_SHORT="$(printf '%s' "$GITHUB_SHA" | cut -c1-12)"
-          IMAGE_BASE="ghcr.io/${{ github.repository_owner }}/voiptests-${{ inputs.mm-type }}:ssut-${MM_BRANCH_SAFE}"
-          IMAGE_REF="${IMAGE_BASE}-${SHA_SHORT}"
-          CACHE_SPEC="type=registry,ref=${IMAGE_BASE}-buildcache"
-          IMAGE_ARTIFACT="ssut-image-${{ inputs.mm-type }}-${MM_BRANCH_SAFE}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          MM_HASH="$(MM_TYPE='${{ inputs.mm-type }}' MM_BRANCH='${{ inputs.mm-branch }}' ./install_depends/opensips.sh --get_mm_hash)"
+          IMAGE_BASE="ghcr.io/${{ github.repository_owner }}/voiptests-${{ inputs.mm-type }}:ssut-${{ inputs.mm-branch }}-py${{ matrix.python-version }}"
+          IMAGE_REF="${IMAGE_BASE}-${GITHUB_SHA}"
+          CACHE_SPEC="type=registry,ref=${IMAGE_BASE}-${MM_HASH}-buildcache"
+          IMAGE_ARTIFACT="ssut-image-${{ inputs.mm-type }}-${{ inputs.mm-branch }}-py${{ matrix.python-version }}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           echo "image-ref=${IMAGE_REF}" >> "$GITHUB_OUTPUT"
           echo "image-artifact=${IMAGE_ARTIFACT}" >> "$GITHUB_OUTPUT"
           echo "cache-spec=${CACHE_SPEC}" >> "$GITHUB_OUTPUT"
+          echo "mm-hash=${MM_HASH}" >> "$GITHUB_OUTPUT"
+          echo "MM hash: ${MM_HASH}"
 
       - name: Restore BuildKit image cache
         if: ${{ inputs.buildkit-image-cache-key != '' && inputs.buildkit-image-cache-path != '' }}
@@ -124,6 +126,8 @@ jobs:
             BASE_IMAGE=${{ inputs.rtpp-image }}:${{ inputs.rtpp-image-tag }}
             MM_TYPE=${{ inputs.mm-type }}
             MM_BRANCH=${{ inputs.mm-branch }}
+            MM_REV=${{ steps.meta.outputs.mm-hash }}
+            PYTHON_VERSION=${{ matrix.python-version }}
           cache-from: ${{ steps.meta.outputs.cache-spec }}
           cache-to: ${{ steps.meta.outputs.cache-spec }},mode=max
 
@@ -139,6 +143,8 @@ jobs:
             BASE_IMAGE=${{ inputs.rtpp-image }}:${{ inputs.rtpp-image-tag }}
             MM_TYPE=${{ inputs.mm-type }}
             MM_BRANCH=${{ inputs.mm-branch }}
+            MM_REV=${{ steps.meta.outputs.mm-hash }}
+            PYTHON_VERSION=${{ matrix.python-version }}
 
       - name: Upload SSUT image artifact
         if: ${{ inputs.use-local-image }}
@@ -153,7 +159,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build_ssut_image]
     container:
-      image: ${{ needs.build_ssut_image.outputs.image-ref }}
+      image: ghcr.io/${{ github.repository_owner }}/voiptests-${{ inputs.mm-type }}:ssut-${{ inputs.mm-branch }}-py${{ matrix.python-version }}-${{ github.sha }}
       options: --privileged --sysctl net.ipv6.conf.all.disable_ipv6=0
     env:
       MM_TYPE: ${{ inputs.mm-type }}
@@ -169,24 +175,6 @@ jobs:
         mm-auth: ${{ fromJSON(inputs.mm-auths) }}
         python-version: ${{ fromJSON(inputs.python-versions) }}
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Define PYTHON_CMD
-        run: echo "PYTHON_CMD=${pythonLocation}/bin/python" >> "$GITHUB_ENV"
-
-      - name: Install Python dependencies
-        run: |
-          cd /opt/voiptests
-          ${PYTHON_CMD} -m pip install --upgrade pip
-          ${PYTHON_CMD} -m pip install -r requirements.txt
-          if [ "${MM_TYPE}" = "b2bua" ]
-          then
-            ${PYTHON_CMD} -m pip install -U -r dist/b2bua/requirements.txt
-          fi
-
       - name: Build artifact name
         id: artifact_name
         run: |
@@ -204,32 +192,8 @@ jobs:
 
       - name: Run tests
         id: run_tests
-        timeout-minutes: 3
-        run: |
-          cd /opt/voiptests
-          rm -rf test.logs
-          LOG_FILES="bob.log alice.log rtpproxy.log rtpproxy.rout.diff.txt"
-          if [ -n "${ARTIFACT_FILES}" ]
-          then
-            LOG_FILES="${LOG_FILES} ${ARTIFACT_FILES}"
-          fi
-
-          TEST_RES="ok"
-          RTPP_VERSION=debug sh -x ./test_run.sh || TEST_RES="fail"
-          mkdir -p test.logs/debug
-          for f in ${LOG_FILES}
-          do
-            mv ${f} test.logs/debug || true
-          done
-          test "${TEST_RES}" = "ok"
-
-          RTPP_VERSION=production sh -x ./test_run.sh || TEST_RES="fail"
-          mkdir -p test.logs/production
-          for f in ${LOG_FILES}
-          do
-            mv ${f} test.logs/production || true
-          done
-          test "${TEST_RES}" = "ok"
+        timeout-minutes: 4
+        run: voiptests-run-ssut-tests
 
       - name: Upload test logs
         if: always() && ( steps.run_tests.outcome == 'success' || steps.run_tests.outcome == 'failure' )
@@ -254,7 +218,7 @@ jobs:
       - name: Download SSUT image artifact
         uses: actions/download-artifact@v8
         with:
-          name: ${{ needs.build_ssut_image.outputs.image-artifact }}
+          name: ssut-image-${{ inputs.mm-type }}-${{ inputs.mm-branch }}-py${{ matrix.python-version }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: /tmp
 
       - name: Load SSUT image
@@ -276,8 +240,8 @@ jobs:
           echo "artname=${ARTNAME}" >> "$GITHUB_OUTPUT"
 
       - name: Run tests in local image
+        id: run_tests
         run: |
-          PYTHON_VER="$(echo '${{ matrix.python-version }}' | sed 's|-dev$||')"
           CTR_NAME="voiptests-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ strategy.job-index }}"
           trap 'docker rm -f "${CTR_NAME}" >/dev/null 2>&1 || true' EXIT
 
@@ -291,53 +255,16 @@ jobs:
             -e RTPP_BRANCH='DOCKER' \
             -e RTPPC_TYPE='${{ matrix.rtppc-type }}' \
             -e ARTIFACT_FILES='${{ inputs.artifact-files }}' \
-            -e PYTHON_CMD="python${PYTHON_VER}" \
-            '${{ needs.build_ssut_image.outputs.image-ref }}' \
-            /bin/sh -lc '
-              set -e
-              cd /opt/voiptests
-              if ! command -v "${PYTHON_CMD}" >/dev/null 2>&1
-              then
-                PYTHON_CMD=python3
-              fi
-              export PYTHON_CMD
-              export PIP_BREAK_SYSTEM_PACKAGES=1
+            'ghcr.io/${{ github.repository_owner }}/voiptests-${{ inputs.mm-type }}:ssut-${{ inputs.mm-branch }}-py${{ matrix.python-version }}-${{ github.sha }}' \
+            voiptests-run-ssut-tests
 
-              ${PYTHON_CMD} -m pip install --upgrade pip
-              ${PYTHON_CMD} -m pip install -r requirements.txt
-              if [ "${MM_TYPE}" = "b2bua" ]
-              then
-                ${PYTHON_CMD} -m pip install -U -r dist/b2bua/requirements.txt
-              fi
-
-              rm -rf test.logs
-              LOG_FILES="bob.log alice.log rtpproxy.log rtpproxy.rout.diff.txt"
-              if [ -n "${ARTIFACT_FILES}" ]
-              then
-                LOG_FILES="${LOG_FILES} ${ARTIFACT_FILES}"
-              fi
-
-              TEST_RES="ok"
-              RTPP_VERSION=debug sh -x ./test_run.sh || TEST_RES="fail"
-              mkdir -p test.logs/debug
-              for f in ${LOG_FILES}
-              do
-                mv ${f} test.logs/debug || true
-              done
-              test "${TEST_RES}" = "ok"
-
-              RTPP_VERSION=production sh -x ./test_run.sh || TEST_RES="fail"
-              mkdir -p test.logs/production
-              for f in ${LOG_FILES}
-              do
-                mv ${f} test.logs/production || true
-              done
-              test "${TEST_RES}" = "ok"
-            '
-
+          set +e
           docker start -a "${CTR_NAME}"
+          TEST_STATUS="$?"
+          set -e
           rm -rf test.logs
-          docker cp "${CTR_NAME}:/opt/voiptests/test.logs" ./test.logs
+          docker cp "${CTR_NAME}:/opt/voiptests/test.logs" ./test.logs || true
+          exit "${TEST_STATUS}"
 
       - name: Upload test logs
         if: always() && ( steps.run_tests.outcome == 'success' || steps.run_tests.outcome == 'failure' )

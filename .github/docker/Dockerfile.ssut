@@ -5,16 +5,22 @@ FROM ${BASE_IMAGE}
 
 ARG MM_TYPE
 ARG MM_BRANCH
+ARG MM_REV
+ARG PYTHON_VERSION=3.x
 
 ENV MM_TYPE=${MM_TYPE} \
     MM_BRANCH=${MM_BRANCH} \
+    MM_REV=${MM_REV} \
     RTPP_BRANCH=DOCKER \
     BASEDIR=/opt/voiptests \
     BUILDDIR=/opt/voiptests \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
     PYTHON_CMD=python3 \
     DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /opt/voiptests
+
+COPY --chmod=755 .github/docker/run_ssut_tests.sh /usr/local/bin/voiptests-run-ssut-tests
 
 RUN --mount=type=bind,source=cibits/install_ssut_bdeps.sh,target=install_ssut_bdeps.sh \
  /bin/sh -eux install_ssut_bdeps.sh
@@ -25,3 +31,21 @@ RUN --mount=type=bind,source=cibits,target=cibits \
  /bin/sh -eux ./cibits/build_ssut_image.sh
 
 COPY . /opt/voiptests
+
+ENV PYTHON_CMD=/usr/local/bin/voiptests-python
+
+RUN set -eux; \
+ if [ "${PYTHON_VERSION}" = "3.x" ]; then \
+   ln -sf "$(command -v python3)" "${PYTHON_CMD}"; \
+ else \
+   python3 -m pip install --upgrade uv; \
+   UV_PYTHON_INSTALL_DIR=/opt/voiptests-python uv python install "${PYTHON_VERSION}"; \
+   ln -sf "$(UV_PYTHON_INSTALL_DIR=/opt/voiptests-python uv python find "${PYTHON_VERSION}")" "${PYTHON_CMD}"; \
+ fi; \
+ ln -sf "${PYTHON_CMD}" /usr/local/bin/python; \
+ "${PYTHON_CMD}" --version; \
+ "${PYTHON_CMD}" -m ensurepip --upgrade || true; \
+ "${PYTHON_CMD}" -m pip install -r requirements.txt; \
+ if [ "${MM_TYPE}" = "b2bua" ]; then \
+   "${PYTHON_CMD}" -m pip install -U -r dist/b2bua/requirements.txt; \
+ fi

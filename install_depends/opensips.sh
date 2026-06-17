@@ -2,17 +2,25 @@
 
 set -e
 
+GET_MM_HASH=0
+while [ ${#} -gt 0 ]
+do
+  case "${1}" in
+  --get_mm_hash)
+    GET_MM_HASH=1
+    ;;
+  *)
+    echo "Unknown option: ${1}" >&2
+    exit 2
+    ;;
+  esac
+  shift
+done
+
 BASEDIR="${BASEDIR:-$(dirname -- "${0}")/..}"
 BASEDIR="$(readlink -f -- ${BASEDIR})"
 
 . ${BASEDIR}/functions
-
-if [ -e "${BUILDDIR}/dist" ]
-then
-  rm -rf "${BUILDDIR}/dist"
-fi
-mkdir "${BUILDDIR}/dist"
-cd "${BUILDDIR}/dist"
 
 MM_PATCH_SET=""
 
@@ -43,6 +51,59 @@ go-b2bua)
   exit 1
   ;;
 esac
+
+git_ls_remote_hash() {
+  _repo="${1}"
+  _ref="${2}"
+  _hash="$(git ls-remote "${_repo}" "${_ref}" 2>/dev/null | awk 'NR == 1 { print $1 }')"
+  if [ -n "${_hash}" ]
+  then
+    printf '%s\n' "${_hash}"
+    return 0
+  fi
+  return 1
+}
+
+get_mm_hash() {
+  if [ "${MM_REV}" != "${MM_BRANCH}" ]
+  then
+    _ref="${MM_REV}"
+  else
+    _ref="${MM_BRANCH}"
+  fi
+
+  if [ "${_ref#refs/}" != "${_ref}" ]
+  then
+    git_ls_remote_hash "${MM_REPO}" "${_ref}" && return 0
+  else
+    for _remote_ref in "refs/heads/${_ref}" "refs/tags/${_ref}^{}" "refs/tags/${_ref}" "${_ref}"
+    do
+      git_ls_remote_hash "${MM_REPO}" "${_remote_ref}" && return 0
+    done
+  fi
+
+  if [ "${#_ref}" -eq 40 ] && [ -z "$(printf '%s' "${_ref}" | tr -d '0123456789abcdefABCDEF')" ]
+  then
+    printf '%s\n' "${_ref}"
+    return 0
+  fi
+
+  echo "Unable to resolve ${_ref} in ${MM_REPO}" >&2
+  return 1
+}
+
+if [ "${GET_MM_HASH}" = "1" ]
+then
+  get_mm_hash
+  exit ${?}
+fi
+
+if [ -e "${BUILDDIR}/dist" ]
+then
+  rm -rf "${BUILDDIR}/dist"
+fi
+mkdir "${BUILDDIR}/dist"
+cd "${BUILDDIR}/dist"
 
 git clone -b "${MM_BRANCH}" "${MM_REPO}" "${MM_TYPE}"
 MM_GIT="git -C ${MM_TYPE}"
