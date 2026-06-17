@@ -1,5 +1,5 @@
 nsess_created=96 nsess_destroyed=88 nsess_timeout=8 nsess_complete=60 nsess_nortp=26 nsess_owrtp=0 nsess_nortcp=52 nsess_owrtcp=0
-ncmds_rcvd=335 ncmds_succd=326 ncmds_errs=8 ncmds_repld=334
+ncmds_rcvd=327 ncmds_succd=326 ncmds_errs=0 ncmds_repld=326
 nsess_created=96 nsess_destroyed=96 nsess_timeout=16 nsess_complete=60 nsess_nortp=34 nsess_owrtp=0 nsess_nortcp=60 nsess_owrtcp=0
-ncmds_rcvd=345 ncmds_succd=328 ncmds_errs=16 ncmds_repld=344
+ncmds_rcvd=329 ncmds_succd=328 ncmds_errs=0 ncmds_repld=328
 MEMDEB(rtpproxy): all clear
