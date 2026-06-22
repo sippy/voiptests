@@ -41,7 +41,7 @@ class b_test_reinv_frombob(test_reinvite, b_test1):
     disconnect_ival = 16
 
     def __init__(self, *args):
-        self.reinvite_ival = self.get_reinvite_ival()
+        self.reinvite_ival = min(self.disconnect_ival, a_test_reinv_frombob.disconnect_ival) - 2.0
         b_test1.__init__(self, *args)
 
     def reinvite(self, ua, *args):
