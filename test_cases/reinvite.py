@@ -67,7 +67,7 @@ class test_reinvite(object):
         ua.recvEvent(event)
 
     def get_reinvite_ival(self):
-        return b_test_reinvite.disconnect_ival / 2.0
+        return min(self.disconnect_ival, b_test_reinvite.disconnect_ival) - 2.0
 
     def recvEvent(self, event, ua):
         #print('recvEvent')
