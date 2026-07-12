@@ -386,13 +386,13 @@ report_rc_log "${BOB_RC}" "${MM_CFG} bob.log alice.log rtpproxy.log ${MM_LOG}" "
 
 if [ "${RTPPC_TYPE}" != "rtp.io" ]
 then
-  report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG}" "Checking RTPproxy exit code"
+  report_rc_log "${RTPP_RC}" "${MM_CFG} rtpproxy.log ${MM_LOG} alice.log bob.log" "Checking RTPproxy exit code"
 fi
 if [ x"${MM_LOG}" != x"" ]
 then
-  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG} ${RRO_DIFF}" "Checking RTPproxy stdout"
+  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${MM_LOG} ${RRO_DIFF} alice.log bob.log" "Checking RTPproxy stdout"
 else
-  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${RRO_DIFF}" "Checking RTPproxy stdout"
+  report_rc_log "${RTPP_CHECK_RC}" "rtpproxy.log ${RRO_DIFF} alice.log bob.log" "Checking RTPproxy stdout"
 fi
 rm ${RRO_DIFF}
 
