@@ -36,7 +36,6 @@ from sippy.SipWWWAuthenticate import SipWWWAuthenticate
 from sippy.misc import local4remote
 
 from array import array
-from threading import Lock
 from random import random, randint
 from socket import AF_INET, AF_INET6
 
@@ -99,7 +98,6 @@ class test(object):
         assert not self._rtp_inited
         self._rtp_inited = True
         self._rtp_enabled = not self.tccfg.signalling_only
-        self._rtp_lock = Lock()
         self._rtp_ep = None
         self._rtp_closing = False
         self._rtp_tx_gen = 0
@@ -144,8 +142,8 @@ class test(object):
         return None
 
     def _rtp_audio_in(self, chunk):
-        with self._rtp_lock:
-            self._rtp_rx_frames += chunk.nframes
+        # RTPInStream invokes audio_in while holding its ring lock.
+        self._rtp_rx_frames += chunk.nframes
 
     def _rtp_feed_once(self, rtp_soundout):
         if self._rtp_closing:
@@ -160,9 +158,9 @@ class test(object):
         except Exception as ex:
             self._rtp_error = str(ex)
             return
-        with self._rtp_lock:
-            self._rtp_tx_gen += achunk.nframes
-            self._rtp_tx_chunks += 1
+        # The output worker is the sole writer and is joined before reporting.
+        self._rtp_tx_gen += achunk.nframes
+        self._rtp_tx_chunks += 1
 
     def _rtp_start_or_update(self, sdp_body):
         assert self._rtp_inited
