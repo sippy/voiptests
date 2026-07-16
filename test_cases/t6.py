@@ -28,7 +28,7 @@ from .t1 import a_test1, b_test1
 class a_test6(a_test1):
     cld = 'bob_6'
     cli = 'alice_6'
-    name = 'Basic test #6'
+    name = 'Compact SIP basic call setup and teardown'
     compact_sip = True
 
 class b_test6(b_test1):

@@ -28,7 +28,7 @@ from .t1 import a_test1, b_test1
 class a_test14(a_test1):
     cld = 'bob_14'
     cli = 'alice_14'
-    name = 'Basic test #14'
+    name = 'Signalling-only two-minute call'
     compact_sip = False
     disconnect_ival = 120
 

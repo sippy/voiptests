@@ -28,7 +28,7 @@ from .t1 import a_test1, b_test1
 class a_test11(a_test1):
     cld = 'bob_11'
     cli = 'alice_11'
-    name = 'Basic test #11'
+    name = 'Compact SIP half-setup no-media timeout'
     compact_sip = True
 
     def alldone(self, ua):

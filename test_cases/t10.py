@@ -28,7 +28,7 @@ from .t5 import a_test5, b_test5
 class a_test10(a_test5):
     cld = 'bob_10'
     cli = 'alice_10'
-    name = 'Basic test #10'
+    name = 'Compact SIP post-early-media call failure (503)'
     compact_sip = True
 
 class b_test10(b_test5):

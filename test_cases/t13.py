@@ -35,7 +35,7 @@ from .t12 import b_test12
 class a_test13(a_test11):
     cld = 'bob_13'
     cli = 'alice_13'
-    name = 'Basic test #13'
+    name = 'Fully-setup no-media timeout'
     compact_sip = True
 
     def __init__(self, *a, **kwa):

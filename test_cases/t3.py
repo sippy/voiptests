@@ -30,7 +30,7 @@ from sippy.CCEvents import CCEventFail
 class a_test3(a_test1):
     cld = 'bob_3'
     cli = 'alice_3'
-    name = 'Basic test #3'
+    name = 'Post-ring call failure (501)'
 
     def alldone(self, ua):
         if self.disconnect_done and self.nerrs == 0:

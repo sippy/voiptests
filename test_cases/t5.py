@@ -31,7 +31,7 @@ from sippy.CCEvents import CCEventFail
 class a_test5(a_test3):
     cld = 'bob_5'
     cli = 'alice_5'
-    name = 'Basic test #5'
+    name = 'Post-early-media call failure (503)'
 
 class b_test5(b_test2):
     cli = a_test5.cld

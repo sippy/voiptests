@@ -34,7 +34,7 @@ from .t2 import b_test2
 class a_test12(a_test11):
     cld = 'bob_12'
     cli = 'alice_12'
-    name = 'Basic test #12'
+    name = 'Half-setup no-media timeout'
     compact_sip = False
 
 class b_test12(b_test2):

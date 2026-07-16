@@ -287,7 +287,7 @@ class test(object):
 class a_test1(test):
     cld = 'bob_1'
     cli = 'alice_1'
-    name = 'Basic test #1'
+    name = 'Basic call setup and teardown'
     disconnect_ival = 9.0
     cancel_ival = None
     test_id  = None

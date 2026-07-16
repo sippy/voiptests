@@ -31,7 +31,7 @@ from sippy.CCEvents import CCEventFail
 class a_test4(a_test3):
     cld = 'bob_4'
     cli = 'alice_4'
-    name = 'Basic test #4'
+    name = 'Pre-ring call failure (502)'
 
 class b_test4(b_test1):
     cli = a_test4.cld

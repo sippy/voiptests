@@ -31,7 +31,7 @@ from sippy.Time.Timeout import Timeout
 class a_test2(a_test1):
     cld = 'bob_2'
     cli = 'alice_2'
-    name = 'Basic test #2'
+    name = 'Early-media call setup and teardown'
 
 class b_test2(b_test1):
     cli = a_test2.cld

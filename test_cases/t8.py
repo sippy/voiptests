@@ -28,7 +28,7 @@ from .t3 import a_test3, b_test3
 class a_test8(a_test3):
     cld = 'bob_8'
     cli = 'alice_8'
-    name = 'Basic test #8'
+    name = 'Compact SIP post-ring call failure (501)'
     compact_sip = True
 
 class b_test8(b_test3):
