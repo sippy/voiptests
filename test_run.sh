@@ -170,6 +170,33 @@ start_mm() {
     MM_PID=${!}
     ;;
 
+  siphon)
+    MM_CFG="siphon.yaml"
+    MM_LOG="${BUILDDIR}/siphon.log"
+    MM_BIN="${MM_ROOT}/target/release/siphon"
+    case "${RTPPC_TYPE}" in
+    udp)
+      SIPHON_RTPP_ADDRESS="127.0.0.1:22222"
+      ;;
+    udp6)
+      SIPHON_RTPP_ADDRESS="[::1]:22222"
+      ;;
+    *)
+      echo "RTPPC_TYPE=${RTPPC_TYPE} is not supported by ${MM_TYPE}" 1>&2
+      return 1
+      ;;
+    esac
+    sed "s|%%RTPP_ADDRESS%%|${SIPHON_RTPP_ADDRESS}|g ; \
+     s|%%SCRIPT_PATH%%|${BUILDDIR}/scenarios/${MM_AUTH}/siphon_script.py|g" \
+     "scenarios/${MM_AUTH}/${MM_CFG}.in" > "${MM_CFG}"
+    for nret in 0 1 2
+    do
+      PP_SUF=".nr${nret}" pp_file scenarios/${MM_AUTH}/rtpproxy.siphon.output.in -DNRET=${nret}
+    done
+    ${MM_BIN} -c "${MM_CFG}" >${MM_LOG} 2>&1 &
+    MM_PID=${!}
+    ;;
+
   *)
     echo "Unknown MM_TYPE: ${MM_TYPE}" 1>&2
     return 1
@@ -351,7 +378,7 @@ fi
 cleanup_rtpp_socks
 
 RRO_DIFF="rtpproxy.rout.diff.txt"
-if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" ]
+if [ "${MM_TYPE}" != "opensips" -a "${MM_TYPE}" != "kamailio" -a "${MM_TYPE}" != "siphon" ]
 then
   RTPP_OUT="rtpproxy.${MM_TYPE}.output"
   if [ "${RTPP_VERSION}" != "debug" -o "${RTPPC_TYPE}" = "rtp.io" ]

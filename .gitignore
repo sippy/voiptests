@@ -13,4 +13,7 @@ kamailio.cfg
 rtpproxy.log
 rtpproxy.opensips.output
 rtpproxy.kamailio.output
+/rtpproxy.siphon.output.nr*
+/siphon.yaml
+/siphon.log
 __pycache__

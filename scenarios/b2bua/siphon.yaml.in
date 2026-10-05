@@ -1,0 +1,24 @@
+listen:
+  udp:
+    - "127.0.0.1:5060"
+    - "[::1]:5060"
+
+domain:
+  local:
+    - "127.0.0.1"
+    - "::1"
+
+script:
+  path: "%%SCRIPT_PATH%%"
+
+media:
+  backend: rtpproxy
+  sdp_keep_session_name: true
+  rtpproxy:
+    address: "%%RTPP_ADDRESS%%"
+    timeout_ms: 2000
+    retries: 2
+
+log:
+  level: debug
+  format: pretty
