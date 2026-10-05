@@ -123,8 +123,29 @@ jobs:
       matrix:
         mm-branch: ['master', '6.1', '6.0', '5.8', '5.7', '5.6', '5.5', '5.4', '5.3', '5.2', '5.1']
 
+  # Alice->SIPhon->Bob, as a proxy ("") and as a B2BUA
+  siphon:
+    name: SIPhon (${{ matrix.mm-branch }})
+    needs: buildkit_image
+    uses: ./.github/workflows/.main.yml
+    with:
+      mm-type: 'siphon'
+      mm-branch: ${{ matrix.mm-branch }}
+      mm-auths: '["", "b2bua"]'
+      rtppc-types: '["udp", "udp6"]'
+      use-local-image: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
+      artifact-files: 'siphon.yaml siphon.log'
+      buildkit-image: ${{ needs.buildkit_image.outputs.image }}
+      buildkit-image-cache-key: ${{ needs.buildkit_image.outputs.image-cache-key }}
+      buildkit-image-cache-path: ${{ needs.buildkit_image.outputs.image-cache-path }}
+      buildkit-image-cache-tar: ${{ needs.buildkit_image.outputs.image-cache-tar }}
+    strategy:
+      fail-fast: false
+      matrix:
+        mm-branch: ['main']
+
   publish:
-    needs: [opensips, sippy_py_b2bua, sippy_go_b2bua, kamailio]
+    needs: [opensips, sippy_py_b2bua, sippy_go_b2bua, kamailio, siphon]
     if: github.event_name == 'release' && github.event.action == 'created'
     runs-on: ubuntu-latest
 

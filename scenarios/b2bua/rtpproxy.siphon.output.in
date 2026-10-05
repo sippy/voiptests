@@ -1,0 +1,3 @@
+#define NCMDS_BASE 247
+
+#include "simple/rtpproxy.output/common.in"

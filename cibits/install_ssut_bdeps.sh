@@ -17,3 +17,9 @@ if [ "${MM_TYPE}" = "kamailio" ]
 then
   apt-get install -y --no-install-recommends libcurl4-gnutls-dev
 fi
+
+if [ "${MM_TYPE}" = "siphon" ]
+then
+  apt-get install -y --no-install-recommends cargo rustc cmake g++ \
+    pkg-config python3-dev libpython3-dev
+fi

@@ -46,6 +46,9 @@ kamailio)
 go-b2bua)
   MM_REPO=${MM_REPO:-"https://github.com/sippy/go-b2bua.git"}
   ;;
+siphon)
+  MM_REPO=${MM_REPO:-"https://github.com/siphon-project/siphon-sip.git"}
+  ;;
 *)
   echo "Bogus MM_TYPE=\"${MM_TYPE}\"" 2>&1
   exit 1
@@ -214,6 +217,16 @@ then
     go version
     which go
     ${MAKE_CMD} -C "${BUILDDIR}/dist/go-b2bua" all
+fi
+
+if [ "${MM_TYPE}" = "siphon" ]
+then
+    cargo --version
+    PYO3_PYTHON="${PYTHON_CMD}" cargo build --release --locked --bin siphon \
+     --manifest-path "${BUILDDIR}/dist/siphon/Cargo.toml"
+    # The build tree is several GB and only the binary is run.
+    find "${BUILDDIR}/dist/siphon/target/release" -mindepth 1 -maxdepth 1 \
+     ! -name siphon -exec rm -rf {} +
 fi
 
 if [ "${RTPP_BRANCH}" != "DOCKER" ]
