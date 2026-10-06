@@ -26,8 +26,6 @@
 from .t1 import a_test1, b_test1
 from .reinvite import test_reinvite
 
-from sippy.CCEvents import CCEventFail
-
 class a_test_reinv_bad_ack(test_reinvite, a_test1):
     cld = 'bob_reinv_bad_ack'
     cli = 'alice_reinv_bad_ack'
@@ -43,16 +41,9 @@ class a_test_reinv_bad_ack(test_reinvite, a_test1):
         test_reinvite.reinvite(self, ua, alter_port)
         if not self.connect_done or self.disconnect_done:
             return
-        ua.tr.uack = True
 
     def on_reinvite_connected(self, ua):
         ua.tr.ack.getHFBody('cseq').cseq = 0
-        ua.global_config['_sip_tm'].sendACK(ua.tr)
-
-    def on_reinvite_failed(self, ua, event):
-        if isinstance(event, CCEventFail):
-            ua.global_config['_sip_tm'].sendACK(ua.tr)
-        test_reinvite.on_reinvite_failed(self, ua, event)
 
     def disconnect(self, ua):
         if not self.disconnect_done:
