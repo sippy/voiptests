@@ -56,8 +56,8 @@ class a_test_inv_brkn1(a_test_inv):
         if isinstance(event, CCEventRing) and event.getData()[0] == 100:
             return (super().recvEvent(event, ua))
         if self.connect_done or not isinstance(event, (CCEventFail, CCEventDisconnect)):
-            self.nerrs += 1
-            raise ValueError(f'{self.failed_msg()}: INVITE has NOT failed with {event}')
+            self.scenario_failed(ua, f'INVITE has NOT failed with {event}')
+            return
         return (super().recvEvent(event, ua))
 
 class b_test_inv_brkn1(b_test_inv):

@@ -56,10 +56,10 @@ class a_test_reinv_bad_ack(test_reinvite, a_test1):
 
     def disconnect(self, ua):
         if not self.disconnect_done:
-            self.nerrs += 1
             # The ACK in the re-INVITE transaction is sent with wrong CSeq so
             # the call should have been interrupted early.
-            raise ValueError('%s: The call was not interrupted early.' % self.my_name())
+            self.scenario_failed(ua, 'The call was not interrupted early')
+            return
         a_test1.disconnect(self, ua)
 
     def get_reinvite_ival(self):

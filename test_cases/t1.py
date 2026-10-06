@@ -284,6 +284,12 @@ class test(object):
                 self.rval = 0
         self.done()
 
+    def scenario_failed(self, ua, why):
+        print(f'{self.failed_msg()}: {why}')
+        self.nerrs += 1
+        event = CCEventDisconnect(origin = 'switch')
+        ua.recvEvent(event)
+
 class a_test1(test):
     cld = 'bob_1'
     cli = 'alice_1'
